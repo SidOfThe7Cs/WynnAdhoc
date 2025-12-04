@@ -9,29 +9,29 @@ import io.github.notenoughupdates.moulconfig.platform.MoulConfigScreenComponent;
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis;
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver;
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.io.File;
 
 public class ConfigManager {
-    public static final Config INSTANCE = new Config();
-    public static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve("sidly/WynnAdhoc_config.json");
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final ConfigManager INSTANCE = new ConfigManager();
 
-    public static Screen getConfigScreen(Screen parent) {
+    public Config config = new Config();  // the in-memory config
+    private final File configFile = new File("config/sidly/wynnadhoc.json");
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        MoulConfigProcessor<Config> processor = new MoulConfigProcessor<>(ConfigManager.INSTANCE);
+    public Screen getConfigScreen(Screen parent) {
+
+        MoulConfigProcessor<Config> processor = new MoulConfigProcessor<>(this.config);
 
         // Register builtin editors so MoulConfig knows how to render annotated fields
         BuiltinMoulConfigGuis.addProcessors(processor);
 
         // Use the driver to process the structure (this will finish/finalize the processor)
         ConfigProcessorDriver driver = new ConfigProcessorDriver(processor);
-        driver.processConfig(ConfigManager.INSTANCE); // this discovers @Category / @ConfigOption fields etc.
+        driver.processConfig(this.config); // this discovers @Category / @ConfigOption fields etc.
 
         // Create the editor using the processed config
         MoulConfigEditor<Config> editor = new MoulConfigEditor<>(processor);
@@ -50,5 +50,23 @@ public class ConfigManager {
 
         return screen;
     }
+
+    public void load() {
+        configFile.getParentFile().mkdirs();
+        Config loaded = ConfigUtil.loadConfig(Config.class, configFile, gson);
+
+        if (loaded != null) {
+            this.config = loaded;
+        } else {
+            // Config file missing or corrupted → regenerate defaults
+            this.config = new Config();
+            save();
+        }
+    }
+
+    public void save() {
+        ConfigUtil.saveConfig(this.config, configFile, gson);
+    }
+
 
 }
