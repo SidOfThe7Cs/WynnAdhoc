@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "wynnadhoc",
+	"version": "${version}",
+	"name": "WynnAdhoc",
+	"description": "",
+	"authors": [
+		"SidOfThe7Cs"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/wynnadhoc/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+          "sidly.wynnadhoc.WynnAdhocClient"
+		],
+        "modmenu":[
+          "sidly.wynnadhoc.config.ModMenuIntegration"
+        ]
+	},
+	"mixins": [
+		{
+			"config": "wynnadhoc.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.1",
+		"minecraft": ">=1.21.4",
+		"java": ">=17",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
