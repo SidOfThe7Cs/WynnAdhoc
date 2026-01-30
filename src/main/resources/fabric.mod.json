@@ -9,19 +9,19 @@
 	],
 	"contact": {
 		"homepage": "",
-		"sources": ""
+		"sources": "https://github.com/SidOfThe7Cs/WynnAdhoc"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/wynnadhoc/icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"client": [
-          "sidly.wynnadhoc.WynnAdhocClient"
-		],
-        "modmenu":[
-          "sidly.wynnadhoc.config.ModMenuIntegration"
-        ]
-	},
+      "client": [
+        "sidly.wynnadhoc.WynnAdhocClient"
+      ],
+      "modmenu": [
+        "sidly.wynnadhoc.config.ModMenuIntegration"
+      ]
+    },
 	"mixins": [
 		{
 			"config": "wynnadhoc.client.mixins.json",
@@ -30,7 +30,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.18.1",
-		"minecraft": ">=1.21.4",
+		"minecraft": ">=1.21.11",
 		"java": ">=17",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
