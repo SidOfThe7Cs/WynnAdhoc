@@ -23,12 +23,13 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
 
     public ChestItemsLoadedEvent(GenericContainerScreen containerScreen) {
         this.containerScreen = containerScreen;
+        this.fire();
     }
 
     private static boolean itemsLoaded = false;
 
-    public static void onScreenRender(HandledScreen<?> screen) {
-        if (!(screen instanceof GenericContainerScreen container)) return;
+    public static void onScreenRender(ScreenRenderEvent event) {
+        if (!(event.screen instanceof GenericContainerScreen container)) return;
         if (itemsLoaded) return; // already triggered
 
         boolean hasNonAir = false;
@@ -43,7 +44,7 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
 
         if (hasNonAir) {
             itemsLoaded = true;
-            new ChestItemsLoadedEvent(container).fire();
+            new ChestItemsLoadedEvent(container);
         }
     }
 

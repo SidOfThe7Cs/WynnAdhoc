@@ -1,0 +1,124 @@
+package sidly.wynnadhoc.utils;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.Text;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FormatUtils {
+    public static String millisToHMS(long millis) {
+        long seconds = millis / 1000;
+        long hours = seconds / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long secs = seconds % 60;
+
+        StringBuilder sb = new StringBuilder();
+        if (hours > 0) sb.append(hours).append("h");
+        if (minutes > 0 || hours > 0) sb.append(minutes).append("m");
+        sb.append(secs).append("s");
+
+        return sb.toString();
+    }
+
+    public static List<Text> getTooltip(ItemStack item){
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.player == null) return new ArrayList<>();
+
+        return item.getTooltip(Item.TooltipContext.DEFAULT, client.player, TooltipType.BASIC);
+
+    }
+
+    public static long timeSinceIso(String isoTimestamp, ChronoUnit timeunit) {
+        if (isoTimestamp == null || isoTimestamp.isEmpty()) return Long.MAX_VALUE;
+        try {
+            // Parse the ISO-8601 timestamp string into an Instant
+            Instant past = Instant.parse(isoTimestamp);
+            Instant now = Instant.ofEpochMilli(System.currentTimeMillis());
+
+            if (timeunit == ChronoUnit.WEEKS) {
+                return ChronoUnit.DAYS.between(past, now) / 7;
+            }
+            // Calculate days between past and now
+            return timeunit.between(past, now);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1; // Return -1 if parsing failed
+        }
+    }
+
+    public static String formatTime(long time, ChronoUnit unit) {
+        double seconds = unit.getDuration().toMillis() / 1000.0 * Math.abs(time);
+        return formatTime(seconds, ChronoUnit.SECONDS);
+    }
+    public static String formatTime(double time, ChronoUnit unit) {
+        double seconds = unit.getDuration().toMillis() / 1000.0 * Math.abs(time);
+        String base;
+
+        if (seconds < 60) {
+            base = String.format("%.1fs", seconds);
+        } else if ((seconds /= 60.0) < 60) {
+            base = String.format("%.1fm", seconds);
+        } else if ((seconds /= 60.0) < 24) {
+            base = String.format("%.1fh", seconds);
+        } else if ((seconds /= 24.0) < 7) {
+            base = String.format("%.1fd", seconds);
+        } else if ((seconds /= 7.0) < 4.345) {
+            base = String.format("%.1fw", seconds);
+        } else if ((seconds *= 7.0 / 30.4375) < 12) {
+            base = String.format("%.1fmo", seconds);
+        } else {
+            base = String.format("%.1fy", seconds / 12.0);
+        }
+
+        return base;
+    }
+
+    public static String getUnicode(String plain) {
+        //DebugWindow.getInstance().log("getUnicode called for " + plain);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < plain.length(); i++) {
+            char c = plain.charAt(i);
+
+            // if it’s a private-use area symbol (usually used for custom fonts)
+            //if (c >= '\uE000' && c <= '\uF8FF') {
+            sb.append(String.format("\\u%04X", (int) c));
+            //} else {
+            //sb.append(c);
+            //}
+        }
+
+        return sb.toString();
+    }
+
+    public static String[] splitByAnySpecialChar(String message){
+        return message.split("[^\\p{L}\\p{N} \\[\\]%+()]+");
+        //split by anything that is not a letter number or space or [ or ] or % or +
+    }
+
+    public static String removeAllBut(String message, String toKeepRegex) {
+        return message.replaceAll("[^" + toKeepRegex + "]", "");
+    }
+
+    public static String removeNonAscii(String message){
+        String cleaned = removeColorCodes(message);
+        cleaned = cleaned.replaceAll("[^\\x00-\\x7F]", "");
+        cleaned = cleaned.replace("\n", "");
+        cleaned = cleaned.replace("  ", " ");
+        return cleaned.trim();
+    }
+
+    public static String removeColorCodes(String message) {
+        // Regular expression to match Minecraft color codes
+        return message.replaceAll("§.", "");
+    }
+
+}

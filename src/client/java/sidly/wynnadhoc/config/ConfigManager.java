@@ -12,8 +12,13 @@ import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import sidly.wynnadhoc.lootruns.LootrunningSaveData;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
@@ -21,6 +26,23 @@ public class ConfigManager {
     public Config config = new Config();  // the in-memory config
     private final File configFile = new File("config/sidly/wynnadhoc.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+
+    // TODO actually save to
+    private LootrunningSaveData lootrunSaveData = new LootrunningSaveData();
+
+    public LootrunData getLootrun(String uuid) {
+        return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>()));
+    }
+    public void resetLootrun(String uuid) {
+        lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData())); // create new object but preserve camp data
+    }
+    public Map<BlockPos, Long> getChests() {
+        return lootrunSaveData.chests;
+    }
+    public List<BlockPos> getBannedChests() {
+        return lootrunSaveData.bannedChests;
+    }
 
     public Screen getConfigScreen(Screen parent) {
 
