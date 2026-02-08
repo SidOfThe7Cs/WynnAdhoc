@@ -10,7 +10,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import sidly.wynnadhoc.event.RenderWorldEvent;
+import sidly.wynnadhoc.event.WorldRenderEvent;
 import sidly.wynnadhoc.utils.datatypes.WEVec;
 
 import java.awt.*;
@@ -32,11 +32,11 @@ public class LineDrawer {
         }
     }
 
-    private final RenderWorldEvent event;
+    private final WorldRenderEvent event;
     private final int lineWidth;
     private final boolean depth;
 
-    public LineDrawer(RenderWorldEvent event, int lineWidth, boolean depth) {
+    public LineDrawer(WorldRenderEvent event, int lineWidth, boolean depth) {
         this.event = event;
         this.lineWidth = lineWidth;
         this.depth = depth;
@@ -77,16 +77,16 @@ public class LineDrawer {
             WEVec p2a = line.p2.add(right);
             WEVec p2b = line.p2.subtract(right);
 
-            buffer.vertex(matrix.getPositionMatrix(), (float)p1a.x(), (float)p1a.y(), (float)p1a.z())
+            buffer.vertex(matrix.getPositionMatrix(), (float) p1a.x(), (float) p1a.y(), (float) p1a.z())
                     .color(line.color.getRed(), line.color.getGreen(), line.color.getBlue(), line.color.getAlpha());
 
-            buffer.vertex(matrix.getPositionMatrix(), (float)p2a.x(), (float)p2a.y(), (float)p2a.z())
+            buffer.vertex(matrix.getPositionMatrix(), (float) p2a.x(), (float) p2a.y(), (float) p2a.z())
                     .color(line.color.getRed(), line.color.getGreen(), line.color.getBlue(), line.color.getAlpha());
 
-            buffer.vertex(matrix.getPositionMatrix(), (float)p2b.x(), (float)p2b.y(), (float)p2b.z())
+            buffer.vertex(matrix.getPositionMatrix(), (float) p2b.x(), (float) p2b.y(), (float) p2b.z())
                     .color(line.color.getRed(), line.color.getGreen(), line.color.getBlue(), line.color.getAlpha());
 
-            buffer.vertex(matrix.getPositionMatrix(), (float)p1b.x(), (float)p1b.y(), (float)p1b.z())
+            buffer.vertex(matrix.getPositionMatrix(), (float) p1b.x(), (float) p1b.y(), (float) p1b.z())
                     .color(line.color.getRed(), line.color.getGreen(), line.color.getBlue(), line.color.getAlpha());
         }
 
@@ -109,13 +109,13 @@ public class LineDrawer {
     }
 
     public void drawEdges(WEVec location, Color color) {
-        for (Pair<WEVec, WEVec> edge: location.edges()) {
+        for (Pair<WEVec, WEVec> edge : location.edges()) {
             draw3DLine(edge.getLeft(), edge.getRight(), color);
         }
     }
 
     public void drawEdges(Box box, Color color) {
-        for (Pair<WEVec, WEVec> edge: WorldRenderUtils.calculateEdges(box)) {
+        for (Pair<WEVec, WEVec> edge : WorldRenderUtils.calculateEdges(box)) {
             draw3DLine(edge.getLeft(), edge.getRight(), color);
         }
     }
@@ -124,7 +124,7 @@ public class LineDrawer {
         addQueuedLine(p1, p2, color);
     }
 
-    static void draw3D(RenderWorldEvent event, int lineWidth, boolean depth, LineDrawerDraws draws) {
+    static void draw3D(WorldRenderEvent event, int lineWidth, boolean depth, LineDrawerDraws draws) {
         event.matrices.push();
 
         WEVec inverseView = WorldRenderUtils.getViewerPos().negate();

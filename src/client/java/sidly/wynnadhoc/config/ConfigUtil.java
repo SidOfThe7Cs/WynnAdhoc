@@ -1,4 +1,3 @@
-
 // yoinked from https://github.com/NotEnoughUpdates/NotEnoughUpdates/blob/master/src/main/java/io/github/moulberry/notenoughupdates/core/config/ConfigUtil.java
 
 package sidly.wynnadhoc.config;
@@ -6,12 +5,7 @@ package sidly.wynnadhoc.config;
 import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -58,7 +52,7 @@ public class ConfigUtil {
         return null;
     }
 
-    private static List<String> unimportantConfigs = Arrays.asList();
+    private static final List<String> unimportantConfigs = List.of();
 
     public static void saveConfig(Object config, File file, Gson gson) {
         saveConfig(config, file, gson, false);
@@ -76,7 +70,8 @@ public class ConfigUtil {
                             )) :
                             new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(tempFile.toPath()), StandardCharsets.UTF_8))
             ) {
-                writer.write(gson.toJson(config));
+                String saving = gson.toJson(config);
+                writer.write(saving);
             }
 
             if (loadConfig(config.getClass(), tempFile, gson, useGzip, false) == null) {
@@ -110,8 +105,7 @@ public class ConfigUtil {
             } catch (Exception __) {
                 System.out.println("WynnAdhoc config gone");
             }
-        }
-        finally {
+        } finally {
             file.delete();
         }
     }

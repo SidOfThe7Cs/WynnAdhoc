@@ -1,13 +1,17 @@
 package sidly.wynnadhoc.war;
 
 import net.minecraft.client.MinecraftClient;
+import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.config.catagories.WarConfig;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.utils.DebugWindow;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WarUtils {
+    private static final WarConfig config = ConfigManager.INSTANCE.config.war;
 
     public static void onChatMessage(ChatMessageEvent event) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -31,9 +35,9 @@ public class WarUtils {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setMarkedAsUnknown(true);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"marked " + territoryName + " as unknown (loadout: " + loadoutName + ")");
+                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "marked " + territoryName + " as unknown (loadout: " + loadoutName + ")");
                 } else {
-                    DebugWindow.getInstance().log(DebugWindow.Priority.WARNING,"unknown territory: " + territoryName);
+                    DebugWindow.getInstance().log(DebugWindow.Priority.WARNING, "unknown territory: " + territoryName);
                 }
             }
         }
@@ -52,7 +56,7 @@ public class WarUtils {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setUpgrade(upgradeName, level);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"set " + upgradeName + " to " + level);
+                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "set " + upgradeName + " to " + level);
                 }
             }
         }
@@ -69,7 +73,7 @@ public class WarUtils {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setUpgrade(upgradeName, 0);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"set " + upgradeName + " to " + 0);
+                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "set " + upgradeName + " to " + 0);
                 }
             }
         }
@@ -87,7 +91,7 @@ public class WarUtils {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setMarkedAsUnknown(true);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"marked " + territoryName + " as unknown");
+                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "marked " + territoryName + " as unknown");
                 }
             }
         }
@@ -100,7 +104,7 @@ public class WarUtils {
             String guildName = takeoverMatcher.group(2).trim();
 
             DB.ownedTerritories.put(territoryName, DB.allTerritories.get(territoryName));
-            DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"added " + territoryName + " as owned");
+            DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "added " + territoryName + " as owned");
         }
         // you lost a territory
         Pattern guildTakeoverPattern = Pattern.compile("^\\[(.*?)] has taken control of (.*?)!$");
@@ -111,8 +115,71 @@ public class WarUtils {
             String territoryName = guildTakeoverMatcher.group(2).trim();
 
             DB.ownedTerritories.remove(territoryName);
-            DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"removed " + territoryName + " from owned");
+            DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "removed " + territoryName + " from owned");
         }
 
+    }
+
+    public static boolean shouldShowResourceOverlay() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (config.getShowResourceOverlay() && client != null && client.currentScreen != null) {
+            String title = client.currentScreen.getTitle().getString();
+            int colonIndex = title.indexOf(':');
+            if (colonIndex != -1) {
+                title = title.substring(0, colonIndex).trim();
+            }
+            if (DB.allTerritories.containsKey(title)) {
+                return true;
+            } else if (title.equals(DB.GUILD_NAME)) {
+                return true;
+            } else return title.equals("Territory Management");
+        }
+        return false;
+    }
+
+    public static String updateResourceDisplay() {
+        int oreProd = 0;
+        int oreConsume = 0;
+
+        int cropsProd = 0;
+        int cropsConsume = 0;
+
+        int woodProd = 0;
+        int woodConsume = 0;
+
+        int fishProd = 0;
+        int fishConsume = 0;
+
+        int emeraldProd = 0;
+        int emeraldConsume = 0;
+
+        for (Map.Entry<String, Territory> entry : DB.ownedTerritories.entrySet()) {
+            Territory territory = entry.getValue();
+
+            emeraldProd += territory.getEmeraldsPerHourProd();
+            emeraldConsume += territory.getEmeraldsPerHourConsume();
+
+            oreProd += territory.getOrePerHourProd();
+            oreConsume += territory.getOrePerHourConsume();
+
+            woodProd += territory.getWoodPerHourProd();
+            woodConsume += territory.getWoodPerHourConsume();
+
+            fishProd += territory.getFishPerHourProd();
+            fishConsume += territory.getFishPerHourConsume();
+
+            cropsProd += territory.getCropsPerHourProd();
+            cropsConsume += territory.getCropsPerHourConsume();
+        }
+
+        return String.valueOf(DB.getDisplay("§a", ResourceType.Emeralds, emeraldConsume, emeraldProd)) +
+                DB.getDisplay("§f", ResourceType.Ore, oreConsume, oreProd) +
+                DB.getDisplay("§6", ResourceType.Wood, woodConsume, woodProd) +
+                DB.getDisplay("§b", ResourceType.Fish, fishConsume, fishProd) +
+                DB.getDisplay("§e", ResourceType.Crops, cropsConsume, cropsProd);
+    }
+
+    public static void onWarResourceDisplayClick() {
+        DB.parseTerritoryScreen(MinecraftClient.getInstance().currentScreen, true);
     }
 }

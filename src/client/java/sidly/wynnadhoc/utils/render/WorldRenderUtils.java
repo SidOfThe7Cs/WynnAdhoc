@@ -13,7 +13,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.MappableRingBuffer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BuiltBuffer;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -28,7 +31,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.event.RenderWorldEvent;
+import sidly.wynnadhoc.event.WorldRenderEvent;
 import sidly.wynnadhoc.utils.datatypes.WEVec;
 
 import java.awt.*;
@@ -69,7 +72,7 @@ public class WorldRenderUtils {
         return new WEVec(camera.getCameraPos());
     }
 
-    public static WEVec exactPlayerEyeLocation(RenderWorldEvent event) {
+    public static WEVec exactPlayerEyeLocation(WorldRenderEvent event) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         double eyeHeight = player.getEyeHeight(player.getPose());
         return exactLocation(player, event.partialTicks).add(0, eyeHeight, 0);
@@ -104,7 +107,7 @@ public class WorldRenderUtils {
     }
 
     // Draws
-    public void drawFilledBoundingBox(RenderWorldEvent event, Box box, Color color, float alphaMultiplier) {
+    public void drawFilledBoundingBox(WorldRenderEvent event, Box box, Color color, float alphaMultiplier) {
         MatrixStack matrices = event.matrices;
         Vec3d camera = event.camera.getCameraPos();
 
@@ -163,24 +166,24 @@ public class WorldRenderUtils {
         buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
     }
 
-    public static void drawEdges(RenderWorldEvent event, Box box, Color color, int lineWidth, boolean depth) {
+    public static void drawEdges(WorldRenderEvent event, Box box, Color color, int lineWidth, boolean depth) {
         LineDrawer.draw3D(event, lineWidth, depth, lineDrawer -> lineDrawer.drawEdges(box, color));
     }
 
-    public static void drawEdges(RenderWorldEvent event, WEVec location, Color color, int lineWidth, boolean depth) {
+    public static void drawEdges(WorldRenderEvent event, WEVec location, Color color, int lineWidth, boolean depth) {
         LineDrawer.draw3D(event, lineWidth, depth, lineDrawer -> lineDrawer.drawEdges(location, color));
     }
 
-    public static void draw3DLine(RenderWorldEvent event, WEVec p1, WEVec p2, Color color, int lineWidth, boolean depth) {
+    public static void draw3DLine(WorldRenderEvent event, WEVec p1, WEVec p2, Color color, int lineWidth, boolean depth) {
         LineDrawer.draw3D(event, lineWidth, depth, lineDrawer -> lineDrawer.draw3DLine(p1, p2, color));
     }
 
-    public static void drawLineToEye(RenderWorldEvent event, WEVec location, Color color, int lineWidth, boolean depth) {
+    public static void drawLineToEye(WorldRenderEvent event, WEVec location, Color color, int lineWidth, boolean depth) {
         WEVec rotationVec = new WEVec(MinecraftClient.getInstance().player.getRotationVec(event.partialTicks));
         draw3DLine(event, exactPlayerEyeLocation(event).add(rotationVec.multiply(2)), location, color, lineWidth, depth);
     }
 
-    public static void draw3DCircle(RenderWorldEvent event, WEVec location, double radius, Color color, int lineWidth, boolean depth) {
+    public static void draw3DCircle(WorldRenderEvent event, WEVec location, double radius, Color color, int lineWidth, boolean depth) {
         LineDrawer.draw3D(event, lineWidth, depth, lineDrawer -> {
             WEVec lastPoint = location.add(radius, 0, 0);
 
@@ -194,7 +197,7 @@ public class WorldRenderUtils {
     }
 
     public static void drawText(
-            RenderWorldEvent event,
+            WorldRenderEvent event,
             WEVec location,
             Text text,
             float scale,

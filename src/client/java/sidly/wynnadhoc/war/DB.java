@@ -49,11 +49,12 @@ public class DB {
 
         try {
             Gson gson = new Gson();
-            InputStream input = DB.class.getClassLoader().getResourceAsStream("assets/wynntools/territoryDefaults.json");
+            InputStream input = DB.class.getClassLoader().getResourceAsStream("assets/wynntools/territoryDefaults.json"); // TODO make exist
             Reader reader = new InputStreamReader(input);
 
 
-            Type listType = new TypeToken<List<JsonTerritoryData>>() {}.getType();
+            Type listType = new TypeToken<List<JsonTerritoryData>>() {
+            }.getType();
             List<JsonTerritoryData> jsonData = gson.fromJson(reader, listType);
 
             for (JsonTerritoryData data : jsonData) {
@@ -83,7 +84,7 @@ public class DB {
             }
 
             allTerritories = Collections.unmodifiableMap(defaults);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             allTerritories = Map.of();
         }
@@ -108,7 +109,8 @@ public class DB {
 
             // Parse response with Gson
             Gson gson = new Gson();
-            Type type = new TypeToken<TerritoryApiResponse>(){}.getType();
+            Type type = new TypeToken<TerritoryApiResponse>() {
+            }.getType();
             TerritoryApiResponse apiData = gson.fromJson(response.body(), type);
 
             if (apiData == null) {
@@ -137,7 +139,7 @@ public class DB {
                 ApiTerritoryData.get(guildPrefix).put(territoryName, territory);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -161,11 +163,12 @@ public class DB {
 
                         if (territory.isMarkedAsUnknown() || forceUpdate) {
                             territory.parseFromWynntils(wynntilsTerritory);
-                            DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"parsed info for " + wynntilsTerritory.getName());
+                            DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "parsed info for " + wynntilsTerritory.getName());
                         }
 
                         ownedTerritories.put(wynntilsTerritory.getName(), territory);
-                    } else DebugWindow.getInstance().log(DebugWindow.Priority.WARNING,"couldnt find territory " + wynntilsTerritory.getName());
+                    } else
+                        DebugWindow.getInstance().log(DebugWindow.Priority.WARNING, "couldnt find territory " + wynntilsTerritory.getName());
                 }
 
                 Territory hq = getHQ();
@@ -177,7 +180,7 @@ public class DB {
     }
 
     //called every rendered frame
-    public static void parseScreen(ScreenRenderEvent event){
+    public static void parseScreen(ScreenRenderEvent event) {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
@@ -292,10 +295,10 @@ public class DB {
                 screenType = title.substring(colonIndex + 1).trim();
             }
 
-            if (allTerritories.containsKey(name)){
+            if (allTerritories.containsKey(name)) {
                 int size = containerScreen.getScreenHandler().getInventory().size();
-                if (screenType.equals("Guild Tower")){
-                    for (int i = 0; i < size; i++){
+                if (screenType.equals("Guild Tower")) {
+                    for (int i = 0; i < size; i++) {
                         Territory terr = ownedTerritories.get(name);
                         if (terr != null) {
                             Upgrade upgrade = terr.towerUpgrades.upgrades.getBySlot(i);
@@ -308,15 +311,15 @@ public class DB {
                                 if (matcher.find()) {
                                     lvl = Integer.parseInt(matcher.group(1));
                                 }
-                                if (lvl >= 0){
+                                if (lvl >= 0) {
                                     upgrade.setStackSize(lvl);
                                     //System.out.println("set " + upgrade.getName() + " to level " + lvl);
                                 }
                             }
                         }
                     }
-                }else if(screenType.equals("Bonus")){
-                    for (int i = 0; i < size; i++){
+                } else if (screenType.equals("Bonus")) {
+                    for (int i = 0; i < size; i++) {
                         Territory terr = ownedTerritories.get(name);
                         if (terr != null) {
                             Upgrade upgrade = terr.bonusUpgrades.upgrades.getBySlot(i);
@@ -329,7 +332,7 @@ public class DB {
                                 if (matcher.find()) {
                                     lvl = Integer.parseInt(matcher.group(1));
                                 }
-                                if (lvl >= 0){
+                                if (lvl >= 0) {
                                     upgrade.setStackSize(lvl);
                                     //System.out.println("set " + upgrade.getName() + " to level " + lvl);
                                 }
@@ -366,25 +369,25 @@ public class DB {
             if (resourceStored != null && storageCap != null) {
                 int remainingToFill = storageCap - resourceStored;
                 int netProduction = produce - consume;
-                //DebugWindow.getInstance().log("netProduction = " + netProduction);
                 if (netProduction > 0 && remainingToFill > 0) {
                     double hoursToFill = remainingToFill / (double) netProduction;
                     //DebugWindow.getInstance().log("hoursToFull = " + hoursToFill);
                     String time = FormatUtils.formatTime(hoursToFill, ChronoUnit.HOURS);
                     sb.append("full in ").append(time);
                 }
-            } //else DebugWindow.getInstance().log("stored " + resourceStored + "cap " + storageCap);
+            } else
+                DebugWindow.getInstance().log(DebugWindow.Priority.ERROR, "null found: stored " + resourceStored + "cap " + storageCap);
         } else if (consume > produce) {
             if (resourceStored != null && storageCap != null) {
                 int netConsumption = consume - produce;
-                //DebugWindow.getInstance().log("netConsume = " + netConsumption);
                 if (netConsumption > 0 && resourceStored > 0) {
                     double hoursToEmpty = resourceStored / (double) netConsumption;
                     //DebugWindow.getInstance().log("hoursToEmpty = " + hoursToEmpty);
                     String time = FormatUtils.formatTime(hoursToEmpty, ChronoUnit.HOURS);
                     sb.append("empty in ").append(time);
                 }
-            } //else DebugWindow.getInstance().log("stored " + resourceStored + "cap " + storageCap);
+            } else
+                DebugWindow.getInstance().log(DebugWindow.Priority.ERROR, "null found: stored " + resourceStored + "cap " + storageCap);
         }
         sb.append("\n");
 
@@ -392,7 +395,7 @@ public class DB {
     }
 
     public static Territory getHQ() {
-        for (Territory terr: ownedTerritories.values()) {
+        for (Territory terr : ownedTerritories.values()) {
             if (terr.isHQ()) {
                 return terr;
             }
@@ -405,7 +408,6 @@ public class DB {
         // might as well do this here so its only called 20 times per second
         //Config.updateHudElement(HudElements.War_Resources); // only updates when visible
     }
-
 
     public static class TerritoryApiResponse extends HashMap<String, TerritoryInfo> {
         // each key is the territory name, mapped to a TerritoryInfo

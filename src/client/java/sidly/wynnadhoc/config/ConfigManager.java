@@ -2,9 +2,9 @@ package sidly.wynnadhoc.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor;
 import io.github.notenoughupdates.moulconfig.gui.GuiContext;
 import io.github.notenoughupdates.moulconfig.gui.GuiElementComponent;
+import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor;
 import io.github.notenoughupdates.moulconfig.platform.MoulConfigScreenComponent;
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis;
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver;
@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.lootruns.LootrunningSaveData;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,19 +28,21 @@ public class ConfigManager {
     private final File configFile = new File("config/sidly/wynnadhoc.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-
-    // TODO actually save to
-    private LootrunningSaveData lootrunSaveData = new LootrunningSaveData();
+    // TODO actually save too
+    private final LootrunningSaveData lootrunSaveData = new LootrunningSaveData();
 
     public LootrunData getLootrun(String uuid) {
         return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>()));
     }
+
     public void resetLootrun(String uuid) {
         lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData())); // create new object but preserve camp data
     }
+
     public Map<BlockPos, Long> getChests() {
         return lootrunSaveData.chests;
     }
+
     public List<BlockPos> getBannedChests() {
         return lootrunSaveData.bannedChests;
     }
@@ -75,14 +78,20 @@ public class ConfigManager {
 
     public void load() {
         configFile.getParentFile().mkdirs();
+        try {
+            configFile.createNewFile();
+        } catch (IOException e) {
+            System.err.println("Could not create config file!");
+            e.printStackTrace();
+        }
         Config loaded = ConfigUtil.loadConfig(Config.class, configFile, gson);
 
         if (loaded != null) {
             this.config = loaded;
         } else {
             // Config file missing or corrupted → regenerate defaults
+            System.err.println("Config file could not be loaded");
             this.config = new Config();
-            save();
         }
     }
 

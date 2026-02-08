@@ -6,6 +6,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
+import sidly.wynnadhoc.config.gui.HudElementManager;
+import sidly.wynnadhoc.config.gui.TextHudElement;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.lootruns.LootrunningUtils;
 import sidly.wynnadhoc.lootruns.ScoreboardUtils;
@@ -37,21 +40,31 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ScreenRenderEvent.class, DB::parseScreen);
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
         Event.register(ScreenRenderEvent.class, LootrunningUtils::onScreenRender);
+        Event.register(ScreenRenderEvent.class, HudElementManager::onScreenRender);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
         Event.register(ScreenOpenedEvent.class, LootrunningUtils::onScreenOpened);
 
         Event.register(BlockEntityLoadedEvent.class, LootrunningUtils::onBlockEntityLoad);
         Event.register(ForEachEntityEvent.class, LootrunningUtils::checkIfBeacon);
+        Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
 
         ConfigManager.INSTANCE.load();
-	}
+
+        // register hud elements (should really be done with an annotation)
+        HudElementManager.register(new TextHudElement(
+                ConfigManager.INSTANCE.config.war.getResourceOverlay(),
+                WarUtils::shouldShowResourceOverlay,
+                WarUtils::updateResourceDisplay,
+                WarUtils::onWarResourceDisplayClick)
+        );
+    }
 }
 
 /*TODO
-fire events
 test rendering
-use moul hud elements
+on hover / click for war res display
+save and load lootrun data
 add all features with config
 refactor to more "model" format
  */
