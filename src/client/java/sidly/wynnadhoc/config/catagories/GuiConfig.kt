@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW
 
 class GuiConfig {
     @Expose
+    @JvmField
     @ConfigOption(name = "Open Gui Editor", desc = "Press this key to transform hud elements.")
     @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_UNKNOWN)
     var guiEditorKeybind: Int = GLFW.GLFW_KEY_UNKNOWN

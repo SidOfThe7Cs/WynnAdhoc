@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WarUtils {
-    private static final WarConfig config = ConfigManager.INSTANCE.config.war;
+    private static WarConfig config() { return ConfigManager.INSTANCE.config.war; }
 
     public static void onChatMessage(ChatMessageEvent event) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -122,7 +122,7 @@ public class WarUtils {
 
     public static boolean shouldShowResourceOverlay() {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (config.getShowResourceOverlay() && client != null && client.currentScreen != null) {
+        if (config().showResourceOverlay && client != null && client.currentScreen != null) {
             String title = client.currentScreen.getTitle().getString();
             int colonIndex = title.indexOf(':');
             if (colonIndex != -1) {

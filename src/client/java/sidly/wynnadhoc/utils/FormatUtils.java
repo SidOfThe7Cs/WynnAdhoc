@@ -1,18 +1,16 @@
 package sidly.wynnadhoc.utils;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FormatUtils {
     public static String millisToHMS(long millis) {
@@ -29,7 +27,7 @@ public class FormatUtils {
         return sb.toString();
     }
 
-    public static List<Text> getTooltip(ItemStack item){
+    public static List<Text> getTooltip(ItemStack item) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return new ArrayList<>();
 
@@ -59,6 +57,7 @@ public class FormatUtils {
         double seconds = unit.getDuration().toMillis() / 1000.0 * Math.abs(time);
         return formatTime(seconds, ChronoUnit.SECONDS);
     }
+
     public static String formatTime(double time, ChronoUnit unit) {
         double seconds = unit.getDuration().toMillis() / 1000.0 * Math.abs(time);
         String base;
@@ -99,7 +98,7 @@ public class FormatUtils {
         return sb.toString();
     }
 
-    public static String[] splitByAnySpecialChar(String message){
+    public static String[] splitByAnySpecialChar(String message) {
         return message.split("[^\\p{L}\\p{N} \\[\\]%+()]+");
         //split by anything that is not a letter number or space or [ or ] or % or +
     }
@@ -108,7 +107,7 @@ public class FormatUtils {
         return message.replaceAll("[^" + toKeepRegex + "]", "");
     }
 
-    public static String removeNonAscii(String message){
+    public static String removeNonAscii(String message) {
         String cleaned = removeColorCodes(message);
         cleaned = cleaned.replaceAll("[^\\x00-\\x7F]", "");
         cleaned = cleaned.replace("\n", "");
@@ -119,6 +118,21 @@ public class FormatUtils {
     public static String removeColorCodes(String message) {
         // Regular expression to match Minecraft color codes
         return message.replaceAll("§.", "");
+    }
+
+    public static int romanToInt(String roman) {
+        Map<Character, Integer> map = Map.of(
+                'I', 1, 'V', 5, 'X', 10
+        );
+        int result = 0;
+        int prev = 0;
+        for (int i = roman.length() - 1; i >= 0; i--) {
+            int val = map.getOrDefault(roman.charAt(i), 0);
+            if (val < prev) result -= val;
+            else result += val;
+            prev = val;
+        }
+        return result;
     }
 
 }

@@ -50,7 +50,7 @@ public class DB {
         try {
             Gson gson = new Gson();
             InputStream input = DB.class.getClassLoader().getResourceAsStream("assets/wynntools/territoryDefaults.json"); // TODO make exist
-            Reader reader = new InputStreamReader(input);
+            Reader reader = new InputStreamReader(input); // TODO handle if it doesnt as well
 
 
             Type listType = new TypeToken<List<JsonTerritoryData>>() {

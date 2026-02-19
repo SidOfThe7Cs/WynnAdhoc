@@ -1,5 +1,7 @@
 package sidly.wynnadhoc.lootruns;
 
+import sidly.wynnadhoc.lootruns.enums.BeaconColor;
+
 import java.util.*;
 
 public class BeaconCounters {

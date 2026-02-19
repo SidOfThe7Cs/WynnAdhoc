@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.config;
 
 import sidly.wynnadhoc.lootruns.*;
+import sidly.wynnadhoc.lootruns.enums.*;
 
 import java.util.ArrayList;
 import java.util.List;

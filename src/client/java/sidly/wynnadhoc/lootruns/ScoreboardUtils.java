@@ -5,6 +5,9 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardEntry;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import sidly.wynnadhoc.event.ClientTickEvent;
+import sidly.wynnadhoc.lootruns.enums.LootrunStatus;
+import sidly.wynnadhoc.lootruns.enums.MissionOptions;
+import sidly.wynnadhoc.lootruns.enums.TrialOptions;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 import java.util.ArrayList;

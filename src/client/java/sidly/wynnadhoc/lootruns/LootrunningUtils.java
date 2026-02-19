@@ -18,6 +18,7 @@ import net.minecraft.util.math.Vec3d;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.event.*;
+import sidly.wynnadhoc.lootruns.enums.*;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 import sidly.wynnadhoc.utils.DebugWindow;
 

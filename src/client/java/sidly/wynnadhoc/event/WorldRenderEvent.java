@@ -9,9 +9,7 @@ public class WorldRenderEvent extends Event<WorldRenderEvent> {
     public Camera camera;
     public VertexConsumerProvider.Immediate vertexConsumerProvider;
     public float partialTicks;
-    public boolean isCurrentlyDeferring = true;
 
-    // TODO fire
     public WorldRenderEvent(MatrixStack matrices, Camera camera, VertexConsumerProvider.Immediate vertexConsumerProvider, float partialTicks) {
         this.matrices = matrices;
         this.camera = camera;

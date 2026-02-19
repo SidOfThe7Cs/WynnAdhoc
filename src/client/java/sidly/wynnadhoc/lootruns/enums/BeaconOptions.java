@@ -1,5 +1,6 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.lootruns.enums;
 
+import sidly.wynnadhoc.lootruns.LootrunningUtils;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 public enum BeaconOptions {

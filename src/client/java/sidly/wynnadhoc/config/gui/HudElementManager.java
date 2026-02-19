@@ -28,7 +28,7 @@ public class HudElementManager {
     public static void onHudRender() {
         if (MinecraftClient.getInstance().currentScreen != null) return; // draw on screen instead
         for (HudElement e : getHudElements()) {
-            // TODO
+            // TODO this basically needs a screen DrawContext even when screen is null
         }
     }
 }

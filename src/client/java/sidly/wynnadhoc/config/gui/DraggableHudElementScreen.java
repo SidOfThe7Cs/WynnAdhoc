@@ -13,7 +13,7 @@ import sidly.wynnadhoc.event.KeyboardEvent;
 import java.awt.*;
 
 public class DraggableHudElementScreen extends Screen {
-    private static final GuiConfig config = ConfigManager.INSTANCE.config.gui;
+    private static GuiConfig config() { return ConfigManager.INSTANCE.config.gui; }
 
     private static HudElement draggingElement = null;
     private static String desc = "";
@@ -22,7 +22,7 @@ public class DraggableHudElementScreen extends Screen {
     private static boolean sameKeyPress = false;
 
     public static void onKeyPressed(KeyboardEvent event) {
-        if (event.action == 1 && event.key == config.getGuiEditorKeybind() && MinecraftClient.getInstance().currentScreen == null) {
+        if (event.action == 1 && event.key == config().guiEditorKeybind && MinecraftClient.getInstance().currentScreen == null) {
             MinecraftClient.getInstance().setScreen(new DraggableHudElementScreen());
             sameKeyPress = true;
         }
@@ -35,7 +35,7 @@ public class DraggableHudElementScreen extends Screen {
     @Override
     public boolean keyPressed(KeyInput input) {
         if (sameKeyPress) sameKeyPress = false;
-        else if (input.isEscape() || config.getGuiEditorKeybind() == input.getKeycode()) {
+        else if (input.isEscape() || config().guiEditorKeybind == input.getKeycode()) {
             MinecraftClient.getInstance().setScreen(null);
             ConfigManager.INSTANCE.save();
             return true;

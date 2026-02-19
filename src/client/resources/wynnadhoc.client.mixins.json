@@ -7,7 +7,9 @@
     "GameRendererInvoker",
     "KeyboardMixin",
     "ScreenRenderMixin",
-    "accessors.TerritoryManagementScreenAccessor"
+    "accessors.HandledScreenAccessor",
+    "accessors.TerritoryManagementScreenAccessor",
+    "Invoker.IsFavoritedInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

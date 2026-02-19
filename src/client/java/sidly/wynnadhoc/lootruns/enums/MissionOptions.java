@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.lootruns.enums;
 
 public enum MissionOptions {
     // should work
