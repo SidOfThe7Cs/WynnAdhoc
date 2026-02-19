@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.war;
+package sidly.wynnadhoc.features.war;
 
 import net.minecraft.client.MinecraftClient;
 import sidly.wynnadhoc.config.ConfigManager;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WarUtils {
+public class Core {
     private static WarConfig config() { return ConfigManager.INSTANCE.config.war; }
 
     public static void onChatMessage(ChatMessageEvent event) {

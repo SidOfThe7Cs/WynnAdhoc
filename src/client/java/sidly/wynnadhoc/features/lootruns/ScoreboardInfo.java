@@ -1,13 +1,13 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.features.lootruns;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardEntry;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import sidly.wynnadhoc.event.ClientTickEvent;
-import sidly.wynnadhoc.lootruns.enums.LootrunStatus;
-import sidly.wynnadhoc.lootruns.enums.MissionOptions;
-import sidly.wynnadhoc.lootruns.enums.TrialOptions;
+import sidly.wynnadhoc.features.lootruns.enums.LootrunStatus;
+import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
+import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ScoreboardUtils {
+public class ScoreboardInfo {
     private static boolean shouldPrint = false;
     public static void printScoreboardInfo() {
         shouldPrint = true;
@@ -112,17 +112,17 @@ public class ScoreboardUtils {
                     // get current splenk progress
                     if (index == 1){
                         if (line.equals("Collect your rewards!")){
-                            LootrunningUtils.changeStatus(LootrunStatus.ClaimingRewards);
+                            Core.changeStatus(LootrunStatus.ClaimingRewards);
                         }else if(line.equals("Choose a beacon!")){
-                            LootrunningUtils.changeStatus(LootrunStatus.PickingBeacon);
+                            Core.changeStatus(LootrunStatus.PickingBeacon);
                         }else if(line.startsWith("Slay!") || line.startsWith("Defend") || line.startsWith("Destroy")){
-                            LootrunningUtils.changeStatus(LootrunStatus.InChallenge);
+                            Core.changeStatus(LootrunStatus.InChallenge);
                         }
 
 
                         Matcher matcher = splunkChestPattern.matcher(line);
                         if (matcher.matches()) {
-                            LootrunningUtils.changeStatus(LootrunStatus.InChallenge);
+                            Core.changeStatus(LootrunStatus.InChallenge);
                             splunkChestCurrent = Integer.parseInt(matcher.group(1));
                             splunkChestReq = Integer.parseInt(matcher.group(2));
                         }
@@ -150,10 +150,10 @@ public class ScoreboardUtils {
                     // get mission info
                     for (MissionOptions mission : MissionOptions.values()) {
                         if (line.startsWith(mission.getDisplayName())) {
-                            if (LootrunningUtils.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
+                            if (Core.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
                                 isMissionInProgress = true;
                                 missionInProgress = mission.getDisplayName();
-                                LootrunningUtils.addMission(mission.getDisplayName());
+                                Core.addMission(mission.getDisplayName());
                                 missionIndex = index;
                             }
                         }
@@ -161,10 +161,10 @@ public class ScoreboardUtils {
                     // get trial info
                     for (TrialOptions trial : TrialOptions.values()) {
                         if (line.startsWith(trial.getDisplayName())) {
-                            if (LootrunningUtils.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
+                            if (Core.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
                                 isTrialInProgress = true;
                                 trialInProgress = trial.getDisplayName();
-                                LootrunningUtils.addTrial(trial.getDisplayName());
+                                Core.addTrial(trial.getDisplayName());
                                 trialIndex = index;
                             }
                         }
@@ -175,12 +175,12 @@ public class ScoreboardUtils {
                 // check if mission has ended
                 //System.out.println(!isMissionInProgress + " & " + !missionInProgress.isEmpty());
                 if (!isMissionInProgress && !missionLastFrame.isEmpty()) {
-                    LootrunningUtils.onMissionCompleted(missionLastFrame);
+                    Core.onMissionCompleted(missionLastFrame);
                     missionInProgress = "";
                     // TODO update display
                 }
                 if (!isTrialInProgress && !trialLastFrame.isEmpty()) {
-                    LootrunningUtils.onTrialCompleted(trialLastFrame);
+                    Core.onTrialCompleted(trialLastFrame);
                     trialInProgress = "";
                     // TODO update display
                 }
@@ -268,11 +268,11 @@ public class ScoreboardUtils {
 
             System.out.println();
             System.out.println("mission in progeress: " + missionInProgress);
-            for (MissionOptions mission : LootrunningUtils.getCurrentLootrunData().getCurrentMissionsActive()){
+            for (MissionOptions mission : Core.getCurrentLootrunData().getCurrentMissionsActive()){
                 System.out.println("Mission: " + mission);
             }
             System.out.println("trial in progeress: " + trialInProgress);
-            for (TrialOptions trial : LootrunningUtils.getCurrentLootrunData().getCurrentTrialsActive()){
+            for (TrialOptions trial : Core.getCurrentLootrunData().getCurrentTrialsActive()){
                 System.out.println("Trial: " + trial);
             }
             shouldPrint = false;

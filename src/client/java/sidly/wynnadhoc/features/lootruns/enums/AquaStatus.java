@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.lootruns.enums;
+package sidly.wynnadhoc.features.lootruns.enums;
 
 public enum AquaStatus {
     Inactive,

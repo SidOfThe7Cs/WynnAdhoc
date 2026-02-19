@@ -13,12 +13,11 @@ import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
-import sidly.wynnadhoc.lootruns.LootrunningUtils;
-import sidly.wynnadhoc.lootruns.ScoreboardUtils;
+import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.utils.render.RenderUtils;
-import sidly.wynnadhoc.war.DB;
-import sidly.wynnadhoc.war.WarTimer;
-import sidly.wynnadhoc.war.WarUtils;
+import sidly.wynnadhoc.features.war.DB;
+import sidly.wynnadhoc.features.war.WarTimer;
+import sidly.wynnadhoc.features.war.Core;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -35,31 +34,31 @@ public class WynnAdhocClient implements ClientModInitializer {
         WorldRenderEvents.END_MAIN.register(RenderUtils.INSTANCE::onFabricWorldRender);
 
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
-        Event.register(ClientTickEvent.class, LootrunningUtils::onClientTick);
-        Event.register(ClientTickEvent.class, ScoreboardUtils::parseScoreboard);
+        Event.register(ClientTickEvent.class, sidly.wynnadhoc.features.lootruns.Core::onClientTick);
+        Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
         Event.register(ClientTickEvent.class, OuterVoidItemPathfinder.INSTANCE::onClientTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
 
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
-        Event.register(ChatMessageEvent.class, LootrunningUtils::onChatMessage);
-        Event.register(ChatMessageEvent.class, WarUtils::onChatMessage);
+        Event.register(ChatMessageEvent.class, sidly.wynnadhoc.features.lootruns.Core::onChatMessage);
+        Event.register(ChatMessageEvent.class, Core::onChatMessage);
 
         Event.register(ScreenRenderEvent.class, DB::parseScreen);
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
-        Event.register(ScreenRenderEvent.class, LootrunningUtils::onScreenRender);
+        Event.register(ScreenRenderEvent.class, sidly.wynnadhoc.features.lootruns.Core::onScreenRender);
         Event.register(ScreenRenderEvent.class, HudElementManager::onScreenRender);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
-        Event.register(ScreenOpenedEvent.class, LootrunningUtils::onScreenOpened);
+        Event.register(ScreenOpenedEvent.class, sidly.wynnadhoc.features.lootruns.Core::onScreenOpened);
 
         Event.register(ChestItemsLoadedEvent.class, ChestTracker::onChestItemsLoaded);
         Event.register(ChestItemsLoadedEvent.class, AutoLootChests::onChestItemsLoaded);
 
         Event.register(WorldRenderEvent.class, OuterVoidItemPathfinder.INSTANCE::draw);
 
-        Event.register(BlockEntityLoadedEvent.class, LootrunningUtils::onBlockEntityLoad);
-        Event.register(ForEachEntityEvent.class, LootrunningUtils::checkIfBeacon);
+        Event.register(BlockEntityLoadedEvent.class, sidly.wynnadhoc.features.lootruns.Core::onBlockEntityLoad);
+        Event.register(ForEachEntityEvent.class, sidly.wynnadhoc.features.lootruns.Core::checkIfBeacon);
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
 
         ConfigManager.INSTANCE.load();
@@ -67,9 +66,9 @@ public class WynnAdhocClient implements ClientModInitializer {
         // register hud elements (should really be done with an annotation) TODO maybe an event would be easy
         HudElementManager.register(new TextHudElement(
                 ConfigManager.INSTANCE.config.war.resourceOverlay,
-                WarUtils::shouldShowResourceOverlay,
-                WarUtils::updateResourceDisplay,
-                WarUtils::onWarResourceDisplayClick)
+                Core::shouldShowResourceOverlay,
+                Core::updateResourceDisplay,
+                Core::onWarResourceDisplayClick)
         );
 
         new InitEvent();
@@ -79,8 +78,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 /*TODO
 make events registrations static / init
-itemdatabase
-remove WEVec
 on hover / click for war res display
 save and load lootrun data
 add all features with config

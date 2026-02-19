@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.war;
+package sidly.wynnadhoc.features.war;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+// TODO move stuff to core
 public class DB {
     public static final String GUILD_NAME = "Chiefs Of Corkus";
     public static final String GUILD_PREFIX = "HOC";
@@ -228,63 +228,6 @@ public class DB {
                     }
                 }
             }
-            if (title.equals(GUILD_NAME + ": Territories")) {
-
-            /*
-                ownedTerritories.clear();
-                Inventory inventory = containerScreen.getScreenHandler().getInventory();
-
-                for (int i = 0; i < inventory.size(); i++) {
-                    ItemStack stack = inventory.getStack(i);
-                    if (!stack.isEmpty()) {
-                        String name = ChatMessageUtils.removeColorCodes(stack.getName().getString());
-                        boolean hq = name.endsWith(" (HQ)");
-                        String cleanedName = hq ? name.substring(0, name.length() - 5).trim() : name.trim();
-                        cleanedName = ChatMessageUtils.removeAllBut(cleanedName, "a-zA-Z \\-'");
-
-                        if (allTerritories.containsKey(cleanedName)) {
-                            ownedTerritories.put(cleanedName, allTerritories.get(cleanedName));
-                            //System.out.println("added " + cleanedName + " to owned territories");
-                        }
-
-                        Pattern treasuryBonusPattern = Pattern.compile("Treasury Bonus: (\\d+(?:\\.\\d+)?)%");
-                        Pattern upgradePattern = Pattern.compile("- (.+?)\\[Lv\\. (\\d{1,2})]");
-                        List<Text> tooltip = stack.getTooltip(Item.TooltipContext.DEFAULT, client.player, TooltipType.BASIC);
-                        double treasuryBonus = 0.0;
-
-                        for (Text text : tooltip) {
-                            String line = ChatMessageUtils.removeColorCodes(text.getString()).replaceAll("[^a-zA-Z1-9. \\-\\[\\]']", "");
-                            //System.out.println(line);
-
-                            Matcher treasuryMatcher = treasuryBonusPattern.matcher(line);
-                            if (treasuryMatcher.find()) {
-                                treasuryBonus = Double.parseDouble(treasuryMatcher.group(1));
-                                //System.out.println("treasury bonus found: " + treasuryBonus);
-                                continue;
-                            }
-
-                            Territory territory = ownedTerritories.get(cleanedName);
-                            if (territory != null && territory.isMarkedAsUnknown()) {
-                                Matcher upgradeMatcher = upgradePattern.matcher(line);
-                                if (upgradeMatcher.find()) {
-                                    String upgradeName = upgradeMatcher.group(1).trim(); // e.g., "Tower Multi-Attacks"
-                                    int level = Integer.parseInt(upgradeMatcher.group(2)); // e.g., 1
-                                    ownedTerritories.get(cleanedName).setUpgrade(upgradeName, level);
-                                }
-
-                                ownedTerritories.get(cleanedName).setMarkedAsUnknown(false);
-
-                                ChatMessageUtils.sendChatMessage(cleanedName + " was marked as unknown so upgrades were parsed");
-                            }
-                        }
-
-                        //Utils.printItemData(stack);
-                    }
-                }
-                return;
-             */
-            }
-
 
             int colonIndex = title.indexOf(':');
             String name = "";
@@ -295,6 +238,7 @@ public class DB {
                 screenType = title.substring(colonIndex + 1).trim();
             }
 
+            // TODO check real value against db
             if (allTerritories.containsKey(name)) {
                 int size = containerScreen.getScreenHandler().getInventory().size();
                 if (screenType.equals("Guild Tower")) {
@@ -403,7 +347,7 @@ public class DB {
         return null;
     }
 
-    // TODO update display
+    // TODO update display not on client tick please
     public static void onClientTick(MinecraftClient client) {
         // might as well do this here so its only called 20 times per second
         //Config.updateHudElement(HudElements.War_Resources); // only updates when visible

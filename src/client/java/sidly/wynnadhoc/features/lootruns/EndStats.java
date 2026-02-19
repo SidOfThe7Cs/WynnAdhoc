@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.features.lootruns;
 
 import sidly.wynnadhoc.utils.DebugWindow;
 
@@ -25,7 +25,7 @@ public class EndStats {
     public void addEndPulls(int amount) {
         DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"added " + amount + " end pulls");
         this.endPulls += amount;
-        LootrunningUtils.getCurrentLootrunData().addPullsSinceLastYellow(amount);
+        Core.getCurrentLootrunData().addPullsSinceLastYellow(amount);
         // TODO update display Config.updateHudElement(HudElements.Missions);
         // TODO update display Config.updateHudElement(HudElements.Lootrun_End_Rewards);
     }

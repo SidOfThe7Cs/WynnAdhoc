@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.war;
+package sidly.wynnadhoc.features.war;
 
 
 public class TowerUpgrades {

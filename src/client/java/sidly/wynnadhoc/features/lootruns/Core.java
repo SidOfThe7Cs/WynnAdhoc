@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.features.lootruns;
 
 import com.wynntils.core.components.Models;
 import net.minecraft.block.Block;
@@ -18,6 +18,7 @@ import net.minecraft.util.math.Vec3d;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.event.*;
+import sidly.wynnadhoc.features.lootruns.enums.*;
 import sidly.wynnadhoc.lootruns.enums.*;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 import sidly.wynnadhoc.utils.DebugWindow;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LootrunningUtils {
+public class Core {
 
     public static LootrunData getCurrentLootrunData() {
         String uuid = Models.Character.getId();
@@ -263,7 +264,7 @@ public class LootrunningUtils {
                 break;
             case Purple:
                 boolean phobia = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Porphyrophobia)
-                        && !ScoreboardUtils.missionInProgress.equals("Porphyrophobia"));
+                        && !ScoreboardInfo.missionInProgress.equals("Porphyrophobia"));
                 int pulls = getBeaconMultiplier(1, vibrant);
                 getCurrentLootrunData().getEndStats().addEndPulls(phobia ? pulls * 2 : pulls);
                 break;
@@ -312,7 +313,7 @@ public class LootrunningUtils {
         switch (color){
             case Purple:
                 boolean phobia = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Porphyrophobia)
-                        && !ScoreboardUtils.missionInProgress.equals("Porphyrophobia"));
+                        && !ScoreboardInfo.missionInProgress.equals("Porphyrophobia"));
                 getCurrentLootrunData().getEndStats().addEndPulls(phobia ? multiplier * 2 : multiplier);
                 break;
             case Aqua:
@@ -466,7 +467,7 @@ public class LootrunningUtils {
     public static void endLootrun(){
         LootrunData config = getCurrentLootrunData();
 
-        ScoreboardUtils.clearLootrunData(); // this is data that is cleared every frame anyway
+        ScoreboardInfo.clearLootrunData(); // this is data that is cleared every frame anyway
         config.getCurrentMissionsActive().clear();
         config.getActiveCamp().getCamp().justCompleted();
         ConfigManager.INSTANCE.resetLootrun(Models.Character.getId());
@@ -513,9 +514,9 @@ public class LootrunningUtils {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
 
-        boolean hoarder = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Hoarder) && !ScoreboardUtils.missionInProgress.equals("Hoarder"));
-        boolean crono = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Chronokinesis) && !ScoreboardUtils.missionInProgress.equals("Chronokinesis"));
-        boolean missionReq = ScoreboardUtils.missionChestReq > ScoreboardUtils.missionChestCurrent;
+        boolean hoarder = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Hoarder) && !ScoreboardInfo.missionInProgress.equals("Hoarder"));
+        boolean crono = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Chronokinesis) && !ScoreboardInfo.missionInProgress.equals("Chronokinesis"));
+        boolean missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent;
         if (missionReq || crono || hoarder) {
             long currentTime = System.currentTimeMillis();
             long milisIn3Days = 3 * 24 * 60 * 60 * 1000;
@@ -565,30 +566,30 @@ public class LootrunningUtils {
     public static void onChatMessage(ChatMessageEvent event) {
         if (completeChaosCounter != Integer.MAX_VALUE) completeChaosCounter++;
 
-        if (LootrunningUtils.getCurrentLootrunData().getStatus() == LootrunStatus.PickingBeacon) {
+        if (Core.getCurrentLootrunData().getStatus() == LootrunStatus.PickingBeacon) {
             BeaconOptions.getMatches(event.cleanMessage);
         }
 
         for (String part : event.splitMessage) {
             if (part.equals("Lootrun Completed")) {
-                LootrunningUtils.onChallengeCompleted(LootrunningUtils.getCurrentLootrunData().getActiveBeaconColor());
-                LootrunningUtils.getCurrentLootrunData().getEndStats().addEndPulls(1); // assumes you did not fail the last challenge but doesnt really matter so
+                Core.onChallengeCompleted(Core.getCurrentLootrunData().getActiveBeaconColor());
+                Core.getCurrentLootrunData().getEndStats().addEndPulls(1); // assumes you did not fail the last challenge but doesnt really matter so
                 // TODO update display
-                ChatMessageUtils.sendChatMessage("Lootrun completed with " + LootrunningUtils.getCurrentLootrunData().getEndStats().getEndPulls() + " pulls and " + LootrunningUtils.getEffectivePulls() + " Effective pulls");
-                LootrunningUtils.changeStatus(LootrunStatus.NotInLootrun);
+                ChatMessageUtils.sendChatMessage("Lootrun completed with " + Core.getCurrentLootrunData().getEndStats().getEndPulls() + " pulls and " + Core.getEffectivePulls() + " Effective pulls");
+                Core.changeStatus(LootrunStatus.NotInLootrun);
             } else if (part.equals("Lootrun Failed")) {
-                LootrunningUtils.changeStatus(LootrunStatus.NotInLootrun);
+                Core.changeStatus(LootrunStatus.NotInLootrun);
             } else if (part.equals("Choose a Beacon")) {
 
                 // every beacon
                 // TODO update display
-                LootrunningUtils.getCurrentLootrunData().getCurrentBeaconOptions().clear();
+                Core.getCurrentLootrunData().getCurrentBeaconOptions().clear();
                 // TODO update display
-                LootrunningUtils.changeStatus(LootrunStatus.PickingBeacon);
-                LootrunningUtils.getCurrentLootrunData().setBeaconRerolls(0);
+                Core.changeStatus(LootrunStatus.PickingBeacon);
+                Core.getCurrentLootrunData().setBeaconRerolls(0);
 
             } else if (part.startsWith("Challenge Failed!")) {
-                LootrunningUtils.onChallengeFailed();
+                Core.onChallengeFailed();
             } else if (part.equals("Complete Chaos")) {
                 completeChaosCounter = 0;
             }
@@ -596,38 +597,38 @@ public class LootrunningUtils {
             if (completeChaosCounter == 2){
                 for (BeaconOptions opt : BeaconOptions.values()) {
                     if (part.equals(opt.getDisplayName())) {
-                        LootrunningUtils.completeChaosChallengeCompleted(opt);
+                        Core.completeChaosChallengeCompleted(opt);
                     }
                 }
             }
 
-            Matcher reRollsMatcher = LootrunningUtils.beaconRerollPattern.matcher(part);
+            Matcher reRollsMatcher = Core.beaconRerollPattern.matcher(part);
             if (reRollsMatcher.find()) {
                 int rerollsLeft = Integer.parseInt(reRollsMatcher.group(1));
-                LootrunningUtils.getCurrentLootrunData().setBeaconRerolls(rerollsLeft);
+                Core.getCurrentLootrunData().setBeaconRerolls(rerollsLeft);
             }
 
-            Matcher endPullsMatcher = LootrunningUtils.endPullsPattern.matcher(part);
+            Matcher endPullsMatcher = Core.endPullsPattern.matcher(part);
             if (endPullsMatcher.find()) {
                 int pullsGained = Integer.parseInt(endPullsMatcher.group(1));
-                LootrunningUtils.getCurrentLootrunData().getEndStats().addEndPulls(pullsGained);
+                Core.getCurrentLootrunData().getEndStats().addEndPulls(pullsGained);
             }
 
-            Matcher endSacsMatcher = LootrunningUtils.sacrificePattern.matcher(part);
+            Matcher endSacsMatcher = Core.sacrificePattern.matcher(part);
             if (endSacsMatcher.find()) {
                 int sacsGained = Integer.parseInt(endSacsMatcher.group(1));
-                LootrunningUtils.getCurrentLootrunData().getEndStats().addEndSacs(sacsGained);
+                Core.getCurrentLootrunData().getEndStats().addEndSacs(sacsGained);
             }
 
-            Matcher endRerollsMatcher = LootrunningUtils.endRerollPattern.matcher(part);
+            Matcher endRerollsMatcher = Core.endRerollPattern.matcher(part);
             if (endRerollsMatcher.find()) {
                 int rrsGained = Integer.parseInt(endRerollsMatcher.group(1));
-                LootrunningUtils.getCurrentLootrunData().getEndStats().addEndRerolls(rrsGained);
+                Core.getCurrentLootrunData().getEndStats().addEndRerolls(rrsGained);
             }
 
         }
 
-        Matcher curseMatcher = LootrunningUtils.curseBuffPattern.matcher(event.asciiOnlyMessage);
+        Matcher curseMatcher = Core.curseBuffPattern.matcher(event.asciiOnlyMessage);
         if (curseMatcher.find()) {
             int percent = Integer.parseInt(curseMatcher.group(2));
             boolean negative = curseMatcher.group(1).equals("-");
@@ -636,19 +637,19 @@ public class LootrunningUtils {
             String type = curseMatcher.group(4);
             switch (type.toLowerCase()) {
                 case "health":
-                    LootrunningUtils.addMobHealth(percent);
+                    Core.addMobHealth(percent);
                     return;
                 case "resistance":
-                    LootrunningUtils.addMobResistance(percent);
+                    Core.addMobResistance(percent);
                     return;
                 case "damage":
-                    LootrunningUtils.addMobDamage(percent);
+                    Core.addMobDamage(percent);
                     return;
                 case "attack speed":
-                    LootrunningUtils.addMobAttackSpeed(percent);
+                    Core.addMobAttackSpeed(percent);
                     return;
                 case "walk speed":
-                    LootrunningUtils.addMobSpeed(percent);
+                    Core.addMobSpeed(percent);
                     return;
                 default:
             }
@@ -676,13 +677,13 @@ public class LootrunningUtils {
                     Matcher matcher = Pattern.compile("Saved Pulls: §f(\\d+)").matcher(line);
                     if (matcher.find()) {
                         int savedPulls = Integer.parseInt(matcher.group(1));
-                        Camps camp = LootrunningUtils.getCurrentLootrunData().getActiveCamp();
+                        Camps camp = Core.getCurrentLootrunData().getActiveCamp();
                         if (camp == null) {
                             // check if we are close to a camp (prevent wrong camp assignments)
                             MinecraftClient client = MinecraftClient.getInstance();
                             if (client == null || client.player == null || !Camps.isNearAnyCamp(client.player.getEntityPos(), 15)) return;
-                            LootrunningUtils.getCurrentLootrunData().setActiveCamp();
-                            camp = LootrunningUtils.getCurrentLootrunData().getActiveCamp();
+                            Core.getCurrentLootrunData().setActiveCamp();
+                            camp = Core.getCurrentLootrunData().getActiveCamp();
                             if (camp == null) {
                                 System.err.println("Camp was null while sacs were on screen");
                                 return;

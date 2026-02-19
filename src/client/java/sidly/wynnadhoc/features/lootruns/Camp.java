@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.features.lootruns;
 
 import java.time.Instant;
 import java.time.ZoneId;

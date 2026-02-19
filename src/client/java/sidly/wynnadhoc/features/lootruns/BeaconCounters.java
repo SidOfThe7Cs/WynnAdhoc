@@ -1,6 +1,6 @@
-package sidly.wynnadhoc.lootruns;
+package sidly.wynnadhoc.features.lootruns;
 
-import sidly.wynnadhoc.lootruns.enums.BeaconColor;
+import sidly.wynnadhoc.features.lootruns.enums.BeaconColor;
 
 import java.util.*;
 

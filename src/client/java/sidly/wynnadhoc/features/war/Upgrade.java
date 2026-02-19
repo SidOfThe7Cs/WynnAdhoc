@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.war;
+package sidly.wynnadhoc.features.war;
 
 import java.util.HashMap;
 import java.util.Map;

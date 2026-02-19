@@ -1,7 +1,9 @@
 package sidly.wynnadhoc.config;
 
-import sidly.wynnadhoc.lootruns.*;
-import sidly.wynnadhoc.lootruns.enums.*;
+import sidly.wynnadhoc.features.lootruns.BeaconCounters;
+import sidly.wynnadhoc.features.lootruns.Camp;
+import sidly.wynnadhoc.features.lootruns.EndStats;
+import sidly.wynnadhoc.features.lootruns.enums.*;
 
 import java.util.ArrayList;
 import java.util.List;

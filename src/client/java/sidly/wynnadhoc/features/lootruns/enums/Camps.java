@@ -1,9 +1,9 @@
-package sidly.wynnadhoc.lootruns.enums;
+package sidly.wynnadhoc.features.lootruns.enums;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.Vec3d;
-import sidly.wynnadhoc.lootruns.Camp;
-import sidly.wynnadhoc.lootruns.LootrunningUtils;
+import sidly.wynnadhoc.features.lootruns.Camp;
+import sidly.wynnadhoc.features.lootruns.Core;
 
 public enum Camps {
     Canyon("Canyon of the Lost Excursion (South)", new Vec3d(578, 80, -5018)),
@@ -42,7 +42,7 @@ public enum Camps {
     }
 
     public Camp getCamp() {
-        return LootrunningUtils.getCurrentLootrunData()
+        return Core.getCurrentLootrunData()
                 .getCampData()
                 .computeIfAbsent(this, key -> new Camp());
     }

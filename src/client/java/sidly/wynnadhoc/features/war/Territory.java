@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.war;
+package sidly.wynnadhoc.features.war;
 
 import com.wynntils.models.items.items.gui.TerritoryItem;
 import com.wynntils.models.territories.type.TerritoryUpgrade;

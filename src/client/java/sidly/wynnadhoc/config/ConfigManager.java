@@ -13,7 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import sidly.wynnadhoc.lootruns.LootrunningSaveData;
+import sidly.wynnadhoc.features.lootruns.SaveData;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class ConfigManager {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     // TODO actually save too
-    private final LootrunningSaveData lootrunSaveData = new LootrunningSaveData();
+    private final SaveData lootrunSaveData = new SaveData();
 
     public LootrunData getLootrun(String uuid) {
         return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>()));

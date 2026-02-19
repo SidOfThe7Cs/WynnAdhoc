@@ -178,6 +178,7 @@ public class OuterVoidItemDatabase {
         itemRarityMap.put(Precious_Mineral2, GearTier.LEGENDARY);
     }
 
+    // TODO everything is unknown
     // Function to get rarity based on vanilla name and optional custom_model_data
     public static GearTier getRarity(String name, float model) {
         Pair item = new Pair(name, model);
