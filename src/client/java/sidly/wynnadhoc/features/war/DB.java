@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ScreenRenderEvent;
 import sidly.wynnadhoc.mixin.client.accessors.TerritoryManagementScreenAccessor;
 import sidly.wynnadhoc.utils.DebugWindow;
@@ -179,7 +180,7 @@ public class DB {
         }
     }
 
-    //called every rendered frame
+    // called every rendered frame when there is a screen
     public static void parseScreen(ScreenRenderEvent event) {
 
         MinecraftClient client = MinecraftClient.getInstance();
@@ -287,6 +288,7 @@ public class DB {
                     // we are in the main menu of the territory
                 }
             }
+            ConfigManager.INSTANCE.config.war.resourceOverlay.updateDisplay();
         }
     }
 

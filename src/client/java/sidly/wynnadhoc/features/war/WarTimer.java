@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.features.war;
 
 
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.utils.FormatUtils;
 
@@ -29,9 +30,7 @@ public class WarTimer {
         }
     }
 
-    /* TODO update display
     public static void onClientTick() {
-        if (isActive()) Config.getHudElement(HudElements.WAR_TIMER).updateDisplay();
+        if (isActive()) ConfigManager.INSTANCE.config.war.warTimer.updateDisplay();
     }
-     */
 }

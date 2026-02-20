@@ -112,17 +112,17 @@ public class ScoreboardInfo {
                     // get current splenk progress
                     if (index == 1){
                         if (line.equals("Collect your rewards!")){
-                            Core.changeStatus(LootrunStatus.ClaimingRewards);
+                            Core.INSTANCE.changeStatus(LootrunStatus.ClaimingRewards);
                         }else if(line.equals("Choose a beacon!")){
-                            Core.changeStatus(LootrunStatus.PickingBeacon);
+                            Core.INSTANCE.changeStatus(LootrunStatus.PickingBeacon);
                         }else if(line.startsWith("Slay!") || line.startsWith("Defend") || line.startsWith("Destroy")){
-                            Core.changeStatus(LootrunStatus.InChallenge);
+                            Core.INSTANCE.changeStatus(LootrunStatus.InChallenge);
                         }
 
 
                         Matcher matcher = splunkChestPattern.matcher(line);
                         if (matcher.matches()) {
-                            Core.changeStatus(LootrunStatus.InChallenge);
+                            Core.INSTANCE.changeStatus(LootrunStatus.InChallenge);
                             splunkChestCurrent = Integer.parseInt(matcher.group(1));
                             splunkChestReq = Integer.parseInt(matcher.group(2));
                         }
@@ -150,10 +150,10 @@ public class ScoreboardInfo {
                     // get mission info
                     for (MissionOptions mission : MissionOptions.values()) {
                         if (line.startsWith(mission.getDisplayName())) {
-                            if (Core.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
+                            if (Core.INSTANCE.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
                                 isMissionInProgress = true;
                                 missionInProgress = mission.getDisplayName();
-                                Core.addMission(mission.getDisplayName());
+                                Core.INSTANCE.addMission(mission.getDisplayName());
                                 missionIndex = index;
                             }
                         }
@@ -161,10 +161,10 @@ public class ScoreboardInfo {
                     // get trial info
                     for (TrialOptions trial : TrialOptions.values()) {
                         if (line.startsWith(trial.getDisplayName())) {
-                            if (Core.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
+                            if (Core.INSTANCE.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
                                 isTrialInProgress = true;
                                 trialInProgress = trial.getDisplayName();
-                                Core.addTrial(trial.getDisplayName());
+                                Core.INSTANCE.addTrial(trial.getDisplayName());
                                 trialIndex = index;
                             }
                         }
@@ -175,12 +175,12 @@ public class ScoreboardInfo {
                 // check if mission has ended
                 //System.out.println(!isMissionInProgress + " & " + !missionInProgress.isEmpty());
                 if (!isMissionInProgress && !missionLastFrame.isEmpty()) {
-                    Core.onMissionCompleted(missionLastFrame);
+                    Core.INSTANCE.onMissionCompleted(missionLastFrame);
                     missionInProgress = "";
                     // TODO update display
                 }
                 if (!isTrialInProgress && !trialLastFrame.isEmpty()) {
-                    Core.onTrialCompleted(trialLastFrame);
+                    Core.INSTANCE.onTrialCompleted(trialLastFrame);
                     trialInProgress = "";
                     // TODO update display
                 }
@@ -268,11 +268,11 @@ public class ScoreboardInfo {
 
             System.out.println();
             System.out.println("mission in progeress: " + missionInProgress);
-            for (MissionOptions mission : Core.getCurrentLootrunData().getCurrentMissionsActive()){
+            for (MissionOptions mission : Core.INSTANCE.getCurrentLootrunData().getCurrentMissionsActive()){
                 System.out.println("Mission: " + mission);
             }
             System.out.println("trial in progeress: " + trialInProgress);
-            for (TrialOptions trial : Core.getCurrentLootrunData().getCurrentTrialsActive()){
+            for (TrialOptions trial : Core.INSTANCE.getCurrentLootrunData().getCurrentTrialsActive()){
                 System.out.println("Trial: " + trial);
             }
             shouldPrint = false;

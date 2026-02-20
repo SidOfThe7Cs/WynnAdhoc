@@ -5,10 +5,11 @@
   "client": [
     "ChatMixin",
     "GameRendererInvoker",
+    "HandledScreenMixin",
     "KeyboardMixin",
-    "ScreenRenderMixin",
     "accessors.HandledScreenAccessor",
     "accessors.TerritoryManagementScreenAccessor",
+    "accessors.WynntillsEventBusAccessor",
     "Invoker.IsFavoritedInvoker"
   ],
   "injectors": {

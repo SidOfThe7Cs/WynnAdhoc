@@ -1,157 +1,148 @@
-package sidly.wynnadhoc.features.lootruns;
+package sidly.wynnadhoc.features.lootruns
 
-import com.wynntils.core.components.Models;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import sidly.wynnadhoc.config.ConfigManager;
-import sidly.wynnadhoc.config.LootrunData;
-import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.features.lootruns.enums.*;
-import sidly.wynnadhoc.utils.ChatMessageUtils;
-import sidly.wynnadhoc.utils.DebugWindow;
+import com.wynntils.core.WynntilsMod
+import com.wynntils.core.components.Models
+import net.minecraft.block.Blocks
+import net.minecraft.block.entity.ChestBlockEntity
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity
+import net.minecraft.item.ItemStack
+import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.text.Text
+import net.minecraft.util.math.BlockPos
+import sidly.wynnadhoc.config.ConfigManager
+import sidly.wynnadhoc.config.LootrunData
+import sidly.wynnadhoc.config.catagories.LootrunConfig
+import sidly.wynnadhoc.event.*
+import sidly.wynnadhoc.features.lootruns.enums.*
+import sidly.wynnadhoc.mixin.client.accessors.WynntillsEventBusAccessor
+import sidly.wynnadhoc.utils.ChatMessageUtils
+import sidly.wynnadhoc.utils.DebugWindow
+import sidly.wynnadhoc.utils.datatypes.toBox
+import sidly.wynnadhoc.utils.render.drawBox
+import java.awt.Color
+import java.time.Duration
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.*
+import java.util.regex.Pattern
+import kotlin.math.pow
+import kotlin.time.Duration.Companion.days
+import kotlin.time.DurationUnit
 
-import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+object Core {
+    private fun config(): LootrunConfig {
+        return ConfigManager.INSTANCE.config.lootrun
+    }
 
-public class Core {
-
-    public static LootrunData getCurrentLootrunData() {
-        String uuid = Models.Character.getId();
-        return ConfigManager.INSTANCE.getLootrun(uuid);
+    fun getCurrentLootrunData(): LootrunData? {
+        try {
+            if (WynntillsEventBusAccessor.getEventBus() == null) return null;
+            val uuid = Models.Character.id
+            return ConfigManager.INSTANCE.getLootrun(uuid)
+        } catch (_: Exception) {
+            return null
+        }
     }
 
     // this is the actual text displays rendered in the world cleared every tick
-    public static Map<BeaconColor, Integer> currentBeaconOptionsFromWaypoints = new HashMap<>();
+    var currentBeaconOptionsFromWaypoints: MutableMap<BeaconColor, Int> = HashMap<BeaconColor, Int>()
 
     // i just dont care right now (or ever) its both broken and useless
-    public static int mobHealthIncrease = 0;
-    public static int mobResistanceIncrease = 0;
-    public static int mobDamageIncrease = 0;
-    public static int mobAttackSpeedIncrease = 0;
-    public static int mobSpeedIncrease = 0;
-    public static void addMobHealth(int amount) {
-        mobHealthIncrease += amount;
-        // TODO update display
+    var mobHealthIncrease: Int = 0
+    var mobResistanceIncrease: Int = 0
+    var mobDamageIncrease: Int = 0
+    var mobAttackSpeedIncrease: Int = 0
+    var mobSpeedIncrease: Int = 0
+    fun addMobHealth(amount: Int) {
+        mobHealthIncrease += amount
+        // update display
     }
-    public static void addMobResistance(int amount) {
+
+    fun addMobResistance(amount: Int) {
         //System.out.println(" added res: " + amount);
-        mobResistanceIncrease += amount;
-        // TODO update display
+        mobResistanceIncrease += amount
+        // update display
     }
-    public static void addMobDamage(int amount) {
+
+    fun addMobDamage(amount: Int) {
         //System.out.println(" added dam: " + amount);
-        mobDamageIncrease += amount;
-        // TODO update display
+        mobDamageIncrease += amount
+        // update display
     }
-    public static void addMobAttackSpeed(int amount) {
+
+    fun addMobAttackSpeed(amount: Int) {
         //System.out.println(" added attk speed: " + amount);
-        mobAttackSpeedIncrease += amount;
-        // TODO update display
+        mobAttackSpeedIncrease += amount
+        // update display
     }
-    public static void addMobSpeed(int amount) {
+
+    fun addMobSpeed(amount: Int) {
         //System.out.println(" added walk speed: " + amount);
-        mobSpeedIncrease += amount;
-        // TODO update display
+        mobSpeedIncrease += amount
+        // update display
     }
 
-    public static Pattern curseBuffPattern = Pattern.compile("\\[([+-])(\\d+)% (Mob|Enemy) (.+?)]");
-    public static Pattern beaconRerollPattern = Pattern.compile("\\((\\d+) rerolls left\\)");
-    public static Pattern endPullsPattern = Pattern.compile("\\[\\+?(\\d+) Reward Pulls?]");
-    public static Pattern sacrificePattern = Pattern.compile("\\[\\+(\\d+) Reward Sacrifice]");
-    public static Pattern endRerollPattern = Pattern.compile("\\[\\+(\\d+) End Reward Reroll]");
+    var curseBuffPattern: Pattern = Pattern.compile("\\[([+-])(\\d+)% (Mob|Enemy) (.+?)]")
+    var beaconRerollPattern: Pattern = Pattern.compile("\\((\\d+) rerolls left\\)")
+    var endPullsPattern: Pattern = Pattern.compile("\\[\\+?(\\d+) Reward Pulls?]")
+    var sacrificePattern: Pattern = Pattern.compile("\\[\\+(\\d+) Reward Sacrifice]")
+    var endRerollPattern: Pattern = Pattern.compile("\\[\\+(\\d+) End Reward Reroll]")
 
 
-    public static void checkIfBeacon(ForEachEntityEvent event){
+    fun checkIfBeacon(event: ForEachEntityEvent) {
         // we can also add type detection by checking the l;ast charactor in the idsplay name
 
-        if (event.entity instanceof DisplayEntity.TextDisplayEntity textDisplay) {
-
-            Text rootText = textDisplay.getText(); // Your root text component
-            List<Text> siblings = rootText.getSiblings();
+        if (event.entity is TextDisplayEntity) {
+            val rootText: Text = event.entity.getText() // Your root text component
+            val siblings = rootText.siblings
 
             // 1. Check if the first sibling is a "marker"
-            if (!siblings.isEmpty() && siblings.get(0).getStyle().getFont() != null && siblings.get(0).getStyle().getFont().toString().equals("minecraft:marker")) {
-
+            if (!siblings.isEmpty() && siblings.get(0).style.getFont() != null && siblings.get(0).style
+                    .getFont().toString() == "minecraft:marker"
+            ) {
                 // 3. Extract the distance
-                int distance = -1;
-                if (siblings.size() >= 3) {
-                    Text distanceText = siblings.get(2);
-                    String distanceStr = distanceText.getString().split(" ")[0]; // "246m"
-                    distance = Integer.parseInt(distanceStr.replaceAll("[^0-9]", "")); // 246
+
+                var distance = -1
+                if (siblings.size >= 3) {
+                    val distanceText = siblings.get(2)
+                    val distanceStr = distanceText.string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+                        .toTypedArray()[0] // "246m"
+                    distance = distanceStr.replace("[^0-9]".toRegex(), "").toInt() // 246
 
                     //System.out.println("Distance: " + distanceStr);
                 }
 
 
                 // 2. Get the color
-                Text markerSibling = siblings.get(0);
-                for (Text nested : markerSibling.getSiblings()) {
-                    if (nested.getStyle().getColor() != null) {
-                        int color = nested.getStyle().getColor().getRgb();
+                val markerSibling = siblings.get(0)
+                for (nested in markerSibling.siblings) {
+                    if (nested.style.getColor() != null) {
+                        val color = nested.style.getColor()!!.rgb
 
-                        BeaconColor baseColor;
-                        switch (color){
-                            case 0x5C5CE6:
-                                baseColor = BeaconColor.Blue;
-                                break;
-                            case 0xFF00FF:
-                                baseColor = BeaconColor.Purple;
-                                break;
-                            case 0xFFFF33:
-                                baseColor = BeaconColor.Yellow;
-                                break;
-                            case 0x55FFFF:
-                                baseColor = BeaconColor.Aqua;
-                                break;
-                            case 0xff9500:
-                                baseColor = BeaconColor.Orange;
-                                break;
-                            case 0xff80:
-                                baseColor = BeaconColor.Green;
-                                break;
-                            case 0x808080:
-                                baseColor = BeaconColor.DarkGrey;
-                                break;
-                            case 0xffffff:
-                                baseColor = BeaconColor.White;
-                                break;
-                            case 0xbfbfbf:
-                                baseColor = BeaconColor.Grey;
-                                break;
-                            case 0xff0000:
-                                baseColor = BeaconColor.Red;
-                                break;
-                            case 0xf000:
-                                baseColor = BeaconColor.Rainbow;
-                                break;
-                            case 0xf010:
-                                baseColor = BeaconColor.Crimson;
-                                break;
-                            default:
-                                System.out.println("unrecognized beacon color: " + Integer.toHexString(color) + " distance: " + distance);
-                                return;
+                        val baseColor: BeaconColor
+                        when (color) {
+                            0x5C5CE6 -> baseColor = BeaconColor.Blue
+                            0xFF00FF -> baseColor = BeaconColor.Purple
+                            0xFFFF33 -> baseColor = BeaconColor.Yellow
+                            0x55FFFF -> baseColor = BeaconColor.Aqua
+                            0xff9500 -> baseColor = BeaconColor.Orange
+                            0xff80 -> baseColor = BeaconColor.Green
+                            0x808080 -> baseColor = BeaconColor.DarkGrey
+                            0xffffff -> baseColor = BeaconColor.White
+                            0xbfbfbf -> baseColor = BeaconColor.Grey
+                            0xff0000 -> baseColor = BeaconColor.Red
+                            0xf000 -> baseColor = BeaconColor.Rainbow
+                            0xf010 -> baseColor = BeaconColor.Crimson
+                            else -> {
+                                println("unrecognized beacon color: " + Integer.toHexString(color) + " distance: " + distance)
+                                return
+                            }
                         }
-                        if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)){
-                            currentBeaconOptionsFromWaypoints.put(baseColor, distance);
+                        if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
+                            currentBeaconOptionsFromWaypoints.put(baseColor, distance)
                         }
                         //String symbol = nested.getString();
                         //symbol = Utils.convertCustomCharacterToUnicode(symbol);
@@ -162,537 +153,547 @@ public class Core {
 
                 // get beacon type
                 // Get the nested components within the marker
-                List<Text> markerComponents = markerSibling.getSiblings();
-                if (markerComponents.size() > 1) {
+                val markerComponents = markerSibling.siblings
+                if (markerComponents.size > 1) {
                     // The symbol is in the second nested component (index 1)
-                    Text symbolComponent = markerComponents.get(1);
-                    String symbolText = symbolComponent.getString();
+                    val symbolComponent = markerComponents.get(1)
+                    val symbolText = symbolComponent.string
 
-                    int lastSymbol = symbolText.codePoints().skip(symbolText.codePointCount(0, symbolText.length()) - 1).findFirst().orElse(-1);
-                    String unicodeString = "U+" + String.format("%04X", lastSymbol);
-                    String type = "";
-                    switch (unicodeString){
-                        case "U+E00B":
-                            type = "Slay";
-                            break;
-                        case "U+E00C":
-                            type = "Target";
-                            break;
-                        case "U+E00D":
-                            type = "Defend";
-                            break;
-                        case "U+E00E":
-                            type = "Loot";
-                            break;
-                        case "U+E00F":
-                            type = "Destroy";
-                            break;
-                        default:
-                            System.out.printf("Last symbol: " + unicodeString + " Distance: " + distance + " type: " + type + "\n");
-                            break;
+                    val lastSymbol =
+                        symbolText.codePoints().skip((symbolText.codePointCount(0, symbolText.length) - 1).toLong())
+                            .findFirst().orElse(-1)
+                    val unicodeString = "U+" + String.format("%04X", lastSymbol)
+                    var type = ""
+                    when (unicodeString) {
+                        "U+E00B" -> type = "Slay"
+                        "U+E00C" -> type = "Target"
+                        "U+E00D" -> type = "Defend"
+                        "U+E00E" -> type = "Loot"
+                        "U+E00F" -> type = "Destroy"
+                        else -> System.out.printf("Last symbol: $unicodeString Distance: $distance type: $type\n")
                     }
-
                 }
             }
         }
     }
 
     // adds a mission to the active list but active list also contains in progress so called from scoreboard
-    public static void addMission(String name){
-        for (MissionOptions opt : MissionOptions.values()) {
-            if (name.contains(opt.getDisplayName())) {
-                boolean alreadyExists = getCurrentLootrunData().getCurrentMissionsActive().stream().anyMatch(existing -> existing.getDisplayName().equals(opt.getDisplayName()));
+    fun addMission(name: String) {
+        val data = getCurrentLootrunData() ?: return
+        for (opt in MissionOptions.entries) {
+            if (name.contains(opt.displayName)) {
+                val alreadyExists = data.currentMissionsActive.stream()
+                    .anyMatch { existing: MissionOptions -> existing.displayName == opt.displayName }
 
                 if (!alreadyExists) {
-                    getCurrentLootrunData().getCurrentMissionsActive().add(opt);
+                    data.currentMissionsActive.add(opt)
                 }
 
-                // TODO update display
+                config().missionOverlay.updateDisplay()
             }
         }
     }
 
-    public static void addTrial(String name){
-        for (TrialOptions opt : TrialOptions.values()) {
-            if (name.contains(opt.getDisplayName())) {
-                boolean alreadyExists = getCurrentLootrunData().getCurrentTrialsActive().stream().anyMatch(existing -> existing.getDisplayName().equals(opt.getDisplayName()));
+    fun addTrial(name: String) {
+        val data = getCurrentLootrunData() ?: return
+        for (opt in TrialOptions.entries) {
+            if (name.contains(opt.displayName)) {
+                val alreadyExists = data.currentTrialsActive.stream()
+                    .anyMatch { existing: TrialOptions -> existing.displayName == opt.displayName }
 
                 if (!alreadyExists) {
-                    getCurrentLootrunData().getCurrentTrialsActive().add(opt);
+                    data.currentTrialsActive.add(opt)
                 }
 
-                // TODO update display
+                config().missionOverlay.updateDisplay()
             }
         }
     }
 
-    public static void onChallengeFailed(){
-        LootrunData config = getCurrentLootrunData();
+    fun onChallengeFailed() {
+        val data = getCurrentLootrunData() ?: return
 
-        config.clearActiveBeaconColor();
-        config.setAquaStatus(AquaStatus.Inactive);
-        config.getBeaconCounts().decreaseRemaining();
-        // TODO update display
+        data.clearActiveBeaconColor()
+        data.aquaStatus = AquaStatus.Inactive
+        data.beaconCounts.decreaseRemaining()
+
+        config().beaconCountsOverlay.updateDisplay()
     }
 
-    public static void onChallengeCompleted(BeaconColor color){
-        LootrunData config = getCurrentLootrunData();
-        if (color == null) {
-            DebugWindow.getInstance().log(DebugWindow.Priority.WARNING,"completed a null beacon smh");
-            return;
-        }
+    fun onChallengeCompleted(color: BeaconColor) {
+        val data = getCurrentLootrunData() ?: return
 
         // check the availoble beacon options to see if its vibrant or not
-        boolean vibrant = false;
-        String beaconCompleted = "";
-        for (BeaconOptions beacon : getCurrentLootrunData().getCurrentBeaconOptions()){
-            if (beacon.getBaseColor().equals(color)){
-                beaconCompleted = beacon.getDisplayName();
-                break;
+        var vibrant = false
+        var beaconCompleted = ""
+        for (beacon in data.currentBeaconOptions) {
+            if (beacon.baseColor == color) {
+                beaconCompleted = beacon.displayName
+                break
             }
         }
-        if (beaconCompleted.startsWith("Vibrant")) vibrant = true;
+        if (beaconCompleted.startsWith("Vibrant")) vibrant = true
 
-        DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"completed " + (vibrant ? "vibrant " : "") + color + " beacon");
+        DebugWindow.getInstance()
+            .log(DebugWindow.Priority.INFO, "completed " + (if (vibrant) "vibrant " else "") + color + " beacon")
 
-        config.getBeaconCounts().decreaseRemaining();
-        config.getBeaconCounts().incrementCount(color);
-        switch (color){
-            case Yellow:
-                getCurrentLootrunData().resetPullsSinceLastYellow();
-                break;
-            case Purple:
-                boolean phobia = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Porphyrophobia)
-                        && !ScoreboardInfo.missionInProgress.equals("Porphyrophobia"));
-                int pulls = getBeaconMultiplier(1, vibrant);
-                getCurrentLootrunData().getEndStats().addEndPulls(phobia ? pulls * 2 : pulls);
-                break;
-            case Aqua:
-                if (vibrant){
-                    config.setAquaStatus(AquaStatus.Vibrant);
-                }else config.setAquaStatus(AquaStatus.Active);
-                break;
-            case Orange:
-                config.getBeaconCounts().addRemaining(BeaconColor.Orange, getBeaconMultiplier(5, vibrant));
-                break;
-            case DarkGrey:
-                getCurrentLootrunData().getEndStats().addEndPulls(getBeaconMultiplier(3, vibrant));
-                break;
-            case Red:
-                int redToAdd = 3;
-                if (vibrant) redToAdd = 5;
-                if (config.getAquaStatus().equals(AquaStatus.Vibrant)) redToAdd *= 3;
-                else if (config.getAquaStatus().equals(AquaStatus.Active)) redToAdd *= 2;
-                config.getBeaconCounts().addRemaining(BeaconColor.Red, redToAdd);
-                break;
-            case Rainbow:
-                int rainbowToAdd = getBeaconMultiplier(10, vibrant);
-                config.getBeaconCounts().addRemaining(BeaconColor.Rainbow, rainbowToAdd);
-                break;
+        data.beaconCounts.decreaseRemaining()
+        data.beaconCounts.incrementCount(color)
+        when (color) {
+            BeaconColor.Yellow -> data.resetPullsSinceLastYellow()
+            BeaconColor.Purple -> {
+                val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
+                        && ScoreboardInfo.missionInProgress != "Porphyrophobia")
+                val pulls = getBeaconMultiplier(1, vibrant)
+                data.endStats.addEndPulls(if (phobia) pulls * 2 else pulls)
+            }
 
+            BeaconColor.Aqua -> if (vibrant) {
+                data.aquaStatus = AquaStatus.Vibrant
+            } else data.aquaStatus = AquaStatus.Active
+
+            BeaconColor.Orange -> data.beaconCounts
+                .addRemaining(BeaconColor.Orange, getBeaconMultiplier(5, vibrant))
+
+            BeaconColor.DarkGrey -> data.endStats.addEndPulls(getBeaconMultiplier(3, vibrant))
+            BeaconColor.Red -> {
+                var redToAdd = 3
+                if (vibrant) redToAdd = 5
+                if (data.aquaStatus == AquaStatus.Vibrant) redToAdd *= 3
+                else if (data.aquaStatus == AquaStatus.Active) redToAdd *= 2
+                data.beaconCounts.addRemaining(BeaconColor.Red, redToAdd)
+            }
+
+            BeaconColor.Rainbow -> {
+                val rainbowToAdd = getBeaconMultiplier(10, vibrant)
+                data.beaconCounts.addRemaining(BeaconColor.Rainbow, rainbowToAdd)
+            }
+
+            else -> {}
         }
 
-        if (!color.equals(BeaconColor.Aqua)) config.setAquaStatus(AquaStatus.Inactive);
+        if (color != BeaconColor.Aqua) data.aquaStatus = AquaStatus.Inactive
 
-        config.clearActiveBeaconColor();
+        data.clearActiveBeaconColor()
 
-        // TODO update display
+        config().beaconCountsOverlay.updateDisplay()
     }
 
-    public static void completeChaosChallengeCompleted(BeaconOptions beacon){
-        DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"complete chaos gave " + beacon.getDisplayName());
-        LootrunData config = getCurrentLootrunData();
+    fun completeChaosChallengeCompleted(beacon: BeaconOptions) {
+        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "complete chaos gave " + beacon.displayName)
+        val data = getCurrentLootrunData() ?: return
 
-        boolean vibrant = beacon.getDisplayName().startsWith("Vibrant");
-        int multiplier = 1;
-        if (vibrant) multiplier = 2;
+        val vibrant = beacon.displayName.startsWith("Vibrant")
+        var multiplier = 1
+        if (vibrant) multiplier = 2
 
-        BeaconColor color = beacon.getBaseColor();
+        val color = beacon.baseColor
 
-        switch (color){
-            case Purple:
-                boolean phobia = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Porphyrophobia)
-                        && !ScoreboardInfo.missionInProgress.equals("Porphyrophobia"));
-                getCurrentLootrunData().getEndStats().addEndPulls(phobia ? multiplier * 2 : multiplier);
-                break;
-            case Aqua:
-                if (vibrant){
-                    config.setAquaStatus(AquaStatus.Vibrant);
-                }else config.setAquaStatus(AquaStatus.Active);
-                break;
-            case Orange:
-                config.getBeaconCounts().addRemaining(BeaconColor.Orange, 5 * multiplier);
-                break;
-            case DarkGrey:
-                getCurrentLootrunData().getEndStats().addEndPulls(3 * multiplier);
-                break;
-            case Red:
-                int redToAdd = 3;
-                if (vibrant) redToAdd = 5;
-                config.getBeaconCounts().addRemaining(BeaconColor.Red, redToAdd);
-                break;
-            case Rainbow:
-                config.getBeaconCounts().addRemaining(BeaconColor.Rainbow, 10 * multiplier);
-                break;
+        when (color) {
+            BeaconColor.Purple -> {
+                val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
+                        && ScoreboardInfo.missionInProgress != "Porphyrophobia")
+                data.endStats.addEndPulls(if (phobia) multiplier * 2 else multiplier)
+            }
+
+            BeaconColor.Aqua -> if (vibrant) {
+                data.aquaStatus = AquaStatus.Vibrant
+            } else data.aquaStatus = AquaStatus.Active
+
+            BeaconColor.Orange -> data.beaconCounts.addRemaining(BeaconColor.Orange, 5 * multiplier)
+            BeaconColor.DarkGrey -> data.endStats.addEndPulls(3 * multiplier)
+            BeaconColor.Red -> {
+                var redToAdd = 3
+                if (vibrant) redToAdd = 5
+                data.beaconCounts.addRemaining(BeaconColor.Red, redToAdd)
+            }
+
+            BeaconColor.Rainbow -> data.beaconCounts.addRemaining(BeaconColor.Rainbow, 10 * multiplier)
+            else -> {}
         }
     }
 
-    private static int getBeaconMultiplier(int baseValue, boolean vibrant){
-        LootrunData config = getCurrentLootrunData();
-        int multiplier = 1;
-        if (vibrant) multiplier *= 2;
-        if (config.getAquaStatus().equals(AquaStatus.Vibrant)) multiplier *= 3;
-        else if (config.getAquaStatus().equals(AquaStatus.Active)) multiplier *= 2;
-        return baseValue * multiplier;
+    private fun getBeaconMultiplier(baseValue: Int, vibrant: Boolean): Int {
+        var multiplier = 1
+        if (vibrant) multiplier *= 2
+        getCurrentLootrunData()?.let {
+            if (it.aquaStatus == AquaStatus.Vibrant) multiplier *= 3
+            else if (it.aquaStatus == AquaStatus.Active) multiplier *= 2
+        }
+        return baseValue * multiplier
     }
 
-    public static void onMissionCompleted(String mission) {
-        System.out.println("MIssion completed: " + mission);
-        switch (mission){
-            case "High Roller":
-                getCurrentLootrunData().getEndStats().addEndRerolls(1);
-                return;
-            case "Inner Peace":
-                // curses half effective
-                return;
-            case "Redemption":
-                getCurrentLootrunData().getEndStats().addEndSacs(1);
-                return;
-            case "Interest Scheme":
-                getCurrentLootrunData().resetPullsSinceLastYellow();
-                return;
+    fun onMissionCompleted(mission: String) {
+        val data = getCurrentLootrunData() ?: return
+        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "Mission completed: $mission")
+        when (mission) {
+            "High Roller" -> {
+                data.endStats.addEndRerolls(1)
+                return
+            }
+
+            "Inner Peace" ->                 // curses half effective
+                return
+
+            "Redemption" -> {
+                data.endStats.addEndSacs(1)
+                return
+            }
+
+            "Interest Scheme" -> {
+                data.resetPullsSinceLastYellow()
+                return
+            }
         }
     }
 
-    public static void onTrialCompleted(String trial) {
-        System.out.println("Trial completed: " + trial);
-        switch (trial){
-            case "All In":
+    fun onTrialCompleted(trial: String) {
+        val data = getCurrentLootrunData() ?: return
+        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "Trial completed: $trial")
+        when (trial) {
+            "All In" -> {
                 // in reality this happens at the end of lootrun not instantly
-                getCurrentLootrunData().getEndStats().addEndRerolls(getCurrentLootrunData().getEndStats().getEndSacs() * 2);
-                getCurrentLootrunData().getEndStats().clearEndSacs();
-                getCurrentLootrunData().getEndStats().addEndSacs(0);
-                return;
-            case "Hubris", "Warmth Devourer":
-                getCurrentLootrunData().getEndStats().addEndRerolls(1);
-                getCurrentLootrunData().getEndStats().addEndSacs(1);
-                return;
-            case "Side Hustle":
-                getCurrentLootrunData().getEndStats().addEndRerolls(2);
-                return;
-            case "Treasury Bill":
-                getCurrentLootrunData().getEndStats().addEndPulls((int)(getCurrentLootrunData().getEndStats().getEndPulls() * 0.7));
-                return;
-            case "Ultimate Sacrifice":
-                getCurrentLootrunData().getEndStats().addEndSacs(2);
-                return;
+                data.endStats
+                    .addEndRerolls(data.endStats.endSacs * 2)
+                data.endStats.clearEndSacs()
+                data.endStats.addEndSacs(0)
+                return
+            }
+
+            "Hubris", "Warmth Devourer" -> {
+                data.endStats.addEndRerolls(1)
+                data.endStats.addEndSacs(1)
+                return
+            }
+
+            "Side Hustle" -> {
+                data.endStats.addEndRerolls(2)
+                return
+            }
+
+            "Treasury Bill" -> {
+                data.endStats
+                    .addEndPulls((data.endStats.endPulls * 0.7).toInt())
+                return
+            }
+
+            "Ultimate Sacrifice" -> {
+                data.endStats.addEndSacs(2)
+                return
+            }
         }
     }
 
-    public static void changeStatus(LootrunStatus newStatus) {
-        LootrunData config = getCurrentLootrunData();
-        LootrunStatus oldStatus = config.getStatus();
-        if (oldStatus == newStatus) return;
+    fun changeStatus(newStatus: LootrunStatus) {
+        val data = getCurrentLootrunData() ?: return
+        val oldStatus = data.status
+        if (oldStatus == newStatus) return
         //DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"switching lootrun status from " + oldStatus + " to " + newStatus);
-        switch (newStatus) {
-            case PickingBeacon:
-                if (oldStatus == LootrunStatus.NotInLootrun) {
-                    getCurrentLootrunData().startLootrun();
-                    // TODO update display
-                }
-                break;
-            case InChallenge:
-                if (oldStatus == LootrunStatus.PickingBeacon){
-                    config.activateBeacon();
-                }
-                break;
-            case ClaimingRewards:
-                if (oldStatus == LootrunStatus.InChallenge){
-                    onChallengeCompleted(config.getActiveBeaconColor());
-                }
-                break;
-            case NotInLootrun:
-                endLootrun();
-                break;
+        when (newStatus) {
+            LootrunStatus.PickingBeacon -> if (oldStatus == LootrunStatus.NotInLootrun) {
+                data.startLootrun()
+                config().endRewardsOverlay.updateDisplay()
+                config().beaconCountsOverlay.updateDisplay()
+                config().missionOverlay.updateDisplay()
+            }
+
+            LootrunStatus.InChallenge -> if (oldStatus == LootrunStatus.PickingBeacon) {
+                data.activateBeacon()
+            }
+
+            LootrunStatus.ClaimingRewards -> if (oldStatus == LootrunStatus.InChallenge) {
+                onChallengeCompleted(data.activeBeaconColor)
+            }
+
+            LootrunStatus.NotInLootrun -> endLootrun()
         }
-        config.setStatus(newStatus);
+        data.status = newStatus
     }
 
-    private static BlockPos getClosestChest(MinecraftClient client){
-        if (client == null || client.player == null) return null;
-        Vec3d playerPos = client.player.getEntityPos();
-        double shortestDist = Double.MAX_VALUE;
-        BlockPos closestChest = null;
-        for (Map.Entry<BlockPos, Long> entry : ConfigManager.INSTANCE.getChests().entrySet()) {
-            double dist = entry.getKey().getSquaredDistance(playerPos.x, playerPos.y, playerPos.z);
+    private fun getClosestChest(client: MinecraftClient?): BlockPos? {
+        if (client == null || client.player == null) return null
+        val playerPos = client.player!!.entityPos
+        var shortestDist = Double.MAX_VALUE
+        var closestChest: BlockPos? = null
+        for (entry in ConfigManager.INSTANCE.chests.entries) {
+            val dist = entry.key.getSquaredDistance(playerPos.x, playerPos.y, playerPos.z)
             if (dist < shortestDist) {
-                closestChest = entry.getKey();
-                shortestDist = dist;
+                closestChest = entry.key
+                shortestDist = dist
             }
         }
-        return closestChest;
+        return closestChest
     }
 
-    public static int getEffectivePulls(){
-        int epulls = 0;
-        if (getCurrentLootrunData().getActiveCamp() != null){
-            int rrs = getCurrentLootrunData().getEndStats().getEndRerolls();
-            int pulls = getCurrentLootrunData().getEndStats().getEndPulls();
+    fun getEffectivePulls(): Int {
+        val data = getCurrentLootrunData() ?: return -1
+        var epulls = 0
+        if (data.activeCamp != null) {
+            var rrs = data.endStats.endRerolls
+            var pulls = data.endStats.endPulls
 
-            if (getCurrentLootrunData().getActiveCamp().getCamp().isDailyReady()){
-                rrs += 1;
-                pulls += 10;
+            if (data.activeCamp.camp.isDailyReady()) {
+                rrs += 1
+                pulls += 10
             }
 
-            epulls += pulls;
-            epulls += getCurrentLootrunData().getActiveCamp().getCamp().getSacs();
-            epulls *= (rrs + 1);
+            epulls += pulls
+            epulls += data.activeCamp.camp.sacs
+            epulls *= (rrs + 1)
         }
-        return epulls;
+        return epulls
     }
 
-    public static long getTimeTillDailyReset(){
-        ZoneId estZone = ZoneId.of("America/New_York");
-        ZonedDateTime now = ZonedDateTime.now(estZone);
-        ZonedDateTime todayAt12pm = now.withHour(23).withMinute(59).withSecond(59).withNano(999);
+    fun getTimeTillDailyReset(): Long {
+        val estZone = ZoneId.of("America/New_York")
+        val now = ZonedDateTime.now(estZone)
+        var todayAt12pm = now.withHour(23).withMinute(59).withSecond(59).withNano(999)
 
         // If it's already past 11 PM, move to tomorrow
         if (now.isAfter(todayAt12pm)) {
-            todayAt12pm = todayAt12pm.plusDays(1);
+            todayAt12pm = todayAt12pm.plusDays(1)
         }
-        return (Duration.between(now, todayAt12pm).toMillis());
+        return (Duration.between(now, todayAt12pm).toMillis())
     }
 
-    public static void endLootrun(){
-        LootrunData config = getCurrentLootrunData();
+    fun endLootrun() {
+        val data = getCurrentLootrunData() ?: return
 
-        ScoreboardInfo.clearLootrunData(); // this is data that is cleared every frame anyway
-        config.getCurrentMissionsActive().clear();
-        config.getActiveCamp().getCamp().justCompleted();
-        ConfigManager.INSTANCE.resetLootrun(Models.Character.getId());
+        ScoreboardInfo.clearLootrunData() // this is data that is cleared every frame anyway
+        data.currentMissionsActive.clear()
+        data.activeCamp.camp.justCompleted()
+        ConfigManager.INSTANCE.resetLootrun(Models.Character.id)
 
-        mobHealthIncrease = 0;
-        mobSpeedIncrease = 0;
-        mobDamageIncrease = 0;
-        mobAttackSpeedIncrease = 0;
-        mobResistanceIncrease = 0;
+        mobHealthIncrease = 0
+        mobSpeedIncrease = 0
+        mobDamageIncrease = 0
+        mobAttackSpeedIncrease = 0
+        mobResistanceIncrease = 0
     }
 
-    // events TODO make sure all are called
-
-    public static void onClientTick(ClientTickEvent event) {
-        if (event.client.world == null || currentBeaconOptionsFromWaypoints.isEmpty()) return;
+    fun onClientTick(event: ClientTickEvent) {
+        val data = getCurrentLootrunData() ?: return
+        if (event.client.world == null || currentBeaconOptionsFromWaypoints.isEmpty()) return
 
         // get the waypoint if we might be about to start it
-        for (Map.Entry<BeaconColor, Integer> entry : currentBeaconOptionsFromWaypoints.entrySet()) {
-            if (entry.getValue() == -1) {
-                getCurrentLootrunData().setPossibleActiveBeaconColor(entry.getKey());
-                break;
+        for (entry in currentBeaconOptionsFromWaypoints.entries) {
+            if (entry.value == -1) {
+                data.possibleActiveBeaconColor = entry.key
+                break
             }
         }
-        currentBeaconOptionsFromWaypoints.clear();
+        currentBeaconOptionsFromWaypoints.clear()
     }
 
-    public static void onBlockEntityLoad(BlockEntityLoadedEvent event) {
-        if (event.clientWorld == null) return;
+    fun onBlockEntityLoad(event: BlockEntityLoadedEvent) {
+        if (event.clientWorld == null) return
 
-        if (event.blockEntity instanceof ChestBlockEntity chest) {
-            BlockPos pos = chest.getPos();
-            Block block = event.clientWorld.getBlockState(pos).getBlock();
+        if (event.blockEntity is ChestBlockEntity) {
+            val pos: BlockPos = event.blockEntity.getPos()
+            val block = event.clientWorld.getBlockState(pos).block
 
-            if (block == Blocks.TRAPPED_CHEST) {
-                if (!ConfigManager.INSTANCE.getChests().containsKey(pos)) {
-                    ConfigManager.INSTANCE.getChests().put(pos, (long) -1);
+            if (block === Blocks.TRAPPED_CHEST) {
+                if (!ConfigManager.INSTANCE.chests.containsKey(pos)) {
+                    ConfigManager.INSTANCE.chests[pos] = -1L
                 }
             }
         }
     }
 
-    // TODO render stuff
-    public static void onHudRender(DrawContext context) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null) return;
+    fun onWorldRender(event: WorldRenderEvent) {
+        val data = getCurrentLootrunData() ?: return
+        val client = MinecraftClient.getInstance()
+        if (client == null || client.player == null) return
 
-        boolean hoarder = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Hoarder) && !ScoreboardInfo.missionInProgress.equals("Hoarder"));
-        boolean crono = (getCurrentLootrunData().getCurrentMissionsActive().contains(MissionOptions.Chronokinesis) && !ScoreboardInfo.missionInProgress.equals("Chronokinesis"));
-        boolean missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent;
-        if (missionReq || crono || hoarder) {
-            long currentTime = System.currentTimeMillis();
-            long milisIn3Days = 3 * 24 * 60 * 60 * 1000;
+        val force = ConfigManager.INSTANCE.config.chest.forceEsp
+        val crono = (data.currentMissionsActive
+            .contains(MissionOptions.Chronokinesis) && ScoreboardInfo.missionInProgress != "Chronokinesis")
+        val missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent
+        if (missionReq || crono || force) {
+            val currentTime = System.currentTimeMillis()
 
-            for (Map.Entry<BlockPos, Long> entry : ConfigManager.INSTANCE.getChests().entrySet()) {
-                if (ConfigManager.INSTANCE.getBannedChests().contains(entry.getKey())) continue;
+            for (entry in ConfigManager.INSTANCE.chests.entries) {
+                if (ConfigManager.INSTANCE.bannedChests.contains(entry.key)) continue
 
-                double distSqr = entry.getKey().getSquaredDistance(client.player.getEntityPos());
-                // Todo config double maxDist = Math.pow(Config.getMax_Range_To_Show_Chests(), 2);
-                // if (distSqr > maxDist) continue;
+                val distSqr = entry.key.getSquaredDistance(client.player!!.entityPos)
 
-                if (entry.getValue() == -1 || entry.getValue() + milisIn3Days < currentTime) { // never been opened or 3 days have passed
-                    // Todo render WorldRenderUtils.drawEdges()  DrawUtils.drawBlockEdges(context, entry.getKey(), Color.green); // green means has max loot (not opened for 3d)
-                    continue;
-                }
+                val maxDist = ConfigManager.INSTANCE.config.chest.maxEspDistance.pow(2)
+                if (distSqr > maxDist) continue
 
-                if (missionReq || crono) {
-                    if (entry.getValue() + 1800000 < currentTime) { // never been opened or 30 minutes has passed
-                        // Todo render WorldRenderUtils.drawEdges()  DrawUtils.drawBlockEdges(context, entry.getKey(), Color.getHSBColor(130, 74, 18)); // this literally says s and b should be between 0 and 1 so idk why it gives the right color
-                    }
-                }
+                var color = Color.RED
+                // 30 minutes has passed
+                if (entry.value + 1800000 < currentTime) color = Color.yellow
+                // never been opened or 3 days have passed
+                if (entry.value == -1L || entry.value + 3.days.toLong(DurationUnit.MILLISECONDS) < currentTime) color = Color.green
+                event.drawBox(entry.key.toBox(), color)
             }
         }
     }
 
     // runs once TODO better chest tracking
-    public static void onScreenOpened(ScreenOpenedEvent event) {
-        if (event.client == null || event.client.player == null) return;
+    fun onScreenOpened(event: ScreenOpenedEvent) {
+        if (event.client == null || event.client.player == null) return
 
         // loot chest highlighter
-        if (event.screen instanceof GenericContainerScreen) {
+        if (event.screen is GenericContainerScreen) {
             // this seems horribly unefficient (and unreliable) but yk
-            BlockPos closestChest = getClosestChest(event.client);
+            val closestChest = getClosestChest(event.client)
             if (closestChest != null) {
-                if (event.screen.getTitle().getString().startsWith("Loot Chest")) {
-                    ConfigManager.INSTANCE.getChests().replace(closestChest, System.currentTimeMillis());
-                } else if (event.screen.getTitle().getString().startsWith("Challenge Rewards")) {
-                    ConfigManager.INSTANCE.getBannedChests().add(closestChest);
-                } else if (event.screen.getTitle().getString().equals("\uDAFF\uDFE8\uE011")){ // player shops
-                    ConfigManager.INSTANCE.getBannedChests().add(closestChest);
+                if (event.screen.getTitle().string.startsWith("Loot Chest")) {
+                    ConfigManager.INSTANCE.chests.replace(closestChest, System.currentTimeMillis())
+                } else if (event.screen.getTitle().string.startsWith("Challenge Rewards")) {
+                    ConfigManager.INSTANCE.bannedChests.add(closestChest)
+                } else if (event.screen.getTitle().string == "\uDAFF\uDFE8\uE011") { // player shops
+                    ConfigManager.INSTANCE.bannedChests.add(closestChest)
                 }
             }
         }
     }
 
-    private static int completeChaosCounter = Integer.MAX_VALUE;
-    public static void onChatMessage(ChatMessageEvent event) {
-        if (completeChaosCounter != Integer.MAX_VALUE) completeChaosCounter++;
+    private var completeChaosCounter: Int = Int.MAX_VALUE
+    fun onChatMessage(event: ChatMessageEvent) {
+        val data = getCurrentLootrunData() ?: return
+        if (completeChaosCounter != Int.MAX_VALUE) completeChaosCounter++
 
-        if (Core.getCurrentLootrunData().getStatus() == LootrunStatus.PickingBeacon) {
-            BeaconOptions.getMatches(event.cleanMessage);
+        if (data.status === LootrunStatus.PickingBeacon) {
+            BeaconOptions.getMatches(event.cleanMessage)
         }
 
-        for (String part : event.splitMessage) {
-            if (part.equals("Lootrun Completed")) {
-                Core.onChallengeCompleted(Core.getCurrentLootrunData().getActiveBeaconColor());
-                Core.getCurrentLootrunData().getEndStats().addEndPulls(1); // assumes you did not fail the last challenge but doesnt really matter so
-                // TODO update display
-                ChatMessageUtils.sendChatMessage("Lootrun completed with " + Core.getCurrentLootrunData().getEndStats().getEndPulls() + " pulls and " + Core.getEffectivePulls() + " Effective pulls");
-                Core.changeStatus(LootrunStatus.NotInLootrun);
-            } else if (part.equals("Lootrun Failed")) {
-                Core.changeStatus(LootrunStatus.NotInLootrun);
-            } else if (part.equals("Choose a Beacon")) {
-
-                // every beacon
-                // TODO update display
-                Core.getCurrentLootrunData().getCurrentBeaconOptions().clear();
-                // TODO update display
-                Core.changeStatus(LootrunStatus.PickingBeacon);
-                Core.getCurrentLootrunData().setBeaconRerolls(0);
-
+        for (part in event.splitMessage) {
+            if (part == "Lootrun Completed") {
+                onChallengeCompleted(data.activeBeaconColor)
+                data.endStats
+                    .addEndPulls(1) // assumes you did not fail the last challenge but doesnt really matter so
+                config().endRewardsOverlay.updateDisplay()
+                ChatMessageUtils.sendChatMessage(
+                    "Lootrun completed with " + data.endStats
+                        .endPulls + " pulls and " + getEffectivePulls() + " Effective pulls"
+                )
+                changeStatus(LootrunStatus.NotInLootrun)
+            } else if (part == "Lootrun Failed") {
+                changeStatus(LootrunStatus.NotInLootrun)
+            } else if (part == "Choose a Beacon") {
+                data.currentBeaconOptions.clear()
+                changeStatus(LootrunStatus.PickingBeacon)
+                data.beaconRerolls = 0
             } else if (part.startsWith("Challenge Failed!")) {
-                Core.onChallengeFailed();
-            } else if (part.equals("Complete Chaos")) {
-                completeChaosCounter = 0;
+                onChallengeFailed()
+            } else if (part == "Complete Chaos") {
+                completeChaosCounter = 0
             }
 
-            if (completeChaosCounter == 2){
-                for (BeaconOptions opt : BeaconOptions.values()) {
-                    if (part.equals(opt.getDisplayName())) {
-                        Core.completeChaosChallengeCompleted(opt);
+            if (completeChaosCounter == 2) {
+                for (opt in BeaconOptions.entries) {
+                    if (part == opt.displayName) {
+                        completeChaosChallengeCompleted(opt)
                     }
                 }
             }
 
-            Matcher reRollsMatcher = Core.beaconRerollPattern.matcher(part);
+            val reRollsMatcher = beaconRerollPattern.matcher(part)
             if (reRollsMatcher.find()) {
-                int rerollsLeft = Integer.parseInt(reRollsMatcher.group(1));
-                Core.getCurrentLootrunData().setBeaconRerolls(rerollsLeft);
+                val rerollsLeft = reRollsMatcher.group(1).toInt()
+                data.beaconRerolls = rerollsLeft
             }
 
-            Matcher endPullsMatcher = Core.endPullsPattern.matcher(part);
+            val endPullsMatcher = endPullsPattern.matcher(part)
             if (endPullsMatcher.find()) {
-                int pullsGained = Integer.parseInt(endPullsMatcher.group(1));
-                Core.getCurrentLootrunData().getEndStats().addEndPulls(pullsGained);
+                val pullsGained = endPullsMatcher.group(1).toInt()
+                data.endStats.addEndPulls(pullsGained)
             }
 
-            Matcher endSacsMatcher = Core.sacrificePattern.matcher(part);
+            val endSacsMatcher = sacrificePattern.matcher(part)
             if (endSacsMatcher.find()) {
-                int sacsGained = Integer.parseInt(endSacsMatcher.group(1));
-                Core.getCurrentLootrunData().getEndStats().addEndSacs(sacsGained);
+                val sacsGained = endSacsMatcher.group(1).toInt()
+                data.endStats.addEndSacs(sacsGained)
             }
 
-            Matcher endRerollsMatcher = Core.endRerollPattern.matcher(part);
+            val endRerollsMatcher = endRerollPattern.matcher(part)
             if (endRerollsMatcher.find()) {
-                int rrsGained = Integer.parseInt(endRerollsMatcher.group(1));
-                Core.getCurrentLootrunData().getEndStats().addEndRerolls(rrsGained);
+                val rrsGained = endRerollsMatcher.group(1).toInt()
+                data.endStats.addEndRerolls(rrsGained)
             }
-
         }
 
-        Matcher curseMatcher = Core.curseBuffPattern.matcher(event.asciiOnlyMessage);
+        val curseMatcher = curseBuffPattern.matcher(event.asciiOnlyMessage)
         if (curseMatcher.find()) {
-            int percent = Integer.parseInt(curseMatcher.group(2));
-            boolean negative = curseMatcher.group(1).equals("-");
-            if (negative) percent *= -1;
+            var percent = curseMatcher.group(2).toInt()
+            val negative = curseMatcher.group(1) == "-"
+            if (negative) percent *= -1
             // TODO i think group 3 should be whether its curse or natrual so i can seperate and apply half curse effects if mission
-            String type = curseMatcher.group(4);
-            switch (type.toLowerCase()) {
-                case "health":
-                    Core.addMobHealth(percent);
-                    return;
-                case "resistance":
-                    Core.addMobResistance(percent);
-                    return;
-                case "damage":
-                    Core.addMobDamage(percent);
-                    return;
-                case "attack speed":
-                    Core.addMobAttackSpeed(percent);
-                    return;
-                case "walk speed":
-                    Core.addMobSpeed(percent);
-                    return;
-                default:
+            val type = curseMatcher.group(4)
+            when (type.lowercase(Locale.getDefault())) {
+                "health" -> {
+                    addMobHealth(percent)
+                    return
+                }
+
+                "resistance" -> {
+                    addMobResistance(percent)
+                    return
+                }
+
+                "damage" -> {
+                    addMobDamage(percent)
+                    return
+                }
+
+                "attack speed" -> {
+                    addMobAttackSpeed(percent)
+                    return
+                }
+
+                "walk speed" -> {
+                    addMobSpeed(percent)
+                    return
+                }
+
+                else -> {}
             }
         }
     }
 
-    public static void onScreenRender(ScreenRenderEvent event) {
-        if (event.screen.getScreenHandler() instanceof GenericContainerScreenHandler chestHandler) {
+    fun onScreenRender(event: ScreenRenderEvent) {
+        if (event.screen.getScreenHandler() !is GenericContainerScreenHandler) return
+        val data = getCurrentLootrunData() ?: return
 
-            ItemStack slot5 = chestHandler.getInventory().getStack(5);
-            ItemStack slot4 = chestHandler.getInventory().getStack(4);
+        val slot5: ItemStack = event.screen.getScreenHandler().getSlot(5).stack
+        val slot4: ItemStack = event.screen.getScreenHandler().getSlot(4).stack
 
-            List<Text> loreList = new ArrayList<>();
+        val loreList: MutableList<Text> = ArrayList<Text>()
 
-            LoreComponent lore5 = slot5.getComponents().get(DataComponentTypes.LORE);
-            if (lore5 != null) loreList.addAll(lore5.lines());
+        val lore5 = slot5.getComponents().get(DataComponentTypes.LORE)
+        if (lore5 != null) loreList.addAll(lore5.lines())
 
-            LoreComponent lore4 = slot5.getComponents().get(DataComponentTypes.LORE);
-            if (lore4 != null) loreList.addAll(lore4.lines());
+        val lore4 = slot4.getComponents().get(DataComponentTypes.LORE)
+        if (lore4 != null) loreList.addAll(lore4.lines())
 
-            for (Text text : loreList) {
-                String line = text.getString();
-                if (line.contains("Saved Pulls")) {
-                    // Extract number using regex
-                    Matcher matcher = Pattern.compile("Saved Pulls: §f(\\d+)").matcher(line);
-                    if (matcher.find()) {
-                        int savedPulls = Integer.parseInt(matcher.group(1));
-                        Camps camp = Core.getCurrentLootrunData().getActiveCamp();
+        for (text in loreList) {
+            val line = text.string
+            if (line.contains("Saved Pulls")) {
+                // Extract number using regex
+                val matcher = Pattern.compile("Saved Pulls: §f(\\d+)").matcher(line)
+                if (matcher.find()) {
+                    val savedPulls = matcher.group(1).toInt()
+                    var camp = data.activeCamp
+                    if (camp == null) {
+                        // check if we are close to a camp (prevent wrong camp assignments)
+                        val client = MinecraftClient.getInstance()
+                        if (client == null || client.player == null || !Camps.isNearAnyCamp(
+                                client.player!!.entityPos,
+                                15.0
+                            )
+                        ) return
+                        data.setActiveCamp()
+                        camp = data.activeCamp
                         if (camp == null) {
-                            // check if we are close to a camp (prevent wrong camp assignments)
-                            MinecraftClient client = MinecraftClient.getInstance();
-                            if (client == null || client.player == null || !Camps.isNearAnyCamp(client.player.getEntityPos(), 15)) return;
-                            Core.getCurrentLootrunData().setActiveCamp();
-                            camp = Core.getCurrentLootrunData().getActiveCamp();
-                            if (camp == null) {
-                                System.err.println("Camp was null while sacs were on screen");
-                                return;
-                            }
+                            System.err.println("Camp was null while sacs were on screen")
+                            return
                         }
-                        camp.getCamp().setPossibleSacs(savedPulls);
                     }
+                    camp.camp.setPossibleSacs(savedPulls)
                 }
             }
         }
     }
-
 }

@@ -21,4 +21,19 @@ class WarConfig {
         10,
         1.0f
     )
+
+    @Expose
+    @JvmField
+    @ConfigOption(name = "Show War Timer", desc = "<-")
+    @ConfigEditorBoolean
+    var showWarTimer: Boolean = true
+
+    @Expose
+    @JvmField
+    var warTimer: HudElementData = HudElementData(
+        "War Timer",
+        10,
+        40,
+        1.0f
+    )
 }

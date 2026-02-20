@@ -9,15 +9,18 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.WorldRenderEvent
 import sidly.wynnadhoc.utils.datatypes.edges
 import sidly.wynnadhoc.utils.datatypes.toBlockPos
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.datatypes.toVec3d
 import java.awt.Color
+import kotlin.math.ln
+import kotlin.math.sqrt
 
 object RenderUtils {
-    var DEFAULT_LINE_WIDTH = 2 // TODO config
+    private val config get() = ConfigManager.INSTANCE.config.gui
 
     fun onFabricWorldRender(event: WorldRenderContext) {
         val vertexConsumers = event.consumers()
@@ -28,7 +31,6 @@ object RenderUtils {
         WorldRenderEvent(stack, event.gameRenderer().camera, vertexConsumers, event.worldState().time.toFloat())
     }
 
-    //init { Event.register<WorldRenderEvent>(WorldRenderEvent::class.java, RenderUtils::testDraw) }
     fun testDraw(event: WorldRenderEvent) {
         event.drawBox(
             Box.of(Vec3d(0.5, 80.5, 2.5), 1.0, 1.0, 1.0),
@@ -48,7 +50,7 @@ object RenderUtils {
             )
         }
 
-        event.drawLineToEye(Vec3d(0.5, 82.5, 0.5), Color.ORANGE, xray = true)
+        event.drawLineToEye(Vec3d(0.5, 82.5, 0.5), Color.ORANGE)
     }
 
 
@@ -73,8 +75,13 @@ object RenderUtils {
             // This gives a vector perpendicular to both (points sideways relative to view)
             val dir1 = line.p1.normalize()
             val dir2 = line.p2.normalize()
-            val offset1 = line.direction.crossProduct(dir1).normalize().multiply(DEFAULT_LINE_WIDTH * 0.01 * thickness)
-            val offset2 = line.direction.crossProduct(dir2).normalize().multiply(DEFAULT_LINE_WIDTH * 0.01 * thickness)
+
+            val baseLineWidth = config.defaultLineWidth * 0.0125 * thickness
+            val lineWidth1 = baseLineWidth + cameraPos.distanceTo(inputLine.p1) * 0.0005 * config.lineDistanceFactor
+            val lineWidth2 = baseLineWidth + cameraPos.distanceTo(inputLine.p2) * 0.0005 * config.lineDistanceFactor
+
+            val offset1 = line.direction.crossProduct(dir1).normalize().multiply(lineWidth1)
+            val offset2 = line.direction.crossProduct(dir2).normalize().multiply(lineWidth2)
 
             addVertex(buf, matrix, line.p1.add(offset1), color)
             addVertex(buf, matrix, line.p1.subtract(offset1), color)
@@ -120,7 +127,7 @@ fun WorldRenderEvent.drawLine(start: Vec3d?, end: Vec3d?, color: Color, xray: Bo
 }
 
 // TODO this acts weird when the target is behind you make it normal
-fun WorldRenderEvent.drawLineToEye(end: Vec3d?, color: Color, xray: Boolean) {
+fun WorldRenderEvent.drawLineToEye(end: Vec3d?, color: Color, xray: Boolean = true) {
     if (end == null) return
     val lookDirection = this.camera.rotation.transform(Vector3f(0f, 0f, -1f)).toVec3d()
     val line = Line(this.camera.cameraPos.add(lookDirection.multiply(2.0)), end)
@@ -132,7 +139,7 @@ fun WorldRenderEvent.drawBox(
     color: Color,
     alphaMultiplier: Float = 1f,
     solid: Boolean = false,
-    xray: Boolean = false,
+    xray: Boolean = true,
     thicknessMultiplier: Double = 1.0,
 ) {
 

@@ -28,7 +28,7 @@ public class BeaconCounters {
                 }
                 yield sb.toString();
             }
-            default -> throw new IllegalStateException("Unexpected value: " + color);
+            default -> "";
         };
     }
 

@@ -18,4 +18,10 @@ public class HudElementData {
         this.y = y;
         this.scale = scale;
     }
+
+    public void updateDisplay() {
+        HudElement hudElement = HudElementManager.getHudElement(name);
+        if (hudElement != null) hudElement.updateDisplay();
+        else System.err.println("Hud element with name " + name + " not found");
+    }
 }

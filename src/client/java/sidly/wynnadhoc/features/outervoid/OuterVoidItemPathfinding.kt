@@ -131,12 +131,12 @@ object OuterVoidItemPathfinder {
             val rarity = OuterVoidItemDatabase.getRarity(item)
             val color = OuterVoidItemDatabase.getColor(rarity)
             if (rarity.ordinal >= config.showBoxesAtRarity.ordinal) {
-                event.drawBox(item.boundingBox, color, xray = true)
+                event.drawBox(item.boundingBox, color)
             }
 
             //draw item lines
             if (rarity.ordinal >= config.showLinesAtRarity.ordinal) {
-                event.drawLineToEye(item.entityPos, color, true)
+                event.drawLineToEye(item.entityPos, color)
             }
         }
     }
@@ -421,25 +421,19 @@ object OuterVoidItemPathfinder {
                 event.drawBox(
                     path.item.boundingBox,
                     OuterVoidItemDatabase.getColor(OuterVoidItemDatabase.getRarity(path.item)),
-                    xray = true
                 )
-                event.drawLineToEye(path.item.entityPos, color, true)
+                event.drawLineToEye(path.item.entityPos, color)
                 return
             }
 
             // draws line from screen to first node
-            event.drawLineToEye(
-                Vec3d.of(path.nodes[0]).add(Vec3d(0.5, 0.5, 0.5)),
-                color,
-                false
-            )
+            event.drawLineToEye(Vec3d.of(path.nodes[0]).add(Vec3d(0.5, 0.5, 0.5)), color)
         } else {
             if (path.nodes.isEmpty()) {
                 // draws item and line to it
                 event.drawBox(
                     path.item.boundingBox,
                     OuterVoidItemDatabase.getColor(OuterVoidItemDatabase.getRarity(path.item)),
-                    xray = true,
                     thicknessMultiplier = 2.5,
                 )
                 event.drawLine(
@@ -467,7 +461,7 @@ object OuterVoidItemPathfinder {
             val endPosition = path.nodes[i + 1]
 
             // draw block
-            event.drawBox(startPosition.toBox(), color, xray = true)
+            event.drawBox(startPosition.toBox(), color)
             // Draw a line between the two blocks
             event.drawLine(
                 Vec3d.of(startPosition).add(Vec3d(0.5, 0.5, 0.5)),
@@ -477,12 +471,11 @@ object OuterVoidItemPathfinder {
             )
         }
         // draw the last block because the loop above doesnt
-        event.drawBox(path.nodes.getLast()?.toBox(), color, xray = true)
+        event.drawBox(path.nodes.getLast()?.toBox(), color)
         // draw the item that we tryin to get to
         event.drawBox(
             path.item.boundingBox,
             OuterVoidItemDatabase.getColor(OuterVoidItemDatabase.getRarity(path.item)),
-            xray = true
         )
         // draw the line from last block to the item
         event.drawLine(

@@ -29,5 +29,9 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     @Expose
     @Category(name = "Chest Related Settings", desc = "chest related settings")
     public ChestConfig chest = new ChestConfig();
+
+    @Expose
+    @Category(name = "Lootrun Settings", desc = "lootrun settings")
+    public LootrunConfig lootrun = new LootrunConfig();
 }
 

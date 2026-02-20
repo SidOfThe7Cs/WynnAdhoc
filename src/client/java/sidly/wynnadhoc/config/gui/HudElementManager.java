@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.config.gui;
 
-import net.minecraft.client.MinecraftClient;
-import sidly.wynnadhoc.event.ScreenRenderEvent;
+import sidly.wynnadhoc.event.GuiRenderOnTopEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,20 +14,17 @@ public class HudElementManager {
         return new HashSet<>(hudElements.values());
     }
 
+    public static HudElement getHudElement(String name) {
+        return hudElements.get(name);
+    }
+
     public static void register(HudElement e) {
         hudElements.put(e.name(), e);
     }
 
-    public static void onScreenRender(ScreenRenderEvent event) {
+    public static void onHudRender(GuiRenderOnTopEvent event) {
         for (HudElement e : getHudElements()) {
             e.render(event.context, false);
-        }
-    }
-
-    public static void onHudRender() {
-        if (MinecraftClient.getInstance().currentScreen != null) return; // draw on screen instead
-        for (HudElement e : getHudElements()) {
-            // TODO this basically needs a screen DrawContext even when screen is null
         }
     }
 }

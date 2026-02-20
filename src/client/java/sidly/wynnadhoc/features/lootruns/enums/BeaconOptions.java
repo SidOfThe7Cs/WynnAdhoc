@@ -52,11 +52,11 @@ public enum BeaconOptions {
             String[] parts = FormatUtils.splitByAnySpecialChar(message);
             for (String part : parts) {
                 if (part.equals(opt.displayName)) {
-                    boolean alreadyExists = Core.getCurrentLootrunData().getCurrentBeaconOptions().stream()
+                    boolean alreadyExists = Core.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().stream()
                             .anyMatch(existing -> existing.baseColor.equals(opt.baseColor));
 
                     if (!alreadyExists) {
-                        Core.getCurrentLootrunData().getCurrentBeaconOptions().add(opt);
+                        Core.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().add(opt);
                         // TODO update display Config.updateHudElement(HudElements.Beacons);
                     }
                 }

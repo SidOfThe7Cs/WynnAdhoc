@@ -42,7 +42,7 @@ public enum Camps {
     }
 
     public Camp getCamp() {
-        return Core.getCurrentLootrunData()
+        return Core.INSTANCE.getCurrentLootrunData()
                 .getCampData()
                 .computeIfAbsent(this, key -> new Camp());
     }

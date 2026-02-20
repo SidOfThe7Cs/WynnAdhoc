@@ -15,6 +15,9 @@ public class TextHudElement extends HudElement {
     private transient final Supplier<String> updater;
     private transient final Runnable onClick;
 
+    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater) {
+        this(data, visibleCondition, updater, () -> {});
+    }
     public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick) {
         super(data);
         this.visibleCondition = visibleCondition;

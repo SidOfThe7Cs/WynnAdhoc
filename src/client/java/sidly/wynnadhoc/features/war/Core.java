@@ -3,15 +3,32 @@ package sidly.wynnadhoc.features.war;
 import net.minecraft.client.MinecraftClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.WarConfig;
+import sidly.wynnadhoc.config.gui.HudElementManager;
+import sidly.wynnadhoc.config.gui.TextHudElement;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.utils.DebugWindow;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Core {
     private static WarConfig config() { return ConfigManager.INSTANCE.config.war; }
+
+    private static String displayCache = "";
+    private static Set<String> last = null;
+
+
+    public static void registerHudElements() {
+        HudElementManager.register(new TextHudElement(
+                ConfigManager.INSTANCE.config.war.resourceOverlay,
+                Core::shouldShowResourceOverlay,
+                Core::updateResourceDisplay,
+                Core::onWarResourceDisplayClick)
+        );
+    }
 
     public static void onChatMessage(ChatMessageEvent event) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -138,6 +155,8 @@ public class Core {
     }
 
     public static String updateResourceDisplay() {
+        if (Objects.equals(last, DB.ownedTerritories.keySet())) return displayCache;
+
         int oreProd = 0;
         int oreConsume = 0;
 
@@ -172,11 +191,15 @@ public class Core {
             cropsConsume += territory.getCropsPerHourConsume();
         }
 
-        return String.valueOf(DB.getDisplay("§a", ResourceType.Emeralds, emeraldConsume, emeraldProd)) +
+        String result = String.valueOf(DB.getDisplay("§a", ResourceType.Emeralds, emeraldConsume, emeraldProd)) +
                 DB.getDisplay("§f", ResourceType.Ore, oreConsume, oreProd) +
                 DB.getDisplay("§6", ResourceType.Wood, woodConsume, woodProd) +
                 DB.getDisplay("§b", ResourceType.Fish, fishConsume, fishProd) +
                 DB.getDisplay("§e", ResourceType.Crops, cropsConsume, cropsProd);
+
+        last = DB.ownedTerritories.keySet();
+        displayCache = result;
+        return result;
     }
 
     public static void onWarResourceDisplayClick() {
