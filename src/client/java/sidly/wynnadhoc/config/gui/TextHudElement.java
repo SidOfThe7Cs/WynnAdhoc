@@ -4,9 +4,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class TextHudElement extends HudElement {
@@ -14,15 +17,17 @@ public class TextHudElement extends HudElement {
     private transient final Supplier<Boolean> visibleCondition;
     private transient final Supplier<String> updater;
     private transient final Runnable onClick;
+    private transient final Supplier<List<Text>> tooltipSupplier;
 
     public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater) {
-        this(data, visibleCondition, updater, () -> {});
+        this(data, visibleCondition, updater, () -> {}, null);
     }
-    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick) {
+    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick,  Supplier<List<Text>> tooltipSupplier) {
         super(data);
         this.visibleCondition = visibleCondition;
         this.updater = updater;
         this.onClick = onClick;
+        this.tooltipSupplier = tooltipSupplier;
     }
 
     @Override
@@ -59,6 +64,13 @@ public class TextHudElement extends HudElement {
 
             matrixStack.popMatrix();
         }
+        super.render(drawContext, override);
+    }
+
+    @Override
+    public List<Text> getHoverTooltip() {
+        if (tooltipSupplier == null) return super.getHoverTooltip();
+        return tooltipSupplier.get();
     }
 
     @Override

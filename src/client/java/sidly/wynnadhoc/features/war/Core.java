@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.war;
 
+import com.wynntils.core.components.Models;
 import net.minecraft.client.MinecraftClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.WarConfig;
@@ -20,7 +21,8 @@ public class Core {
                 ConfigManager.INSTANCE.config.war.resourceOverlay,
                 Core::shouldShowResourceOverlay,
                 Core::updateResourceDisplay,
-                Core::onWarResourceDisplayClick)
+                Core::onWarResourceDisplayClick,
+                DB::getSuggestedChanges)
         );
     }
 
@@ -141,7 +143,7 @@ public class Core {
             }
             if (DB.allTerritories.containsKey(title)) {
                 return true;
-            } else if (title.equals(DB.GUILD_NAME)) {
+            } else if (title.equals(Models.Guild.getGuildName())) {
                 return true;
             } else return title.equals("Territory Management");
         }

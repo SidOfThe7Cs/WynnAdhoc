@@ -2,6 +2,7 @@ package sidly.wynnadhoc.features.war;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wynntils.core.components.Models;
 import com.wynntils.models.items.items.gui.TerritoryItem;
 import com.wynntils.screens.territorymanagement.TerritoryManagementScreen;
 import com.wynntils.utils.type.Pair;
@@ -18,6 +19,7 @@ import sidly.wynnadhoc.utils.DebugWindow;
 import sidly.wynnadhoc.utils.FormatUtils;
 import sidly.wynnadhoc.utils.ItemUtils;
 
+import java.awt.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -27,19 +29,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-// TODO move stuff to core
 public class DB {
-    // TODO config
-    public static final String GUILD_NAME = "Chiefs Of Corkus";
-    public static final String GUILD_PREFIX = "HOC";
-
     public static Map<String, Territory> allTerritories;
     public static Map<String, Territory> ownedTerritories = new HashMap<>();
     // String guild prefix mapped to a map that maps territory names to territory
@@ -192,7 +188,7 @@ public class DB {
 
         if (event.screen instanceof GenericContainerScreen containerScreen) {
             String title = containerScreen.getTitle().getString();
-            if (title.equals(GUILD_NAME + ": Manage")) {
+            if (title.equals(Models.Guild.getGuildName() + ": Manage")) {
                 // get info from the guild output diamond
                 Slot slot = containerScreen.getScreenHandler().slots.get(17);
                 List<Text> tooltip = FormatUtils.getTooltip(slot.getStack());
@@ -273,17 +269,72 @@ public class DB {
         }
     }
 
-    private static Pattern upgradeCostPattern = Pattern.compile("- (\\d+) (Emeralds|Ore|Crops|Wood|Fish)\\b");
+    public static List<Text> getSuggestedChanges() {
+        if (DB.wynntilsTerritoryItems == null) return List.of();
+
+        List<Territory> noLongerOwned = new ArrayList<>();
+        List<Territory> newOwned = new ArrayList<>();
+
+        Map<String, Territory> ownedMap = DB.ownedTerritories;
+        Set<String> ownedNames = ownedMap.keySet();
+        Set<String> wynntilsNames = DB.wynntilsTerritoryItems.stream()
+                .map(TerritoryItem::getName)
+                .collect(Collectors.toSet());
+
+        // Check owned territories against wynntils
+        for (String name : ownedNames) {
+            if (!wynntilsNames.contains(name)) {
+                noLongerOwned.add(ownedMap.get(name).getCopy());
+            }
+        }
+
+        // Check wynntils territories against owned
+        for (TerritoryItem item : DB.wynntilsTerritoryItems) {
+            if (!ownedNames.contains(item.getName())) {
+                newOwned.add(DB.allTerritories.get(item.getName()).getCopy());
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Click to parse from screen and apply these changes:\n");
+
+        if (!noLongerOwned.isEmpty()) {
+            sb.append("Remove From Owned:\n");
+            noLongerOwned.forEach(sb::append);
+        }
+
+        if (!newOwned.isEmpty()) {
+            sb.append("Add To Owned:\n");
+            newOwned.forEach(sb::append);
+        }
+
+        for (TerritoryItem wynntilsTerritoryItem : DB.wynntilsTerritoryItems) {
+            String name = wynntilsTerritoryItem.getName();
+
+            Territory territory1 = DB.ownedTerritories.get(name).getCopy();
+
+            Territory territory2 = DB.allTerritories.get(name).getCopy();
+            territory2.parseFromWynntils(wynntilsTerritoryItem);
+
+            String diff = Territory.detectDifferences(territory1, territory2);
+            if (!diff.isEmpty()) {
+                sb.append(name).append(":\n").append(diff);
+            }
+        }
+
+        return Arrays.stream(sb.toString().split("\n")).map(Text::literal).collect(Collectors.toList());
+    }
+
+    private static final Pattern upgradeCostPattern = Pattern.compile("- (\\d+) (Emeralds|Ore|Crops|Wood|Fish)\\b");
+    private static final Pattern upgradeLevelPattern = Pattern.compile("\\[Lv\\. (\\d{1,2})]"); // Matches [Lv. 0] to [Lv. 99]
     private static void parseUpgrade(Upgrade upgrade, ItemStack itemStack) {
-        Pattern levelPattern = Pattern.compile("\\[Lv\\. (\\d{1,2})]"); // Matches [Lv. 0] to [Lv. 99]
-        Matcher matcher = levelPattern.matcher(itemStack.getName().getString());
+        Matcher matcher = upgradeLevelPattern.matcher(itemStack.getName().getString());
         int lvl = -1; // Default or error value
         if (matcher.find()) {
             lvl = Integer.parseInt(matcher.group(1));
         }
         if (lvl >= 0) {
             upgrade.setStackSize(lvl);
-            //System.out.println("set " + upgrade.getName() + " to level " + lvl);
         }
 
         // check if database is wrong

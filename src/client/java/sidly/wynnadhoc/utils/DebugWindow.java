@@ -4,12 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class DebugWindow {
     private static DebugWindow instance;
-    private JFrame frame = null;
-    private JTextArea textArea = null;
+    private final JTextArea textArea;
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private String lastMessage = "";
 
     public static DebugWindow getInstance() {
         // Todo config
@@ -23,7 +24,7 @@ public class DebugWindow {
     public DebugWindow() {
         // Todo config
 
-        frame = new JFrame("WynnTools Debug Log");
+        JFrame frame = new JFrame("WynnTools Debug Log");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -44,9 +45,11 @@ public class DebugWindow {
         if (textArea == null) return;
 
         SwingUtilities.invokeLater(() -> {
+            if (Objects.equals(message, lastMessage)) return;
             String time = "[" + level + "] [" + LocalTime.now().format(timeFormat) + "] ";
             textArea.append(time + message + "\n");
             textArea.setCaretPosition(textArea.getDocument().getLength());
+            lastMessage = message;
         });
     }
 

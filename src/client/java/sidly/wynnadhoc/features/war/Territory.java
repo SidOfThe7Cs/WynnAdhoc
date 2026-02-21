@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.war;
 
+import com.wynntils.core.components.Models;
 import com.wynntils.models.items.items.gui.TerritoryItem;
 import com.wynntils.models.territories.type.TerritoryUpgrade;
 import sidly.wynnadhoc.utils.DebugWindow;
@@ -95,6 +96,13 @@ public class Territory {
         double rate = bonusUpgrades.upgrades.getByName("Resource Rate").getEffect();
         double resourceIncrease = ((4.0 / rate) * (1.0 + efficiency / 100.0));
         resourceIncrease *= (1.0 + treasuryBonus / 100);
+        /*
+        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "eff: " + efficiency +
+                " rate: " + rate +
+                " incr: " + (4.0 / rate) + " * " + (1.0 + efficiency / 100.0) + " = " + ((4.0 / rate) * (1.0 + efficiency / 100.0)) +
+                " tres: " + " * " + (1.0 + treasuryBonus / 100) + " = " + resourceIncrease);
+
+         */
         return resourceIncrease;
     }
 
@@ -209,7 +217,7 @@ public class Territory {
         resetToDefaults();
 
         this.treasuryBonus = terr.getTreasuryBonus();
-        this.holder = DB.GUILD_PREFIX;
+        this.holder = Models.Guild.getGuildName();
         this.setHQ(terr.isHeadquarters());
 
         Map<TerritoryUpgrade, Integer> upgrades = terr.getUpgrades();

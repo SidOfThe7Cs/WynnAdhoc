@@ -9,7 +9,7 @@ public enum MissionOptions {
     Materialism("Materialism", "All Challenges now additionally have the Yellow Beacon effect."),
     Hoarder("Hoarder", "After every time you are offered 30 items from Chests, get a random Boon."),
     JestersTrick("Jester's Trick", "After being offered 20 Items from Flying Chests, randomly get +3 Pulls, +1 Boon, +1 Curse, or +30s."),
-    // TODO
+    // TODO add support
     InterestScheme("Interest Scheme", "Gaining 2 Pulls adds an additional Flying Chest to completing your next Yellow Beacon. (Max 12)"),
     ThrillSeeker("Thrill Seeker", "Red Beacons will reward 1 Boon out of 2."),
     // N/A
@@ -22,7 +22,7 @@ public enum MissionOptions {
     CleansingRitual("Cleansing Ritual", "After finishing a Challenge, consume 1 Curse to gain +1 Challenge."),
     Equilibrium("Equilibrium", "After getting 2 Curses, gain a random Boon."),
     InnerPeace("Inner Peace", "Curses are now half as effective."),
-    // TODO
+    // TODO add support
     Optimism("Optimism", "Gain +1 Pull for every beacon you reroll."),
     //
     BackupBeat("Backup Beat", "Every time you add +360s to your timer, gain +1 Beacon Reroll."),

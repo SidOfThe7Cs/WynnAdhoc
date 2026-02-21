@@ -84,11 +84,18 @@ public class WynnAdhocClient implements ClientModInitializer {
 }
 
 
-/*TODO
-on hover / click for war res display also why doesnt it always say full/empty in
+/*TODO main list
 DebugWindow config
+store parent screen on draggablehudscreen
+remove wynntills spam
+add hpr tick
+better chest tracking
 save and load lootrun data
-fix outer void database
-split mod
+Refactor render with renderable interface and make it use screen % with pixel origin offset
+resource tick display
 auto update checker
+split mod
+spellcaster with queue and display and safe cast
+fix outer void database
+why doesnt war res always display full/empty in + add loadout support + check total guild cost / output diamond and compare
  */

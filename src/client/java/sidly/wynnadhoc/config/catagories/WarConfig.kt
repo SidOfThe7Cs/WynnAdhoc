@@ -6,7 +6,6 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
 import sidly.wynnadhoc.config.gui.HudElementData
 
 class WarConfig {
-
     @Expose
     @JvmField
     @ConfigOption(name = "Show War Resource Overlay", desc = "<-")
