@@ -20,4 +20,14 @@ public class ChestConfig {
     @ConfigOption(name = "Max Distance", desc = "Max distance to show chest esp")
     @ConfigEditorSlider(minValue = 0.0F, maxValue = 1000.0F, minStep = 5.0F)
     public double maxEspDistance = 150.0F;
+
+    @Expose
+    @ConfigOption(name = "Track Chests", desc = "Track all the items you get from loot chests")
+    @ConfigEditorBoolean
+    public boolean trackChests = true;
+
+    @Expose
+    @ConfigOption(name = "Display Level", desc = "Display the % of the items you have gotten from a chest that are in each level range")
+    @ConfigEditorBoolean
+    public boolean displayLevel = true;
 }

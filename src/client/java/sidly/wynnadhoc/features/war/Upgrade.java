@@ -1,5 +1,8 @@
 package sidly.wynnadhoc.features.war;
 
+import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.utils.DebugWindow;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +43,7 @@ public class Upgrade {
         if (stackSize != this.stackSize) {
             //DebugWindow.getInstance().log("changed upgrade " + this.name + " from lvl " + this.stackSize + " to lvl " + stackSize);
             this.stackSize = stackSize;
+            ConfigManager.INSTANCE.config.war.resourceOverlay.updateDisplay();
         }
     }
 

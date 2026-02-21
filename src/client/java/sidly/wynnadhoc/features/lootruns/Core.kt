@@ -1,15 +1,18 @@
 package sidly.wynnadhoc.features.lootruns
 
-import com.wynntils.core.WynntilsMod
 import com.wynntils.core.components.Models
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
+import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity
+import net.minecraft.item.Item.TooltipContext
 import net.minecraft.item.ItemStack
+import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import sidly.wynnadhoc.config.ConfigManager
@@ -39,7 +42,7 @@ object Core {
 
     fun getCurrentLootrunData(): LootrunData? {
         try {
-            if (WynntillsEventBusAccessor.getEventBus() == null) return null;
+            if (WynntillsEventBusAccessor.getEventBus() == null) return null
             val uuid = Models.Character.id
             return ConfigManager.INSTANCE.getLootrun(uuid)
         } catch (_: Exception) {
@@ -100,14 +103,14 @@ object Core {
             val siblings = rootText.siblings
 
             // 1. Check if the first sibling is a "marker"
-            if (!siblings.isEmpty() && siblings.get(0).style.getFont() != null && siblings.get(0).style
+            if (!siblings.isEmpty() && siblings[0].style.getFont() != null && siblings[0].style
                     .getFont().toString() == "minecraft:marker"
             ) {
                 // 3. Extract the distance
 
                 var distance = -1
                 if (siblings.size >= 3) {
-                    val distanceText = siblings.get(2)
+                    val distanceText = siblings[2]
                     val distanceStr = distanceText.string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
                         .toTypedArray()[0] // "246m"
                     distance = distanceStr.replace("[^0-9]".toRegex(), "").toInt() // 246
@@ -117,7 +120,7 @@ object Core {
 
 
                 // 2. Get the color
-                val markerSibling = siblings.get(0)
+                val markerSibling = siblings[0]
                 for (nested in markerSibling.siblings) {
                     if (nested.style.getColor() != null) {
                         val color = nested.style.getColor()!!.rgb
@@ -142,7 +145,7 @@ object Core {
                             }
                         }
                         if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
-                            currentBeaconOptionsFromWaypoints.put(baseColor, distance)
+                            currentBeaconOptionsFromWaypoints[baseColor] = distance
                         }
                         //String symbol = nested.getString();
                         //symbol = Utils.convertCustomCharacterToUnicode(symbol);
@@ -156,7 +159,7 @@ object Core {
                 val markerComponents = markerSibling.siblings
                 if (markerComponents.size > 1) {
                     // The symbol is in the second nested component (index 1)
-                    val symbolComponent = markerComponents.get(1)
+                    val symbolComponent = markerComponents[1]
                     val symbolText = symbolComponent.string
 
                     val lastSymbol =
@@ -654,11 +657,13 @@ object Core {
     }
 
     fun onScreenRender(event: ScreenRenderEvent) {
-        if (event.screen.getScreenHandler() !is GenericContainerScreenHandler) return
+        val screen = event.screen
+        if (screen !is HandledScreen<*>) return
+        if (screen.getScreenHandler() !is GenericContainerScreenHandler) return
         val data = getCurrentLootrunData() ?: return
 
-        val slot5: ItemStack = event.screen.getScreenHandler().getSlot(5).stack
-        val slot4: ItemStack = event.screen.getScreenHandler().getSlot(4).stack
+        val slot5: ItemStack = screen.getScreenHandler().getSlot(5).stack
+        val slot4: ItemStack = screen.getScreenHandler().getSlot(4).stack
 
         val loreList: MutableList<Text> = ArrayList<Text>()
 
@@ -693,6 +698,48 @@ object Core {
                     }
                     camp.camp.setPossibleSacs(savedPulls)
                 }
+            }
+        }
+    }
+
+    fun onSlotClicked(event: SlotClickedEvent) {
+        val data = getCurrentLootrunData() ?: return
+        var closestCamp: Camps? = data.activeCamp
+        if (event.player == null || event.handler == null) return
+
+        if (!Camps.isNearAnyCamp(event.player.entityPos, 15.0)) return
+        if (closestCamp == null) {
+            data.setActiveCamp()
+            closestCamp = data.activeCamp
+            if (closestCamp == null) {
+                System.err.println("Camp was null when sacs were clicked")
+                return
+            }
+        }
+
+        if (event.slotIndex >= 0 && event.slotIndex < event.handler.slots.size) {
+            val slot: Slot = event.handler.slots[event.slotIndex]
+            val clickedStack = slot.stack
+            val tooltip = clickedStack.getTooltip(TooltipContext.DEFAULT, event.player, TooltipType.BASIC)
+            if (tooltip.isEmpty()) return
+
+            // 5 since there is always the claim button in 3 and no rerolls
+            // might as well also check 4 even though you should never sac if you have rerolls left
+            if (event.slotIndex == 5 || event.slotIndex == 4) {
+                if (tooltip[0].string == "§a§lConfirm Sacrifice") {
+                    closestCamp.camp.sac()
+                }
+            }
+            //3 if only rerolls or only sacs and 2 if both
+            // so you have to close the chest after claiming rewards so this is pointless
+            if (event.slotIndex == 3 || event.slotIndex == 2) {
+                if (tooltip[0].string == "§a§lConfirm Rewards") { // confirm rewards
+                    closestCamp.camp.resetSacs()
+                }
+            }
+            // when you have no sacs or rerolls this is the only button
+            if (event.slotIndex == 4 && tooltip[0].string == "§c§lClose Chest") {
+                closestCamp.camp.resetSacs()
             }
         }
     }

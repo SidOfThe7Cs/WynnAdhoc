@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardEntry;
 import net.minecraft.scoreboard.ScoreboardObjective;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ClientTickEvent;
 import sidly.wynnadhoc.features.lootruns.enums.LootrunStatus;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
@@ -177,12 +178,12 @@ public class ScoreboardInfo {
                 if (!isMissionInProgress && !missionLastFrame.isEmpty()) {
                     Core.INSTANCE.onMissionCompleted(missionLastFrame);
                     missionInProgress = "";
-                    // TODO update display
+                    ConfigManager.INSTANCE.config.lootrun.missionOverlay.updateDisplay();
                 }
                 if (!isTrialInProgress && !trialLastFrame.isEmpty()) {
                     Core.INSTANCE.onTrialCompleted(trialLastFrame);
                     trialInProgress = "";
-                    // TODO update display
+                    ConfigManager.INSTANCE.config.lootrun.missionOverlay.updateDisplay();
                 }
 
                 index = -1;

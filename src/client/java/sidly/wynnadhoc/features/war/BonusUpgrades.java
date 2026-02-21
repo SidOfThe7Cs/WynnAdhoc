@@ -11,7 +11,7 @@ public class BonusUpgrades {
         upgrades.getBySlot(strongerMinionsIndex).addLevel(1, 150, 200);
         upgrades.getBySlot(strongerMinionsIndex).addLevel(2, 200, 400);
         upgrades.getBySlot(strongerMinionsIndex).addLevel(3, 250, 800);
-        upgrades.getBySlot(strongerMinionsIndex).addLevel(4, 300, 16000);
+        upgrades.getBySlot(strongerMinionsIndex).addLevel(4, 300, 1600);
 
         int towerMultiAttacksIndex = 3;
         upgrades.add("Tower Multi-Attacks", towerMultiAttacksIndex, ResourceType.Fish);

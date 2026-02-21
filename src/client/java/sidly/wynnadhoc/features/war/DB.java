@@ -8,6 +8,7 @@ import com.wynntils.utils.type.Pair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import sidly.wynnadhoc.config.ConfigManager;
@@ -15,6 +16,7 @@ import sidly.wynnadhoc.event.ScreenRenderEvent;
 import sidly.wynnadhoc.mixin.client.accessors.TerritoryManagementScreenAccessor;
 import sidly.wynnadhoc.utils.DebugWindow;
 import sidly.wynnadhoc.utils.FormatUtils;
+import sidly.wynnadhoc.utils.ItemUtils;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +36,7 @@ import java.util.regex.Pattern;
 
 // TODO move stuff to core
 public class DB {
+    // TODO config
     public static final String GUILD_NAME = "Chiefs Of Corkus";
     public static final String GUILD_PREFIX = "HOC";
 
@@ -50,8 +53,8 @@ public class DB {
 
         try {
             Gson gson = new Gson();
-            InputStream input = DB.class.getClassLoader().getResourceAsStream("assets/wynntools/territoryDefaults.json"); // TODO make exist
-            Reader reader = new InputStreamReader(input); // TODO handle if it doesnt as well
+            InputStream input = DB.class.getClassLoader().getResourceAsStream("assets/wynnadhoc/territoryDefaults.json");
+            Reader reader = new InputStreamReader(input);
 
 
             Type listType = new TypeToken<List<JsonTerritoryData>>() {
@@ -228,6 +231,7 @@ public class DB {
                         }
                     }
                 }
+                ConfigManager.INSTANCE.config.war.resourceOverlay.updateDisplay();
             }
 
             int colonIndex = title.indexOf(':');
@@ -239,7 +243,6 @@ public class DB {
                 screenType = title.substring(colonIndex + 1).trim();
             }
 
-            // TODO check real value against db
             if (allTerritories.containsKey(name)) {
                 int size = containerScreen.getScreenHandler().getInventory().size();
                 if (screenType.equals("Guild Tower")) {
@@ -248,18 +251,7 @@ public class DB {
                         if (terr != null) {
                             Upgrade upgrade = terr.towerUpgrades.upgrades.getBySlot(i);
                             if (upgrade != null) {
-                                String upgradeName = containerScreen.getScreenHandler().getSlot(i).getStack().getName().getString();
-
-                                Pattern levelPattern = Pattern.compile("\\[Lv\\. (\\d{1,2})]"); // Matches [Lv. 0] to [Lv. 99]
-                                Matcher matcher = levelPattern.matcher(upgradeName);
-                                int lvl = -1; // Default or error value
-                                if (matcher.find()) {
-                                    lvl = Integer.parseInt(matcher.group(1));
-                                }
-                                if (lvl >= 0) {
-                                    upgrade.setStackSize(lvl);
-                                    //System.out.println("set " + upgrade.getName() + " to level " + lvl);
-                                }
+                                parseUpgrade(upgrade, containerScreen.getScreenHandler().getSlot(i).getStack());
                             }
                         }
                     }
@@ -269,18 +261,7 @@ public class DB {
                         if (terr != null) {
                             Upgrade upgrade = terr.bonusUpgrades.upgrades.getBySlot(i);
                             if (upgrade != null) {
-                                String upgradeName = containerScreen.getScreenHandler().getSlot(i).getStack().getName().getString();
-
-                                Pattern levelPattern = Pattern.compile("\\[Lv\\. (\\d{1,2})]"); // Matches [Lv. 0] to [Lv. 99]
-                                Matcher matcher = levelPattern.matcher(upgradeName);
-                                int lvl = -1; // Default or error value
-                                if (matcher.find()) {
-                                    lvl = Integer.parseInt(matcher.group(1));
-                                }
-                                if (lvl >= 0) {
-                                    upgrade.setStackSize(lvl);
-                                    //System.out.println("set " + upgrade.getName() + " to level " + lvl);
-                                }
+                                parseUpgrade(upgrade, containerScreen.getScreenHandler().getSlot(i).getStack());
                             }
                         }
                     }
@@ -290,6 +271,46 @@ public class DB {
             }
             ConfigManager.INSTANCE.config.war.resourceOverlay.updateDisplay();
         }
+    }
+
+    private static Pattern upgradeCostPattern = Pattern.compile("- (\\d+) (Emeralds|Ore|Crops|Wood|Fish)\\b");
+    private static void parseUpgrade(Upgrade upgrade, ItemStack itemStack) {
+        Pattern levelPattern = Pattern.compile("\\[Lv\\. (\\d{1,2})]"); // Matches [Lv. 0] to [Lv. 99]
+        Matcher matcher = levelPattern.matcher(itemStack.getName().getString());
+        int lvl = -1; // Default or error value
+        if (matcher.find()) {
+            lvl = Integer.parseInt(matcher.group(1));
+        }
+        if (lvl >= 0) {
+            upgrade.setStackSize(lvl);
+            //System.out.println("set " + upgrade.getName() + " to level " + lvl);
+        }
+
+        // check if database is wrong
+        String lineMatch = "Cost (per hour):";
+        List<Text> tooltip = ItemUtils.getTooltip(itemStack);
+        for (int i = 0; i <= tooltip.size() - 1; i++) {
+            if (FormatUtils.removeColorCodes(tooltip.get(i).getString()).equals(lineMatch)) {
+                String costLine = FormatUtils.removeNonAscii(FormatUtils.removeColorCodes(tooltip.get(i + 1).getString()));
+                Matcher costMatcher = upgradeCostPattern.matcher(costLine);
+                if (costMatcher.matches()) {
+                    int correctCost = Integer.parseInt(costMatcher.group(1));
+                    ResourceType correctType = ResourceType.valueOf(costMatcher.group(2));
+
+                    ResourceType dbType = upgrade.getResourceType();
+                    int dbCost = upgrade.getCost();
+
+                    if (dbType != correctType || dbCost != correctCost) {
+                        DebugWindow.getInstance().log(DebugWindow.Priority.ERROR,
+                                "Database is wrong for " + upgrade.getName() + " lvl " + upgrade.getStackSize() +
+                                "\nis " + dbCost + " " + dbType +
+                                "\nshould be " + correctCost + " " + correctType);
+                    }
+                }
+                break;
+            }
+        }
+
     }
 
     private static double getPercent(int consume, int produce) {
@@ -347,12 +368,6 @@ public class DB {
             }
         }
         return null;
-    }
-
-    // TODO update display not on client tick please
-    public static void onClientTick(MinecraftClient client) {
-        // might as well do this here so its only called 20 times per second
-        //Config.updateHudElement(HudElements.War_Resources); // only updates when visible
     }
 
     public static class TerritoryApiResponse extends HashMap<String, TerritoryInfo> {

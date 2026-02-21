@@ -1,0 +1,2905 @@
+[
+  {
+    "territoryName": "Ragni",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ragni Main Entrance",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Emerald Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ragni North Entrance",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Katoa Ranch",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Crops"
+    ]
+  },
+  {
+    "territoryName": "Coastal Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Maltic Coast",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Maltic",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Pigmen Ravines",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Little Wood",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Time Valley",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Abandoned Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Sanctuary Bridge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Road to Time Valley",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Nivla Woods",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Nivla Woods Exit",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Elkurn",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Road to Elkurn",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Corrupted Road",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Detlas Suburbs",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Detlas",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Tower of Ascension",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Half Moon Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Crops"
+    ]
+  },
+  {
+    "territoryName": "Mage Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Twain Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Twain Mansion",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Bob's Tomb",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Temple of Legends",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Mummy's Tomb",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Crops"
+    ]
+  },
+  {
+    "territoryName": "Bremminglar",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Lion Lair",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Ancient Nemract",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Nemract Cathedral",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Cathedral Harbour",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Rooster Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Zhight Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Selchar",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Pirate Town",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Dujgon Nation",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Nodguj Nation",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Maro Peaks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Tree Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Ternaves",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Nesaak Transition",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Desolate Valley",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Plains Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Mine Base Plains",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Cinfras",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Olux",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Olux",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Orc Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Orc Road",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Meteor Crater",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Iron Road",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Goblin Plains West",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Llevigar Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Forgotten Path",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Goblin Plains East",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Mantis Nest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Path to Cinfras",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Gelibord",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Twisted Housing",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Kander",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Mesquis Tower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Kander Mines",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Path to Talor",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Dark Forest Village",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Lexdale",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Fungal Grove",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Decayed Basin",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Heart of Decay",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Mushroom Hill",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Fallen Village",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Guild Hall",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Cinfras's Small Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Gert Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Jitak's Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Burning Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Burning Airship",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Thanos",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Thanos Exit",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Canyon Dropoff",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Krolton's Cave",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Canyon High Path",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Kandon-Beda",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Kandon Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Cliffside Passage North",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Ranol's Farm",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Thesead Suburbs",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Thesead",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Eltom",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Crater Descent",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Ahmsord",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Temple Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Snail Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Corkus City",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Corkus Castle",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Fallen Factory",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Corkus City Mine",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Legendary Island",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Ruined Houses",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Avos Temple",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Bloody Beach",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Corkus Outskirts",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Frozen Fort",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Sky Castle",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Kandon Ridge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Old Coal Mine",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Dragonling Nests",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Wood"
+    ]
+  },
+  {
+    "territoryName": "Astraulus' Tower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Molten Reach",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Ahmsord Outskirts",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Swamp Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Angel Refuge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Wybel Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Central Islands",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Sky Island Ascent",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sky Falls",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Jofash Tunnel",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Jofash Docks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Santa's Hideout",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Lusuco",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Icy Descent",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Cinfras Outskirts",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Rodoroc",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Llevigar",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Regular Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Herb Cave",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Twisted Ridge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Icy Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Royal Gate",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Fish"
+    ]
+  },
+  {
+    "territoryName": "Fleris Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Wood"
+    ]
+  },
+  {
+    "territoryName": "Orc Battlegrounds",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Abandoned Pass",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Lost Atoll",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Fish"
+    ]
+  },
+  {
+    "territoryName": "Southern Outpost",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Corkus Sea Cove",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Worm Tunnel",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Grey Ruins",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Forgotten Town",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Forest of Eyes",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Sinister Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Lutho",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Paths of Sludge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Toxic Drip",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Toxic Caves",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Gateway to Nothing",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Void Valley",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Final Step",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Bizarre Passage",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "The Gate",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Crops"
+    ]
+  },
+  {
+    "territoryName": "Heavenly Ingress",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Luminous Plateau",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Primal Fen",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Azure Frontier",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Path to Light",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Nexus of Light",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Light Peninsula",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Field of Life",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Nivla Woods",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Riverbank Knoll",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ragni Countryside South",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ragni Countryside North",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Farmers Settlement",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Nomads' Refuge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Ragni South Entrance",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sulphuric Hollow",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Tempo Town",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Blackstring Den",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Alekin",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Blooming Boulders",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Arachnid Woods",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Roots of Corruption",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Akias Ruins",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Corrupted Orchard",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ancient Waterworks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Jagged Foothills",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Webbed Fracture",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Wolves' Den",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Frigid Crossroads",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Florist's Hut",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Frozen Homestead",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Frosty Spikes",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Nesaak",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Icy Vigil",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Abandoned Lumberyard",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Great Bridge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Jungle Entrance",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Apprentice Huts",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Iboju Village",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Troms Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Troms",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Rymek",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sunrise Plateau",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Eagle Tribe",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ruined Prospect",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sunset Plateau",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Owl Tribe",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Invaded Barracks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Barren Sands",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Accursed Dunes",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Cascading Oasis",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Gloopy Cave",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ruined Villa",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ancient Excavation",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Almuj",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Dusty Pit",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Almuj Slums",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ternaves Tunnel",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Almuj",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Lava Springs",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Savannah Plains",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Nemract",
+    "resources": [
+      "+18000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Rocky Shore",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Mount Wynn Inn",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Nested Cliffside",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Razed Inn",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Bear Zoo",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Durum Barley Islet",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Durum Oat Islet",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Durum Malt Islet",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Skien's Island",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Lifeless Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Disturbed Crypt",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Derelict Mansion",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Dreary Docks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Volcanic Excavation",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Black Road",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Abandoned Mines Entrance",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Mining Base Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Abandoned Mines",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Corrupted River",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Essren's Hut",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Corrupted Warfront",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Scorched Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Corrupted Tower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Gavel",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Llevigar Gate",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sanguine Spider Den",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Llevigar Stables",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Cliffhearth Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "The Hive",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Trunkstump Goblin Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Meteor Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Brigand Outpost",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Stonecave Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Collapsed Emerald Mine",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Ore"
+    ]
+  },
+  {
+    "territoryName": "Mudspring Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Floral Peaks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Ogre Den",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Witching Road",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Maiden Tower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Infested Sinkhole",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Forgotten Burrows",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Bloody Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Lizardman Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Olux Lumberyard",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Lizardman Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Swamp Mountain Arch",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Shady Shack",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Scorpion Nest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Secluded Workshop",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Naga Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Path to the Grootslangs",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Karoc Quarry",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Harnort Compound",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Shineridge Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Bucie Waterfall",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sunspark Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Sablestone Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Loamsprout Orc Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Bucie",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Centerworld Fortress",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Road to Light Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Efilim",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Efilim Crossroads",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Minotaur Barbecue",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Path to the Forgery",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Guardian of the Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Wood Sprite Hideaway",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Path to Light's Secret",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Aldorei Valley Outskirts",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Myconid Descent",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Chasm Chokepoint",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Luxuriant Pond",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Dodegar's Forge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Unicorn Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "The Forgery",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Collapsed Bridge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Mycelial Expanse",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "The Shiar",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Chasm Overlook",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Enchanted River",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Gelibord Watermill",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Castle Dullahan",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Fading Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Overtaken Outpost",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Mangled Lake",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Caritat Mansion",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Lexdale Penitentiary",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Wood"
+    ]
+  },
+  {
+    "territoryName": "Path to the Penitentiary",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Faltach Manor",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Viscera Pits",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Talor Cemetery",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Old Crossroads",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Cinfras",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Weird Clearing",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Big Mushroom Cave",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Paper Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Silverbull Headquarters",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Celestial Impact",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Gylia Fisherman Camp",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Cosmic Fissures",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Gylia Research Cabin",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Gylia Lakehouse",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Gylia Watchtower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Aldorei Springs",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Outer Aldorei Town",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Aldorei Valley",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Aldorei River",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Aldorei Cliffside Waterfalls",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Waterfall Cave",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Timeworn Arch",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Pine Pillar Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Evergreen Outbreak",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Secluded Ponds",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Path to Thanos",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Kitrios Armory",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Kitrios Barracks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Colourful Mountaintop",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Upper Thanos",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Molten Passage",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Path to Ozoth's Spire",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Inhospitable Mountain",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Bandit Cave",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Cascading Basins",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Cyclospordial Hazard",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Winding Waters",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Panda Path",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Panda Kingdom",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Parasitic Slime Mine",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Turncoat Turnabout",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Wayward Split",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Perilous Passage",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Perilous Grotto",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Thanos Underpass",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Canyon Walkway",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Wizard's Warning",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Ore"
+    ]
+  },
+  {
+    "territoryName": "Harpy's Haunt North",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Fleris Cranny",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Troll Tower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Illuminant Path",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Bandit's Toll",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Wizard Tower",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Rocky Bend",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Ore"
+    ]
+  },
+  {
+    "territoryName": "Housing Crisis",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Featherfall Cliffs",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Elefolk Stomping Grounds",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Path to the Dojo",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Wanderer's Way",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Workshop Glade",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Bantisu Approach",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Bantisu Air Temple",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Elephelk Trail",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Protector's Pathway",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Cliffside Passage South",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Thesead Underpass",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Thesead",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Displaced Housing",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Cherry Blossom Grove",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entrance to Molten Heights",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Dogun Ritual Site",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Freezing Heights",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Lava Lakes",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Dragonbone Graveyard",
+    "resources": [
+      "+1800 Emeralds",
+      "+900 Ore",
+      "+900 Crops",
+      "+900 Fish",
+      "+900 Wood"
+    ]
+  },
+  {
+    "territoryName": "Entamis Village",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Fountain of Youth",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Delnar Manor",
+    "resources": [
+      "+9000 Emeralds",
+      "+7200 Wood"
+    ]
+  },
+  {
+    "territoryName": "Corkus City Crossroads",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Road to Mine",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Industrial Clearing",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Corkus Forest",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Picnic Pond",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Avos Territory",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Overrun Docks",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Retrofitted Manufactory",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Relos",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Founder's Statue",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Fish"
+    ]
+  },
+  {
+    "territoryName": "Path to Ahmsord",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Aerial Descent",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Raiders' Stronghold",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Raiders' Airbase",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Lighthouse Lookout",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Felroc Fields",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Balloon Airbase",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Silent Road",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Broken Road",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Otherworldly Monolith",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Monte's Village",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  },
+  {
+    "territoryName": "Durum Isles Barn",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Volcanic Isles",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Troll's Challenge",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Harpy's Haunt South",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Hobgoblin's Hoard",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Ore"
+    ]
+  },
+  {
+    "territoryName": "Pyroclastic Flow",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Crops"
+    ]
+  },
+  {
+    "territoryName": "Ava's Workshop",
+    "resources": [
+      "+9000 Emeralds",
+      "+3600 Wood"
+    ]
+  }
+]

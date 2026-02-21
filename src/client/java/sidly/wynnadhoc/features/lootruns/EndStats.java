@@ -1,11 +1,15 @@
 package sidly.wynnadhoc.features.lootruns;
 
+import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.config.catagories.LootrunConfig;
 import sidly.wynnadhoc.utils.DebugWindow;
 
 public class EndStats {
     private int endPulls = 0;
     private int endSacs = 0;
     private int endRerolls = 0;
+
+    private static LootrunConfig config() { return ConfigManager.INSTANCE.config.lootrun; }
 
     public EndStats() {
     }
@@ -26,18 +30,18 @@ public class EndStats {
         DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"added " + amount + " end pulls");
         this.endPulls += amount;
         Core.INSTANCE.getCurrentLootrunData().addPullsSinceLastYellow(amount);
-        // TODO update display Config.updateHudElement(HudElements.Missions);
-        // TODO update display Config.updateHudElement(HudElements.Lootrun_End_Rewards);
+        config().missionOverlay.updateDisplay();
+        config().endRewardsOverlay.updateDisplay();
     }
 
     public void addEndSacs(int amount) {
         this.endSacs += amount;
-        // TODO update display Config.updateHudElement(HudElements.Lootrun_End_Rewards);
+        config().endRewardsOverlay.updateDisplay();
     }
 
     public void addEndRerolls(int amount) {
         this.endRerolls += amount;
-        // TODO update display Config.updateHudElement(HudElements.Lootrun_End_Rewards);
+        config().endRewardsOverlay.updateDisplay();
     }
 
     public void clearEndSacs() {

@@ -1,6 +1,10 @@
 package sidly.wynnadhoc.config.gui;
 
-import sidly.wynnadhoc.event.GuiRenderOnTopEvent;
+import net.minecraft.client.gui.Click;
+import net.minecraft.util.Pair;
+import sidly.wynnadhoc.event.HudRenderOnTopEvent;
+import sidly.wynnadhoc.event.MouseButtonEvent;
+import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,9 +26,24 @@ public class HudElementManager {
         hudElements.put(e.name(), e);
     }
 
-    public static void onHudRender(GuiRenderOnTopEvent event) {
+    public static void onHudRender(HudRenderOnTopEvent event) {
         for (HudElement e : getHudElements()) {
             e.render(event.context, false);
+        }
+    }
+
+    public static void onMouseEvent(MouseButtonEvent event) {
+        if (!event.isLeftClick()) return;
+        if (!event.isPress()) return;
+
+        Pair<Double, Double> mousePos = GuiUtils.getScaledMousePos();
+        if (mousePos == null) return;
+
+        for (HudElement hudElement : getHudElements()) {
+            if (hudElement != null && hudElement.isVisible() && hudElement.isHovering(mousePos.getLeft(), mousePos.getRight())) {
+                Click click = new Click(mousePos.getLeft(), mousePos.getRight(), event.input);
+                hudElement.onMouseClicked(click, false);
+            }
         }
     }
 }

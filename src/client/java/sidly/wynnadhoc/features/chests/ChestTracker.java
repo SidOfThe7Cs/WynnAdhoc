@@ -22,7 +22,9 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.SegmentedSaveManager;
+import sidly.wynnadhoc.config.catagories.ChestConfig;
 import sidly.wynnadhoc.event.ChestItemsLoadedEvent;
 import sidly.wynnadhoc.utils.FormatUtils;
 import sidly.wynnadhoc.utils.ItemUtils;
@@ -39,6 +41,7 @@ public class ChestTracker {
     public static File saveFolder = Paths.get("config", "sidly/chest_loot_data").toFile();
     public static SegmentedSaveManager saveManager = new SegmentedSaveManager(saveFolder, 100000, 1000000);
     public static List<ChestRecord> currentLoaded = loadLatest();
+    private static ChestConfig config() { return ConfigManager.INSTANCE.config.chest; }
 
     private static BlockPos lastClickedChest = null;
 
@@ -56,8 +59,7 @@ public class ChestTracker {
     }
 
     public static void onChestItemsLoaded(ChestItemsLoadedEvent event) {
-        if (Models.Container.getCurrentContainer() instanceof ChallengeRewardContainer ||
-                Models.Container.getCurrentContainer() instanceof LootChestContainer) {
+        if (Models.Container.getCurrentContainer() instanceof LootChestContainer && config().trackChests) {
 
             if (lastClickedChest == null) return;
 
@@ -240,10 +242,10 @@ public class ChestTracker {
         }
     }
 
-
+    // TODO make draggable list with even more options like possible mythics
     public static void onTextDisplaySync(DisplayEntity.TextDisplayEntity textDisplay) {
         String textDisplayText = textDisplay.getText().getString();
-        if (textDisplayText.contains("Loot Chest") || textDisplayText.contains("Challenge Rewards")) {
+        if (textDisplayText.contains("Loot Chest") && config().displayLevel) {
             MutableText copy = textDisplay.getText().copy();
             BlockPos chestPos = LocationUtils.getBlockUnderVec3d(textDisplay.getEntityPos());
             List<ChestRecord> allRecordsForChest = getAllRecordsForChest(chestPos);

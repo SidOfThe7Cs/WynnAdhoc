@@ -46,12 +46,12 @@ public class Camp {
     public void sac() {
         sacs = possibleSacs;
         possibleSacs = 0;
-        // TODO update display
+        // update display sac memory
     }
 
     public void resetSacs() {
         sacs = 0;
         possibleSacs = 0;
-        // TODO update display
+        // update display sac memory
     }
 }

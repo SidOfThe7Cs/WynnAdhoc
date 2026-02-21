@@ -9,17 +9,11 @@ import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.utils.DebugWindow;
 
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Core {
     private static WarConfig config() { return ConfigManager.INSTANCE.config.war; }
-
-    private static String displayCache = "";
-    private static Set<String> last = null;
-
 
     public static void registerHudElements() {
         HudElementManager.register(new TextHudElement(
@@ -155,7 +149,7 @@ public class Core {
     }
 
     public static String updateResourceDisplay() {
-        if (Objects.equals(last, DB.ownedTerritories.keySet())) return displayCache;
+        //if (Objects.equals(last, DB.ownedTerritories.keySet())) return displayCache;
 
         int oreProd = 0;
         int oreConsume = 0;
@@ -197,8 +191,6 @@ public class Core {
                 DB.getDisplay("§b", ResourceType.Fish, fishConsume, fishProd) +
                 DB.getDisplay("§e", ResourceType.Crops, cropsConsume, cropsProd);
 
-        last = DB.ownedTerritories.keySet();
-        displayCache = result;
         return result;
     }
 

@@ -4,15 +4,25 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ChatMixin",
+    "ClientPlayNetworkHandlerMixin",
     "GameRendererInvoker",
-    "HandledScreenMixin",
+    "ScreenMixin",
+    "HudMixin",
     "KeyboardMixin",
+    "MinecraftClientMixin",
+    "MouseMixin",
+    "SlotClickedMixin",
+    "StatusEffectMixin",
+    "WynntilsScreenMixin",
     "accessors.HandledScreenAccessor",
     "accessors.TerritoryManagementScreenAccessor",
+    "accessors.TextDisplayEntityAccessor",
     "accessors.WynntillsEventBusAccessor",
     "Invoker.IsFavoritedInvoker"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+  ]
 }

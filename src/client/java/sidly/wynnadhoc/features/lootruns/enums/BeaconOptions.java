@@ -57,7 +57,7 @@ public enum BeaconOptions {
 
                     if (!alreadyExists) {
                         Core.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().add(opt);
-                        // TODO update display Config.updateHudElement(HudElements.Beacons);
+                        // update display Config.updateHudElement(HudElements.Beacons);
                     }
                 }
             }
