@@ -19,7 +19,6 @@ import sidly.wynnadhoc.utils.DebugWindow;
 import sidly.wynnadhoc.utils.FormatUtils;
 import sidly.wynnadhoc.utils.ItemUtils;
 
-import java.awt.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -276,8 +275,10 @@ public class DB {
         List<Territory> newOwned = new ArrayList<>();
 
         Map<String, Territory> ownedMap = DB.ownedTerritories;
+        Map<String, Territory> allMap = DB.allTerritories;
         Set<String> ownedNames = ownedMap.keySet();
-        Set<String> wynntilsNames = DB.wynntilsTerritoryItems.stream()
+        List<TerritoryItem> wynntilsMap = DB.wynntilsTerritoryItems;
+        Set<String> wynntilsNames = wynntilsMap.stream()
                 .map(TerritoryItem::getName)
                 .collect(Collectors.toSet());
 
@@ -289,9 +290,9 @@ public class DB {
         }
 
         // Check wynntils territories against owned
-        for (TerritoryItem item : DB.wynntilsTerritoryItems) {
+        for (TerritoryItem item : wynntilsMap) {
             if (!ownedNames.contains(item.getName())) {
-                newOwned.add(DB.allTerritories.get(item.getName()).getCopy());
+                newOwned.add(allMap.get(item.getName()).getCopy());
             }
         }
 
@@ -308,12 +309,12 @@ public class DB {
             newOwned.forEach(sb::append);
         }
 
-        for (TerritoryItem wynntilsTerritoryItem : DB.wynntilsTerritoryItems) {
+        for (TerritoryItem wynntilsTerritoryItem : wynntilsMap) {
             String name = wynntilsTerritoryItem.getName();
 
-            Territory territory1 = DB.ownedTerritories.get(name).getCopy();
+            Territory territory1 = ownedMap.get(name).getCopy();
 
-            Territory territory2 = DB.allTerritories.get(name).getCopy();
+            Territory territory2 = allMap.get(name).getCopy();
             territory2.parseFromWynntils(wynntilsTerritoryItem);
 
             String diff = Territory.detectDifferences(territory1, territory2);

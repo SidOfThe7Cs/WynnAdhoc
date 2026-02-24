@@ -33,5 +33,9 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     @Expose
     @Category(name = "Lootrun Settings", desc = "lootrun settings")
     public LootrunConfig lootrun = new LootrunConfig();
+
+    @Expose
+    @Category(name = "Debug Settings", desc = "debug settings")
+    public DebugConfig debug = new DebugConfig();
 }
 

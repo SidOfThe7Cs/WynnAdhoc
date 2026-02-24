@@ -1,18 +1,20 @@
 package sidly.wynnadhoc;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.client.MinecraftClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.Event;
 import sidly.wynnadhoc.features.BowSpammer;
+import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.lootruns.Overlays;
@@ -21,8 +23,6 @@ import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarTimer;
-
-import java.awt.*;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -38,6 +38,8 @@ public class WynnAdhocClient implements ClientModInitializer {
         ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register(BlockEntityLoadedEvent::new);
         WorldRenderEvents.END_MAIN.register(RenderUtils.INSTANCE::onFabricWorldRender);
         UseEntityCallback.EVENT.register(ChestTracker::onEntityClicked);
+        ClientCommandRegistrationCallback.EVENT.register(CommandRegistrationEvent::new);
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
 
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
         Event.register(ClientTickEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onClientTick);
@@ -45,6 +47,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, OuterVoidItemPathfinder.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, BowSpammer::onClientTick);
+        Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
 
@@ -75,6 +78,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
         Event.register(SlotClickedEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onSlotClicked);
+        Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
 
         ConfigManager.INSTANCE.load();
 
@@ -85,10 +89,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
-DebugWindow config
-store parent screen on draggablehudscreen
-remove wynntills spam
-add hpr tick
 better chest tracking
 save and load lootrun data
 Refactor render with renderable interface and make it use screen % with pixel origin offset
@@ -97,5 +97,8 @@ auto update checker
 split mod
 spellcaster with queue and display and safe cast
 fix outer void database
-why doesnt war res always display full/empty in + add loadout support + check total guild cost / output diamond and compare
+why doesnt war res always display full/empty in
+    + add loadout support
+    + check total guild cost / output diamond and compare
+    + why does it sometime show less output than it should ie resource multiplier of 9.9 instead of 11
  */

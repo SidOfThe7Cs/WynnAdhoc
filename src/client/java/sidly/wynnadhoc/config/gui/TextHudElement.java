@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
+import sidly.wynnadhoc.utils.ChatMessageUtils;
 
 import java.awt.*;
 import java.util.List;
@@ -69,14 +70,22 @@ public class TextHudElement extends HudElement {
 
     @Override
     public List<Text> getHoverTooltip() {
-        if (tooltipSupplier == null) return super.getHoverTooltip();
-        return tooltipSupplier.get();
+        try {
+            if (tooltipSupplier == null) return super.getHoverTooltip();
+            return tooltipSupplier.get();
+        } catch (Exception e) {
+            return List.of(Text.literal("Failed to get tooltip"), Text.literal(e.getMessage()));
+        }
     }
 
     @Override
     public void onMouseClicked(Click click, boolean doubled) {
         super.onMouseClicked(click, doubled);
-        this.onClick.run();
+        try {
+            this.onClick.run();
+        } catch (Exception e) {
+            ChatMessageUtils.sendChatMessage("Failed to run click " + e.getMessage());
+        }
     }
 
     @Override
@@ -85,7 +94,11 @@ public class TextHudElement extends HudElement {
             System.err.println("no updater set for TextHudElement " + this.name());
             return;
         }
-        this.text = this.updater.get();
+        try {
+            this.text = this.updater.get();
+        } catch (Exception e) {
+            this.text = "Failed to update display\n" + e.getMessage();
+        }
     }
 
     @Override
@@ -94,6 +107,10 @@ public class TextHudElement extends HudElement {
             System.err.println("no visibility condition set for TextHudElement " + this.name());
             return false;
         }
-        return this.visibleCondition.get();
+        try {
+            return this.visibleCondition.get();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

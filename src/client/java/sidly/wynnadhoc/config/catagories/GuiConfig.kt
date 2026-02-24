@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.config.catagories
 
 import com.google.gson.annotations.Expose
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorKeybind
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
@@ -12,6 +13,12 @@ class GuiConfig {
     @ConfigOption(name = "Open Gui Editor", desc = "Press this key to transform hud elements.")
     @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_UNKNOWN)
     var guiEditorKeybind: Int = GLFW.GLFW_KEY_UNKNOWN
+
+    @Expose
+    @JvmField
+    @ConfigOption(name = "Only Open When No Screen", desc = "Only open the gui editor when pressing the keybind if there is not another open screen")
+    @ConfigEditorBoolean
+    var reqNoScreen = false
 
     @Expose
     @JvmField

@@ -21,22 +21,27 @@ public class DraggableHudElementScreen extends Screen {
     private static double mouseYGlobal = 0;
     private static boolean sameKeyPress = false;
 
+    private final Screen parent;
+
     public static void onKeyPressed(KeyboardEvent event) {
-        if (event.action == 1 && event.key == config().guiEditorKeybind && MinecraftClient.getInstance().currentScreen == null) {
-            MinecraftClient.getInstance().setScreen(new DraggableHudElementScreen());
+        Screen current = MinecraftClient.getInstance().currentScreen;
+        if (event.action == 1 && event.key == config().guiEditorKeybind) {
+            if (config().reqNoScreen && current != null) return;
+            MinecraftClient.getInstance().setScreen(new DraggableHudElementScreen(current));
             sameKeyPress = true;
         }
     }
 
-    public DraggableHudElementScreen() {
+    public DraggableHudElementScreen(Screen parent) {
         super(Text.of("Gui Editor"));
+        this.parent = parent;
     }
 
     @Override
     public boolean keyPressed(KeyInput input) {
         if (sameKeyPress) sameKeyPress = false;
         else if (input.isEscape() || config().guiEditorKeybind == input.getKeycode()) {
-            MinecraftClient.getInstance().setScreen(null);
+            MinecraftClient.getInstance().setScreen(parent);
             ConfigManager.INSTANCE.save();
             return true;
         }

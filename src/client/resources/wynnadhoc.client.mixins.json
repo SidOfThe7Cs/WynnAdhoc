@@ -5,12 +5,13 @@
   "client": [
     "ChatMixin",
     "ClientPlayNetworkHandlerMixin",
+    "FunctionManagerMixin",
     "GameRendererInvoker",
-    "ScreenMixin",
     "HudMixin",
     "KeyboardMixin",
     "MinecraftClientMixin",
     "MouseMixin",
+    "ScreenMixin",
     "SlotClickedMixin",
     "StatusEffectMixin",
     "WynntilsScreenMixin",
@@ -18,7 +19,11 @@
     "accessors.TerritoryManagementScreenAccessor",
     "accessors.TextDisplayEntityAccessor",
     "accessors.WynntillsEventBusAccessor",
-    "Invoker.IsFavoritedInvoker"
+    "Invoker.IsFavoritedInvoker",
+    "loggingdisabler.ChatHandlerMixin",
+    "loggingdisabler.ChatHudMixin",
+    "loggingdisabler.PersonalStorageMixin",
+    "loggingdisabler.PongEventMixin"
   ],
   "injectors": {
     "defaultRequire": 1

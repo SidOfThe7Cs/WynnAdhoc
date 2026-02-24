@@ -1,5 +1,8 @@
 package sidly.wynnadhoc.utils;
 
+import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.config.catagories.DebugConfig;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -7,14 +10,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class DebugWindow {
+    private static DebugConfig config() { return ConfigManager.INSTANCE.config.debug; }
     private static DebugWindow instance;
-    private final JTextArea textArea;
+
+    private JFrame frame = null;
+    private JTextArea textArea = null;
     private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
     private String lastMessage = "";
 
+
     public static DebugWindow getInstance() {
-        // Todo config
-        if (instance == null) {
+        // if we change the config from empty to not empty the window will not be null but not have a frame
+        if (instance == null || (!config().shownDebugging.isEmpty() && instance.frame == null)) {
             instance = new DebugWindow();
         }
         return instance;
@@ -22,9 +29,9 @@ public class DebugWindow {
 
 
     public DebugWindow() {
-        // Todo config
+        if (config().shownDebugging.isEmpty()) return;
 
-        JFrame frame = new JFrame("WynnTools Debug Log");
+        frame = new JFrame("WynnAdhoc Debug Log");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -36,12 +43,13 @@ public class DebugWindow {
         JScrollPane scrollPane = new JScrollPane(textArea);
         frame.add(scrollPane, BorderLayout.CENTER);
 
+        frame.setAutoRequestFocus(false);
         frame.setVisible(true);
     }
 
     /** Logs a message to the popup window. */
     public void log(Priority level, String message) {
-        // Todo config
+        if (!config().shownDebugging.contains(level)) return;
         if (textArea == null) return;
 
         SwingUtilities.invokeLater(() -> {
@@ -62,8 +70,7 @@ public class DebugWindow {
     public enum Priority {
         INFO,
         WARNING,
-        ERROR,
-        NONE
+        ERROR
     }
 }
 
