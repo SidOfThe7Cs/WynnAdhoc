@@ -1,23 +1,27 @@
 package sidly.wynnadhoc.features.lootruns;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardEntry;
 import net.minecraft.scoreboard.ScoreboardObjective;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.event.ClientTickEvent;
 import sidly.wynnadhoc.features.lootruns.enums.LootrunStatus;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
 import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.FormatUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO refactor into not a bunch of individual variables each can have current req and pattern
 public class ScoreboardInfo {
     private static boolean shouldPrint = false;
     public static void printScoreboardInfo() {
@@ -52,54 +56,19 @@ public class ScoreboardInfo {
 
     public static boolean inLootrun = false;
 
+    private static final Pattern missionCursePattern = Pattern.compile("- Get (\\d+)/(\\d+) Curses");
+    private static final Pattern missionChestPattern = Pattern.compile("- Open (\\d+)/(\\d+) Chests");
+    private static final Pattern missionBoonsPattern = Pattern.compile("- Get (\\d+)/(\\d+) Boons");
+    private static final Pattern missionPullsPattern = Pattern.compile("- Gain (\\d+)/(\\d+) Pulls");
+    private static final Pattern missionBeaconsOfferedPattern = Pattern.compile("- Get offered (\\d+)/(\\d+) Beacons");
+    private static final Pattern missionTimePattern = Pattern.compile("- Add (\\d+(?:\\.\\d+)?)/(\\d+)m to your timer");
+    private static final Pattern splunkChestPattern = Pattern.compile("Loot (\\d+)/(\\d+) chests!");
+
     public static void parseScoreboard(ClientTickEvent event){
         if (event.client.world == null) return;
-
         clearLootrunData();
         inLootrun = false;
-
-        MinecraftClient client = event.client;
-        Scoreboard scoreboard = client.world.getScoreboard();
-        Collection<ScoreboardObjective> objectives = scoreboard.getObjectives();
-
-        if (objectives.isEmpty()) return;
-
-        // Get the first objective only
-        ScoreboardObjective firstObjective = objectives.iterator().next();
-        if (firstObjective.getName().equals("wynntilsSB")) return;
-
-        List<ScoreboardEntry> sortedEntries = new ArrayList<>(scoreboard.getScoreboardEntries(firstObjective));
-        sortedEntries.sort(Comparator.comparingInt(ScoreboardEntry::value).reversed());
-
-        List<List<String>> sections = new ArrayList<>();
-        List<String> currentSection = new ArrayList<>();
-
-        for (ScoreboardEntry entry : sortedEntries) {
-            String name = FormatUtils.removeColorCodes(entry.name().getString());
-
-            if (name.matches("À+")) {
-                // Only add the current section if it's not empty
-                if (!currentSection.isEmpty()) {
-                    sections.add(currentSection);
-                    currentSection = new ArrayList<>();
-                }
-            } else {
-                currentSection.add(name);
-            }
-        }
-
-        if (!currentSection.isEmpty()) {
-            sections.add(currentSection);
-        }
-
-        Pattern missionCursePattern = Pattern.compile("- Get (\\d+)/(\\d+) Curses"); // works
-        Pattern missionChestPattern = Pattern.compile("- Open (\\d+)/(\\d+) Chests"); // works
-        Pattern missionBoonsPattern = Pattern.compile("- Get (\\d+)/(\\d+) Boons"); // works
-        Pattern missionPullsPattern = Pattern.compile("- Gain (\\d+)/(\\d+) Pulls"); // works
-        Pattern missionBeaconsOfferedPattern = Pattern.compile("- Get offered (\\d+)/(\\d+) Beacons"); // works
-        Pattern missionTimePattern = Pattern.compile("- Add (\\d+(?:\\.\\d+)?)/(\\d+)m to your timer"); // works
-
-        Pattern splunkChestPattern = Pattern.compile("Loot (\\d+)/(\\d+) chests!"); // works
+        List<List<String>> sections = getSections(event.client);
 
         for (List<String> sect : sections){
             int index = 0;
@@ -110,20 +79,20 @@ public class ScoreboardInfo {
                 boolean isMissionInProgress = false;
                 boolean isTrialInProgress = false;
                 for (String line : sect){
-                    // get current splenk progress
+                    // get current splunk progress
                     if (index == 1){
                         if (line.equals("Collect your rewards!")){
-                            Core.INSTANCE.changeStatus(LootrunStatus.ClaimingRewards);
+                            LootrunCore.INSTANCE.changeStatus(LootrunStatus.ClaimingRewards);
                         }else if(line.equals("Choose a beacon!")){
-                            Core.INSTANCE.changeStatus(LootrunStatus.PickingBeacon);
+                            LootrunCore.INSTANCE.changeStatus(LootrunStatus.PickingBeacon);
                         }else if(line.startsWith("Slay!") || line.startsWith("Defend") || line.startsWith("Destroy")){
-                            Core.INSTANCE.changeStatus(LootrunStatus.InChallenge);
+                            LootrunCore.INSTANCE.changeStatus(LootrunStatus.InChallenge);
                         }
 
 
                         Matcher matcher = splunkChestPattern.matcher(line);
                         if (matcher.matches()) {
-                            Core.INSTANCE.changeStatus(LootrunStatus.InChallenge);
+                            LootrunCore.INSTANCE.changeStatus(LootrunStatus.InChallenge);
                             splunkChestCurrent = Integer.parseInt(matcher.group(1));
                             splunkChestReq = Integer.parseInt(matcher.group(2));
                         }
@@ -148,40 +117,42 @@ public class ScoreboardInfo {
                         currentMaxMissions = total;
                     }
 
-                    // get mission info
-                    for (MissionOptions mission : MissionOptions.values()) {
-                        if (line.startsWith(mission.getDisplayName())) {
-                            if (Core.INSTANCE.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
-                                isMissionInProgress = true;
-                                missionInProgress = mission.getDisplayName();
-                                Core.INSTANCE.addMission(mission.getDisplayName());
-                                missionIndex = index;
+                    @Nullable LootrunData data = LootrunCore.INSTANCE.getCurrentLootrunData();
+                    if (data != null) {
+                        // get mission info
+                        for (MissionOptions mission : MissionOptions.values()) {
+                            if (line.startsWith(mission.getDisplayName())) {
+                                if (data.getLastCompleted() + 10000 < System.currentTimeMillis()) {
+                                    isMissionInProgress = true;
+                                    missionInProgress = mission.getDisplayName();
+                                    LootrunCore.INSTANCE.addMission(mission.getDisplayName());
+                                    missionIndex = index;
+                                }
                             }
                         }
-                    }
-                    // get trial info
-                    for (TrialOptions trial : TrialOptions.values()) {
-                        if (line.startsWith(trial.getDisplayName())) {
-                            if (Core.INSTANCE.getCurrentLootrunData().getLastCompleted() + 10000 < System.currentTimeMillis()) {
-                                isTrialInProgress = true;
-                                trialInProgress = trial.getDisplayName();
-                                Core.INSTANCE.addTrial(trial.getDisplayName());
-                                trialIndex = index;
+                        // get trial info
+                        for (TrialOptions trial : TrialOptions.values()) {
+                            if (line.startsWith(trial.getDisplayName())) {
+                                if (data.getLastCompleted() + 10000 < System.currentTimeMillis()) {
+                                    isTrialInProgress = true;
+                                    trialInProgress = trial.getDisplayName();
+                                    LootrunCore.INSTANCE.addTrial(trial.getDisplayName());
+                                    trialIndex = index;
+                                }
                             }
                         }
+                        index++;
                     }
-                    index++;
                 }
 
                 // check if mission has ended
-                //System.out.println(!isMissionInProgress + " & " + !missionInProgress.isEmpty());
                 if (!isMissionInProgress && !missionLastFrame.isEmpty()) {
-                    Core.INSTANCE.onMissionCompleted(missionLastFrame);
+                    LootrunCore.INSTANCE.onMissionCompleted(missionLastFrame);
                     missionInProgress = "";
                     ConfigManager.INSTANCE.config.lootrun.missionOverlay.updateDisplay();
                 }
                 if (!isTrialInProgress && !trialLastFrame.isEmpty()) {
-                    Core.INSTANCE.onTrialCompleted(trialLastFrame);
+                    LootrunCore.INSTANCE.onTrialCompleted(trialLastFrame);
                     trialInProgress = "";
                     ConfigManager.INSTANCE.config.lootrun.missionOverlay.updateDisplay();
                 }
@@ -237,47 +208,88 @@ public class ScoreboardInfo {
 
 
         if (shouldPrint) {
-            System.out.println("SCOREBOARD:");
+            StringBuilder sb = new StringBuilder();
+            sb.append("\n");
+            sb.append("SCOREBOARD:\n");
             for (List<String> sect : sections){
                 for (String line : sect){
-                    System.out.println(line);
+                    sb.append(line);
                 }
-                System.out.println("SECTION SEOPERATOR");
+                sb.append("SECTION SEPARATOR\n");
             }
 
-            System.out.println("PARSED INFO:");
+            sb.append("PARSED INFO:\n");
+            sb.append("currentMaxMissions: ").append(currentMaxMissions).append("\n");
+            sb.append("currentMissionsCompleted: ").append(currentMissionsCompleted).append("\n");
+            sb.append("timeLeft (seconds): ").append(timeLeft).append("\n");
+            sb.append("missionCurseReq: ").append(missionCurseReq).append("\n");
+            sb.append("missionCurseCurrent: ").append(missionCurseCurrent).append("\n");
+            sb.append("missionChestReq: ").append(missionChestReq).append("\n");
+            sb.append("missionChestCurrent: ").append(missionChestCurrent).append("\n");
+            sb.append("missionBoonsReq: ").append(missionBoonsReq).append("\n");
+            sb.append("missionBoonsCurrent: ").append(missionBoonsCurrent).append("\n");
+            sb.append("missionPullsReq: ").append(missionPullsReq).append("\n");
+            sb.append("missionPullsCurrent: ").append(missionPullsCurrent).append("\n");
+            sb.append("missionBeaconsOfferedReq: ").append(missionBeaconsOfferedReq).append("\n");
+            sb.append("missionBeaconsOfferedCurrent: ").append(missionBeaconsOfferedCurrent).append("\n");
+            sb.append("missionTimeReq: ").append(missionTimeReq).append("\n");
+            sb.append("missionTimeCurrent: ").append(missionTimeCurrent).append("\n");
+            sb.append("splunkChestReq: ").append(splunkChestReq).append("\n");
+            sb.append("splunkChestCurrent: ").append(splunkChestCurrent).append("\n");
+            sb.append("mission in progress: ").append(missionInProgress).append("\n");
+            @Nullable LootrunData data = LootrunCore.INSTANCE.getCurrentLootrunData();
 
-            System.out.println("currentMaxMissions: " + currentMaxMissions);
-            System.out.println("currentMissionsCompleted: " + currentMissionsCompleted);
-            System.out.println("timeLeft (seconds): " + timeLeft);
-
-            System.out.println("missionCurseReq: " + missionCurseReq);
-            System.out.println("missionCurseCurrent: " + missionCurseCurrent);
-            System.out.println("missionChestReq: " + missionChestReq);
-            System.out.println("missionChestCurrent: " + missionChestCurrent);
-            System.out.println("missionBoonsReq: " + missionBoonsReq);
-            System.out.println("missionBoonsCurrent: " + missionBoonsCurrent);
-            System.out.println("missionPullsReq: " + missionPullsReq);
-            System.out.println("missionPullsCurrent: " + missionPullsCurrent);
-            System.out.println("missionBeaconsOfferedReq: " + missionBeaconsOfferedReq);
-            System.out.println("missionBeaconsOfferedCurrent: " + missionBeaconsOfferedCurrent);
-            System.out.println("missionTimeReq: " + missionTimeReq);
-            System.out.println("missionTimeCurrent: " + missionTimeCurrent);
-
-            System.out.println("splunkChestReq: " + splunkChestReq);
-            System.out.println("splunkChestCurrent: " + splunkChestCurrent);
-
-            System.out.println();
-            System.out.println("mission in progeress: " + missionInProgress);
-            for (MissionOptions mission : Core.INSTANCE.getCurrentLootrunData().getCurrentMissionsActive()){
-                System.out.println("Mission: " + mission);
+            if (data != null) {
+                for (MissionOptions mission : data.getCurrentMissionsActive()) {
+                    sb.append("Mission: ").append(mission).append("\n");
+                }
+                sb.append("trial in progress: ").append(trialInProgress).append("\n");
+                for (TrialOptions trial : data.getCurrentTrialsActive()) {
+                    sb.append("Trial: ").append(trial).append("\n");
+                }
             }
-            System.out.println("trial in progeress: " + trialInProgress);
-            for (TrialOptions trial : Core.INSTANCE.getCurrentLootrunData().getCurrentTrialsActive()){
-                System.out.println("Trial: " + trial);
-            }
+
+            WynnAdhocClient.LOGGER.info(Debug.Type.MANUAL, sb.toString());
             shouldPrint = false;
         }
+    }
+
+    private static @NotNull List<List<String>> getSections(@NotNull MinecraftClient client) {
+        ClientWorld world = client.world;
+        if  (world == null) return Collections.emptyList();
+        Scoreboard scoreboard = world.getScoreboard();
+        Collection<ScoreboardObjective> objectives = scoreboard.getObjectives();
+
+        if (objectives.isEmpty()) return Collections.emptyList();
+
+        // Get the first objective only
+        ScoreboardObjective firstObjective = objectives.iterator().next();
+        if (firstObjective.getName().equals("wynntilsSB")) return Collections.emptyList();
+
+        List<ScoreboardEntry> sortedEntries = new ArrayList<>(scoreboard.getScoreboardEntries(firstObjective));
+        sortedEntries.sort(Comparator.comparingInt(ScoreboardEntry::value).reversed());
+
+        List<List<String>> sections = new ArrayList<>();
+        List<String> currentSection = new ArrayList<>();
+
+        for (ScoreboardEntry entry : sortedEntries) {
+            String name = FormatUtils.removeColorCodes(entry.name().getString());
+
+            if (name.matches("À+")) {
+                // Only add the current section if it's not empty
+                if (!currentSection.isEmpty()) {
+                    sections.add(currentSection);
+                    currentSection = new ArrayList<>();
+                }
+            } else {
+                currentSection.add(name);
+            }
+        }
+
+        if (!currentSection.isEmpty()) {
+            sections.add(currentSection);
+        }
+        return sections;
     }
 
     public static void clearLootrunData(){

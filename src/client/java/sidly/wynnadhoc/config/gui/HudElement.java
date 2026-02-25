@@ -6,13 +6,20 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2i;
+import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class HudElement {
     private final HudElementData data;
+
+    private final List<String> children = new ArrayList<>();
 
     public HudElement(HudElementData data) {
         this.data = data;
@@ -47,8 +54,7 @@ public abstract class HudElement {
     abstract boolean isVisible();
 
     void onMouseDragged(double mouseX, double mouseY) {
-        this.data.x = (int) (mouseX + grabDifX);
-        this.data.y = (int) (mouseY + grabDifY);
+        move(new Vector2i((int) (mouseX + grabDifX), (int) (mouseY + grabDifY)));
     }
 
     void onMouseClicked(Click click, boolean doubled) {
@@ -85,5 +91,34 @@ public abstract class HudElement {
 
     int y() {
         return data.y;
+    }
+
+    HudElementData data() {
+        return data;
+    }
+
+    private void move(Vector2i to) {
+        if (data.linkData != null) { // we are a child
+            this.data.linkData.move(this.data, to);
+        }
+        if (!children.isEmpty()) {
+            for (String name : children) {
+                HudElement element = HudElementManager.getHudElement(name);
+                // TODO this is the only place this works i dont know why need to get it to work with defaults
+                if (element.data.linkData == null) element.data.linkData = new LinkData(0, 0, AnchorPoint.CENTER);
+                element.data.x = to.x + element.data.linkData.getOffsetX();
+                element.data.y = to.y + element.data.linkData.getOffsetY();
+            }
+        }
+        this.data.x = to.x();
+        this.data.y = to.y();
+    }
+
+    public void linkChild(HudElementData child) {
+        this.children.add(child.name);
+    }
+    public void unLinkChild(String childName) {
+        HudElementManager.getHudElement(childName).data.linkData = null;
+        this.children.remove(childName);
     }
 }

@@ -125,6 +125,6 @@ public class LootrunData {
 
     public void setBeaconRerolls(int beaconRerolls) {
         this.beaconRerolls = beaconRerolls;
-        // TODO update display
+        // TODO update display fix beacon reroll tracking
     }
 }

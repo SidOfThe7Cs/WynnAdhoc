@@ -3,6 +3,7 @@ package sidly.wynnadhoc.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import sidly.wynnadhoc.WynnAdhocClient;
 
 import java.io.File;
 import java.io.FileReader;
@@ -70,7 +71,7 @@ public class SegmentedSaveManager {
 
         boolean renamed = latestFile.renameTo(archive);
         if (!renamed) {
-            System.err.println("Failed to rename latest.json -> " + archive.getName());
+            WynnAdhocClient.LOGGER.error("Failed to rename latest.json -> " + archive.getName());
         }
     }
 

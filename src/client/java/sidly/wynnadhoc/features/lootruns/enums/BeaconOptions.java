@@ -1,6 +1,6 @@
 package sidly.wynnadhoc.features.lootruns.enums;
 
-import sidly.wynnadhoc.features.lootruns.Core;
+import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 public enum BeaconOptions {
@@ -52,11 +52,11 @@ public enum BeaconOptions {
             String[] parts = FormatUtils.splitByAnySpecialChar(message);
             for (String part : parts) {
                 if (part.equals(opt.displayName)) {
-                    boolean alreadyExists = Core.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().stream()
+                    boolean alreadyExists = LootrunCore.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().stream()
                             .anyMatch(existing -> existing.baseColor.equals(opt.baseColor));
 
                     if (!alreadyExists) {
-                        Core.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().add(opt);
+                        LootrunCore.INSTANCE.getCurrentLootrunData().getCurrentBeaconOptions().add(opt);
                         // update display Config.updateHudElement(HudElements.Beacons);
                     }
                 }

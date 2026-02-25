@@ -13,11 +13,13 @@ import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import net.minecraft.world.World
+import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.OuterVoidConfig
 import sidly.wynnadhoc.event.ClientTickEvent
 import sidly.wynnadhoc.event.InitEvent
 import sidly.wynnadhoc.event.WorldRenderEvent
+import sidly.wynnadhoc.utils.Debug
 import sidly.wynnadhoc.utils.LocationUtils
 import sidly.wynnadhoc.utils.datatypes.getCorners
 import sidly.wynnadhoc.utils.datatypes.getLast
@@ -182,7 +184,7 @@ object OuterVoidItemPathfinder {
             wasInOuterVoid = false
             return
         } else if (!wasInOuterVoid) { // we just entered the outer void
-            if (ALL_ISLANDS_NODES.isEmpty()) cacheIslandData() // TODO make sure far corner is in range if we just entered
+            if (ALL_ISLANDS_NODES.isEmpty()) cacheIslandData() // TODO make sure far corner is in range if we just entered (its not make an executer to gen data and then move data to resources)
             recalcAllPaths = true
             wasInOuterVoid = true
         }
@@ -205,22 +207,23 @@ object OuterVoidItemPathfinder {
                 seenItems.add(itemEntity)
 
                 if (itemEntity.stack.name.string == "Snow") {
-                    println("Mythic thingy finally found at please add it to the database: " + itemEntity.entityPos)
+                    WynnAdhocClient.LOGGER.info(Debug.Type.OUTER_VOID, "Mythic thingy is Snow please add it to the database: " + itemEntity.entityPos)
                 }
 
                 // check for unknowns
                 val rarity = OuterVoidItemDatabase.getRarity(itemEntity)
                 if (rarity == GearTier.MYTHIC) {
-                    println("Mythic thingy finally found at and database is correct: " + itemEntity.entityPos)
+                    WynnAdhocClient.LOGGER.info(Debug.Type.OUTER_VOID, "Mythic thingy finally found at and database is correct: " + itemEntity.entityPos)
                 }
                 if (rarity == GearTier.CRAFTED && !unknownItems.contains(itemEntity)) {
                     unknownItems.add(itemEntity)
-                    println("Name: " + itemEntity.stack.name.string)
-                    println(
-                        "Model: " + itemEntity.stack.get(DataComponentTypes.CUSTOM_MODEL_DATA)?.floats()[0]
-                    )
-                    println("Rarity: $rarity")
-                    println("Durability: " + itemEntity.stack.damage)
+                    val sb = StringBuilder()
+                    sb.append("\nUnknown outer void item found\n")
+                    sb.append("Name: " + itemEntity.stack.name.string + "\n")
+                    sb.append("Model: " + itemEntity.stack.get(DataComponentTypes.CUSTOM_MODEL_DATA)?.floats()[0] + "\n")
+                    sb.append("Rarity: $rarity\n")
+                    sb.append("Durability: " + itemEntity.stack.damage + "\n")
+                    WynnAdhocClient.LOGGER.info(Debug.Type.OUTER_VOID, sb.toString())
                 }
             }
         }
@@ -259,7 +262,7 @@ object OuterVoidItemPathfinder {
                     }
                 }
             } catch (e: IOException) {
-                println("failed to load from $FILE_PATH")
+                WynnAdhocClient.LOGGER.error("failed to load from $FILE_PATH")
                 e.printStackTrace()
             }
         }
@@ -275,7 +278,7 @@ object OuterVoidItemPathfinder {
         if (!LocationUtils.isInOuterVoid(player.x, player.z)) return
         val nodes: MutableMap<Int, IslandNode> = ConcurrentHashMap<Int, IslandNode>()
 
-        println("Island calculation2 started...")
+        WynnAdhocClient.LOGGER.info(Debug.Type.OUTER_VOID, "Island calculation2 started...")
         val visited: MutableSet<Vec3i?> = HashSet<Vec3i?>()
         val minX = 13577
         val maxX = 14046
@@ -304,7 +307,7 @@ object OuterVoidItemPathfinder {
             }
         }
         ALL_ISLANDS_NODES = nodes
-        println("block calculations finnished found " + ALL_ISLANDS_NODES.size + " island, starting neighbor checks")
+        WynnAdhocClient.LOGGER.info(Debug.Type.OUTER_VOID, "block calculations finished found " + ALL_ISLANDS_NODES.size + " island, starting neighbor checks")
 
         // Connect neighbors based on movement constraints
         for (entryA in nodes.entries) {
@@ -319,7 +322,7 @@ object OuterVoidItemPathfinder {
         }
         ALL_ISLANDS_NODES = nodes
         saveIslandNodes()
-        println("Island calculation2 complete and saved.")
+        WynnAdhocClient.LOGGER.info(Debug.Type.OUTER_VOID, "Island calculation2 complete and saved.")
     }
 
     // TODO config executor
@@ -408,7 +411,7 @@ object OuterVoidItemPathfinder {
 
     private fun drawPath(event: WorldRenderEvent, startPos: Vec3d, path: PathToItem?, color: Color) {
         if (path == null) {
-            //System.out.println("tryed to draw null path");
+            WynnAdhocClient.LOGGER.error("tried to draw null path")
             return
         }
 
@@ -470,9 +473,9 @@ object OuterVoidItemPathfinder {
                 true,
             )
         }
-        // draw the last block because the loop above doesnt
+        // draw the last block because the loop above doesn't
         event.drawBox(path.nodes.getLast()?.toBox(), color)
-        // draw the item that we tryin to get to
+        // draw the item that we trying to get to
         event.drawBox(
             path.item.boundingBox,
             OuterVoidItemDatabase.getColor(OuterVoidItemDatabase.getRarity(path.item)),
@@ -525,7 +528,7 @@ object OuterVoidItemPathfinder {
             for (islandId in entry.value) {
                 if (lastId != null) {
                     val island: IslandNode = ALL_ISLANDS_NODES[islandId] ?: run {
-                        println("Error: Island $islandId not found")
+                        WynnAdhocClient.LOGGER.error("Island $islandId not found")
                         return null
                     }
                     val closestBlock: Vec3i = checkNotNull(
@@ -595,7 +598,6 @@ object OuterVoidItemPathfinder {
             currentItem = shortestPath.item
             return shortestPath
         } else {
-            //System.out.println("No path found.");
             currentItem = null
             return null
         }
@@ -608,12 +610,10 @@ object OuterVoidItemPathfinder {
         val startIsland = findIslandForPoint(start)
         val endIsland = findIslandForPoint(end)
 
-        //System.out.println(("attempting to find path: " + startIsland + " " + endIsland));
         if (startIsland == null || endIsland == null) {
             return mutableListOf()
         }
 
-        //System.out.println(bfs(startIsland, endIsland).size());
         return bfs(startIsland, endIsland, doubleJump)
     }
 
@@ -632,16 +632,14 @@ object OuterVoidItemPathfinder {
 
             if (current == endIsland) {
                 return if (startIsland != endIsland) {
-                    //System.out.println("reconstruction path: " + startIsland + " " + endIsland);
                     reconstructPath(previous, startIsland, endIsland)
                 } else {
-                    //System.out.println("called bfs with start and end equal");
                     mutableListOf()
                 }
             }
 
             val currentNode: IslandNode = ALL_ISLANDS_NODES[current] ?: run {
-                println("Error: Island $current not found")
+                WynnAdhocClient.LOGGER.error("Current island $current not found")
                 return mutableListOf()
             }
 
@@ -694,7 +692,6 @@ object OuterVoidItemPathfinder {
         val pos2 = Vec3i(pos.x.toInt(), pos.y.toInt(), pos.z.toInt())
         for (entry in ALL_ISLANDS_NODES.entries) {
             val island = entry.value
-            //System.out.println("ergia: " + island.bounds + " " + pos2);
             if (canTravelToIsland(island.bounds, pos2, false)) {
                 val distance = pos.squaredDistanceTo(Vec3d.of(island.center))
                 if (distance < smallestDistance) {

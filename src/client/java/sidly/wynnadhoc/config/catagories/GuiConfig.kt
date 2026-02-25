@@ -18,7 +18,7 @@ class GuiConfig {
     @JvmField
     @ConfigOption(name = "Only Open When No Screen", desc = "Only open the gui editor when pressing the keybind if there is not another open screen")
     @ConfigEditorBoolean
-    var reqNoScreen = false
+    var reqNoScreen = true
 
     @Expose
     @JvmField

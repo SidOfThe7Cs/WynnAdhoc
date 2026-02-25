@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.config.gui;
 
 import com.google.gson.annotations.Expose;
+import sidly.wynnadhoc.WynnAdhocClient;
 
 public class HudElementData {
     @Expose
@@ -11,6 +12,8 @@ public class HudElementData {
     protected int y;
     @Expose
     protected float scale;
+    @Expose
+    protected LinkData linkData;
 
     public HudElementData(String name, int x, int y, float scale) {
         this.name = name;
@@ -22,6 +25,21 @@ public class HudElementData {
     public void updateDisplay() {
         HudElement hudElement = HudElementManager.getHudElement(name);
         if (hudElement != null) hudElement.updateDisplay();
-        else System.err.println("Hud element with name " + name + " not found");
+        else WynnAdhocClient.LOGGER.error("Hud element with name " + name + " not found");
+    }
+
+    public HudElement getElement() {
+        return HudElementManager.getHudElement(name);
+    }
+
+    @Override
+    public String toString() {
+        return "HudElementData{" +
+                "name='" + name + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", scale=" + scale +
+                ", linkData=" + linkData +
+                '}';
     }
 }

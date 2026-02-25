@@ -1,10 +1,7 @@
 package sidly.wynnadhoc.features.lootruns
 
 import com.wynntils.core.components.Models
-import net.minecraft.block.Blocks
-import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity
@@ -14,7 +11,7 @@ import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
-import net.minecraft.util.math.BlockPos
+import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.LootrunData
 import sidly.wynnadhoc.config.catagories.LootrunConfig
@@ -22,20 +19,14 @@ import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
 import sidly.wynnadhoc.mixin.client.accessors.WynntillsEventBusAccessor
 import sidly.wynnadhoc.utils.ChatMessageUtils
-import sidly.wynnadhoc.utils.DebugWindow
-import sidly.wynnadhoc.utils.datatypes.toBox
-import sidly.wynnadhoc.utils.render.drawBox
-import java.awt.Color
+import sidly.wynnadhoc.utils.Debug
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.math.pow
-import kotlin.time.Duration.Companion.days
-import kotlin.time.DurationUnit
 
-object Core {
+object LootrunCore {
     private fun config(): LootrunConfig {
         return ConfigManager.INSTANCE.config.lootrun
     }
@@ -53,7 +44,7 @@ object Core {
     // this is the actual text displays rendered in the world cleared every tick
     var currentBeaconOptionsFromWaypoints: MutableMap<BeaconColor, Int> = HashMap<BeaconColor, Int>()
 
-    // i just dont care right now (or ever) its both broken and useless
+    // i just don't care right now (or ever) its both broken and useless
     var mobHealthIncrease: Int = 0
     var mobResistanceIncrease: Int = 0
     var mobDamageIncrease: Int = 0
@@ -65,25 +56,21 @@ object Core {
     }
 
     fun addMobResistance(amount: Int) {
-        //System.out.println(" added res: " + amount);
         mobResistanceIncrease += amount
         // update display
     }
 
     fun addMobDamage(amount: Int) {
-        //System.out.println(" added dam: " + amount);
         mobDamageIncrease += amount
         // update display
     }
 
     fun addMobAttackSpeed(amount: Int) {
-        //System.out.println(" added attk speed: " + amount);
         mobAttackSpeedIncrease += amount
         // update display
     }
 
     fun addMobSpeed(amount: Int) {
-        //System.out.println(" added walk speed: " + amount);
         mobSpeedIncrease += amount
         // update display
     }
@@ -96,30 +83,25 @@ object Core {
 
 
     fun checkIfBeacon(event: ForEachEntityEvent) {
-        // we can also add type detection by checking the l;ast charactor in the idsplay name
-
+        // we can also add type detection by checking the last character in the display name
         if (event.entity is TextDisplayEntity) {
-            val rootText: Text = event.entity.getText() // Your root text component
+            val rootText: Text = event.entity.getText()
             val siblings = rootText.siblings
 
-            // 1. Check if the first sibling is a "marker"
+            // check if the first sibling is a "marker"
             if (!siblings.isEmpty() && siblings[0].style.getFont() != null && siblings[0].style
                     .getFont().toString() == "minecraft:marker"
             ) {
-                // 3. Extract the distance
-
+                // extract the distance
                 var distance = -1
                 if (siblings.size >= 3) {
                     val distanceText = siblings[2]
-                    val distanceStr = distanceText.string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
-                        .toTypedArray()[0] // "246m"
-                    distance = distanceStr.replace("[^0-9]".toRegex(), "").toInt() // 246
-
-                    //System.out.println("Distance: " + distanceStr);
+                    val distanceStr =
+                        distanceText.string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                    distance = distanceStr.replace("[^0-9]".toRegex(), "").toInt()
                 }
 
-
-                // 2. Get the color
+                // get the color
                 val markerSibling = siblings[0]
                 for (nested in markerSibling.siblings) {
                     if (nested.style.getColor() != null) {
@@ -140,16 +122,13 @@ object Core {
                             0xf000 -> baseColor = BeaconColor.Rainbow
                             0xf010 -> baseColor = BeaconColor.Crimson
                             else -> {
-                                println("unrecognized beacon color: " + Integer.toHexString(color) + " distance: " + distance)
+                                WynnAdhocClient.LOGGER.warn("unrecognized beacon color: " + Integer.toHexString(color) + " distance: " + distance)
                                 return
                             }
                         }
                         if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
                             currentBeaconOptionsFromWaypoints[baseColor] = distance
                         }
-                        //String symbol = nested.getString();
-                        //symbol = Utils.convertCustomCharacterToUnicode(symbol);
-                        //System.out.printf("Symbol: %s (Color: #%06X)\n", symbol, color);
                     }
                 }
 
@@ -173,7 +152,7 @@ object Core {
                         "U+E00D" -> type = "Defend"
                         "U+E00E" -> type = "Loot"
                         "U+E00F" -> type = "Destroy"
-                        else -> System.out.printf("Last symbol: $unicodeString Distance: $distance type: $type\n")
+                        else -> WynnAdhocClient.LOGGER.warn("Unknown beacon type, Last symbol: $unicodeString Distance: $distance\n")
                     }
                 }
             }
@@ -226,7 +205,7 @@ object Core {
     fun onChallengeCompleted(color: BeaconColor) {
         val data = getCurrentLootrunData() ?: return
 
-        // check the availoble beacon options to see if its vibrant or not
+        // check the available beacon options to see if its vibrant or not
         var vibrant = false
         var beaconCompleted = ""
         for (beacon in data.currentBeaconOptions) {
@@ -237,8 +216,10 @@ object Core {
         }
         if (beaconCompleted.startsWith("Vibrant")) vibrant = true
 
-        DebugWindow.getInstance()
-            .log(DebugWindow.Priority.INFO, "completed " + (if (vibrant) "vibrant " else "") + color + " beacon")
+        WynnAdhocClient.LOGGER.info(
+            Debug.Type.LOOTRUN,
+            "completed " + (if (vibrant) "vibrant " else "") + color + " beacon"
+        )
 
         data.beaconCounts.decreaseRemaining()
         data.beaconCounts.incrementCount(color)
@@ -283,7 +264,7 @@ object Core {
     }
 
     fun completeChaosChallengeCompleted(beacon: BeaconOptions) {
-        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "complete chaos gave " + beacon.displayName)
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "complete chaos gave " + beacon.displayName)
         val data = getCurrentLootrunData() ?: return
 
         val vibrant = beacon.displayName.startsWith("Vibrant")
@@ -328,7 +309,7 @@ object Core {
 
     fun onMissionCompleted(mission: String) {
         val data = getCurrentLootrunData() ?: return
-        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "Mission completed: $mission")
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "Mission completed: $mission")
         when (mission) {
             "High Roller" -> {
                 data.endStats.addEndRerolls(1)
@@ -352,7 +333,7 @@ object Core {
 
     fun onTrialCompleted(trial: String) {
         val data = getCurrentLootrunData() ?: return
-        DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "Trial completed: $trial")
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "Trial completed: $trial")
         when (trial) {
             "All In" -> {
                 // in reality this happens at the end of lootrun not instantly
@@ -411,21 +392,6 @@ object Core {
             LootrunStatus.NotInLootrun -> endLootrun()
         }
         data.status = newStatus
-    }
-
-    private fun getClosestChest(client: MinecraftClient?): BlockPos? {
-        if (client == null || client.player == null) return null
-        val playerPos = client.player!!.entityPos
-        var shortestDist = Double.MAX_VALUE
-        var closestChest: BlockPos? = null
-        for (entry in ConfigManager.INSTANCE.chests.entries) {
-            val dist = entry.key.getSquaredDistance(playerPos.x, playerPos.y, playerPos.z)
-            if (dist < shortestDist) {
-                closestChest = entry.key
-                shortestDist = dist
-            }
-        }
-        return closestChest
     }
 
     fun getEffectivePulls(): Int {
@@ -488,71 +454,6 @@ object Core {
         currentBeaconOptionsFromWaypoints.clear()
     }
 
-    fun onBlockEntityLoad(event: BlockEntityLoadedEvent) {
-        if (event.clientWorld == null) return
-
-        if (event.blockEntity is ChestBlockEntity) {
-            val pos: BlockPos = event.blockEntity.getPos()
-            val block = event.clientWorld.getBlockState(pos).block
-
-            if (block === Blocks.TRAPPED_CHEST) {
-                if (!ConfigManager.INSTANCE.chests.containsKey(pos)) {
-                    ConfigManager.INSTANCE.chests[pos] = -1L
-                }
-            }
-        }
-    }
-
-    fun onWorldRender(event: WorldRenderEvent) {
-        val data = getCurrentLootrunData() ?: return
-        val client = MinecraftClient.getInstance()
-        if (client == null || client.player == null) return
-
-        val force = ConfigManager.INSTANCE.config.chest.forceEsp
-        val crono = (data.currentMissionsActive
-            .contains(MissionOptions.Chronokinesis) && ScoreboardInfo.missionInProgress != "Chronokinesis")
-        val missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent
-        if (missionReq || crono || force) {
-            val currentTime = System.currentTimeMillis()
-
-            for (entry in ConfigManager.INSTANCE.chests.entries) {
-                if (ConfigManager.INSTANCE.bannedChests.contains(entry.key)) continue
-
-                val distSqr = entry.key.getSquaredDistance(client.player!!.entityPos)
-
-                val maxDist = ConfigManager.INSTANCE.config.chest.maxEspDistance.pow(2)
-                if (distSqr > maxDist) continue
-
-                var color = Color.RED
-                // 30 minutes has passed
-                if (entry.value + 1800000 < currentTime) color = Color.yellow
-                // never been opened or 3 days have passed
-                if (entry.value == -1L || entry.value + 3.days.toLong(DurationUnit.MILLISECONDS) < currentTime) color = Color.green
-                event.drawBox(entry.key.toBox(), color)
-            }
-        }
-    }
-
-    // runs once TODO better chest tracking
-    fun onScreenOpened(event: ScreenOpenedEvent) {
-        if (event.client == null || event.client.player == null) return
-
-        // loot chest highlighter
-        if (event.screen is GenericContainerScreen) {
-            // this seems horribly unefficient (and unreliable) but yk
-            val closestChest = getClosestChest(event.client)
-            if (closestChest != null) {
-                if (event.screen.getTitle().string.startsWith("Loot Chest")) {
-                    ConfigManager.INSTANCE.chests.replace(closestChest, System.currentTimeMillis())
-                } else if (event.screen.getTitle().string.startsWith("Challenge Rewards")) {
-                    ConfigManager.INSTANCE.bannedChests.add(closestChest)
-                } else if (event.screen.getTitle().string == "\uDAFF\uDFE8\uE011") { // player shops
-                    ConfigManager.INSTANCE.bannedChests.add(closestChest)
-                }
-            }
-        }
-    }
-
     private var completeChaosCounter: Int = Int.MAX_VALUE
     fun onChatMessage(event: ChatMessageEvent) {
         val data = getCurrentLootrunData() ?: return
@@ -566,7 +467,7 @@ object Core {
             if (part == "Lootrun Completed") {
                 onChallengeCompleted(data.activeBeaconColor)
                 data.endStats
-                    .addEndPulls(1) // assumes you did not fail the last challenge but doesnt really matter so
+                    .addEndPulls(1) // assumes you did not fail the last challenge but doesn't really matter so
                 config().endRewardsOverlay.updateDisplay()
                 ChatMessageUtils.sendChatMessage(
                     "Lootrun completed with " + data.endStats
@@ -623,7 +524,7 @@ object Core {
             var percent = curseMatcher.group(2).toInt()
             val negative = curseMatcher.group(1) == "-"
             if (negative) percent *= -1
-            // TODO i think group 3 should be whether its curse or natrual so i can seperate and apply half curse effects if mission
+            // TODO i think group 3 should be whether its curse or natural so i can separate and apply half curse effects if mission
             val type = curseMatcher.group(4)
             when (type.lowercase(Locale.getDefault())) {
                 "health" -> {
@@ -692,7 +593,7 @@ object Core {
                         data.setActiveCamp()
                         camp = data.activeCamp
                         if (camp == null) {
-                            System.err.println("Camp was null while sacs were on screen")
+                            WynnAdhocClient.LOGGER.error("Camp was null while sacs were on screen")
                             return
                         }
                     }
@@ -712,7 +613,7 @@ object Core {
             data.setActiveCamp()
             closestCamp = data.activeCamp
             if (closestCamp == null) {
-                System.err.println("Camp was null when sacs were clicked")
+                WynnAdhocClient.LOGGER.error("Camp was null when sacs were clicked")
                 return
             }
         }

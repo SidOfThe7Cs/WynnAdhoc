@@ -10,8 +10,6 @@ import java.util.Map;
 
 public class SaveData {
     public Map<String, LootrunData> lootruns = new HashMap<>();
-    public Map<BlockPos, Long> chests = new HashMap<>();
-    public List<BlockPos> bannedChests = new ArrayList<>();
 
     public SaveData() {}
 }

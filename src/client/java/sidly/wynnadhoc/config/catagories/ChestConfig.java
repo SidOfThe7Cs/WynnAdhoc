@@ -11,10 +11,16 @@ public class ChestConfig {
     @ConfigEditorBoolean
     public boolean autoCloseChests = false;
 
+    // TODO esp accordion
     @Expose
-    @ConfigOption(name = "Force Chest Esp", desc = "Turns on chest esp")
+    @ConfigOption(name = "Force Chest Esp", desc = "Turns on chest esp, green is > 3d, yellow is > 30m, red is < 30m, white is unknown ")
     @ConfigEditorBoolean
     public boolean forceEsp = false;
+
+    @Expose
+    @ConfigOption(name = "Only openable", desc = "Whether esp should only show green and yellow chests")
+    @ConfigEditorBoolean
+    public boolean onlyOpenable = true;
 
     @Expose
     @ConfigOption(name = "Max Distance", desc = "Max distance to show chest esp")

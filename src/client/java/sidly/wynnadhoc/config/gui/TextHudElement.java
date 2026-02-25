@@ -5,8 +5,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 
 import java.awt.*;
@@ -91,7 +91,7 @@ public class TextHudElement extends HudElement {
     @Override
     public void updateDisplay() {
         if (updater == null) {
-            System.err.println("no updater set for TextHudElement " + this.name());
+            WynnAdhocClient.LOGGER.warn("no updater set for TextHudElement " + this.name());
             return;
         }
         try {
@@ -104,7 +104,7 @@ public class TextHudElement extends HudElement {
     @Override
     public boolean isVisible() {
         if (visibleCondition == null) {
-            System.err.println("no visibility condition set for TextHudElement " + this.name());
+            WynnAdhocClient.LOGGER.warn("no visibility condition set for TextHudElement " + this.name());
             return false;
         }
         try {

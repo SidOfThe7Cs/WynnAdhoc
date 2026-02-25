@@ -3,7 +3,7 @@ package sidly.wynnadhoc.features.war;
 import com.wynntils.core.components.Models;
 import com.wynntils.models.items.items.gui.TerritoryItem;
 import com.wynntils.models.territories.type.TerritoryUpgrade;
-import sidly.wynnadhoc.utils.DebugWindow;
+import sidly.wynnadhoc.WynnAdhocClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class Territory {
         return (int) (woodPerHour * getResourceIncrease());
     }
 
-    private double getResourceIncrease(){
+    private double getResourceIncrease() {
         double efficiency = bonusUpgrades.upgrades.getByName("Efficient Resources").getEffect();
         double rate = bonusUpgrades.upgrades.getByName("Resource Rate").getEffect();
         double resourceIncrease = ((4.0 / rate) * (1.0 + efficiency / 100.0));
@@ -152,12 +152,12 @@ public class Territory {
         return bonusUpgrades.upgrades.getWoodPerHourConsume() + towerUpgrades.upgrades.getWoodPerHourConsume();
     }
 
-    public void setUpgrade(String name, int level){
+    public void setUpgrade(String name, int level) {
         Upgrade tu = towerUpgrades.upgrades.getByName(name);
         Upgrade bu = bonusUpgrades.upgrades.getByName(name);
-        if (tu != null){
+        if (tu != null) {
             tu.setStackSize(level);
-        } else if (bu != null){
+        } else if (bu != null) {
             bu.setStackSize(level);
         }
     }
@@ -203,7 +203,7 @@ public class Territory {
         isMarkedAsUnknown = markedAsUnknown;
     }
 
-    public void resetToDefaults(){
+    public void resetToDefaults() {
         this.towerUpgrades.upgrades.clear();
         this.bonusUpgrades.upgrades.clear();
         this.setTreasuryBonus(0.0);
@@ -227,13 +227,13 @@ public class Territory {
 
             if (bonus != null) bonus.setStackSize(entry.getValue());
             else if (tower != null) tower.setStackSize(entry.getValue());
-            else DebugWindow.getInstance().log(DebugWindow.Priority.ERROR,"couldnt find territory upgrade " + entry.getKey().getName());
+            else WynnAdhocClient.LOGGER.error("couldn't find territory upgrade " + entry.getKey().getName());
         }
 
         this.setMarkedAsUnknown(false);
     }
 
-    public static String detectDifferences(Territory t1, Territory t2){
+    public static String detectDifferences(Territory t1, Territory t2) {
         if ((t1 == null && t2 != null) || (t1 != null && t2 == null)) return "one is null\n";
         else if (t1 == null && t2 == null) return "both are null\n";
 

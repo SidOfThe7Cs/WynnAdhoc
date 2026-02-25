@@ -3,6 +3,7 @@ package sidly.wynnadhoc.utils.api;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import sidly.wynnadhoc.WynnAdhocClient;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -115,7 +116,6 @@ public class UnknownFieldTracker {
         return "UNKNOWN";
     }
 
-
     void printReport() {
         unknownFields.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
@@ -132,8 +132,8 @@ public class UnknownFieldTracker {
                         valuesStr = "[]";
                     }
 
-                    System.err.println(
-                            "Unknown field: " + e.getKey()
+                    WynnAdhocClient.LOGGER.error(
+                            "Unknown API field: " + e.getKey()
                                     + " | Types: " + e.getValue()
                                     + " | Values: " + valuesStr
                     );

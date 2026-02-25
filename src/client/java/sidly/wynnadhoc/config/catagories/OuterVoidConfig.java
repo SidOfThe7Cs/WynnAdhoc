@@ -24,7 +24,7 @@ public class OuterVoidConfig {
     public GearTier showBoxesAtRarity = GearTier.RARE;
 
     @Expose
-    @ConfigOption(name = "Rare Priority", desc = "the istance of rare items is multiplied by this number for pathfinding \n lower is higher priority")
+    @ConfigOption(name = "Rare Priority", desc = "the distance of rare items is multiplied by this number for pathfinding \nlower is higher priority")
     @ConfigEditorSlider(minValue = 0.1F, maxValue = 2.0F, minStep = 0.05F)
     public float rareItemDistanceMultiplier = 0.65F;
 

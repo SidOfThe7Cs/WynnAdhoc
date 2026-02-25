@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.features.war;
 
 import sidly.wynnadhoc.config.ConfigManager;
-import sidly.wynnadhoc.utils.DebugWindow;
 
 import java.util.HashMap;
 import java.util.Map;

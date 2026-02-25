@@ -27,6 +27,14 @@ fun Vector3f.toVec3d(): Vec3d {
     return Vec3d(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 }
 
+fun Vec3d.down(amount: Int): Vec3d {
+    return Vec3d(this.x, this.y - amount, this.z)
+}
+
+fun Vec3d.up(amount: Int): Vec3d {
+    return Vec3d(this.x, this.y + amount, this.z)
+}
+
 fun Box.getCorners(): Array<Vec3i> {
     return arrayOf(
         Vec3i(this.minX.toInt(), this.maxY.toInt(), this.minZ.toInt()),

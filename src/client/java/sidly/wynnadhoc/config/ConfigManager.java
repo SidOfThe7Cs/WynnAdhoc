@@ -13,6 +13,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.features.chests.ChestSaving;
 import sidly.wynnadhoc.features.lootruns.SaveData;
 
 import java.io.File;
@@ -40,11 +42,7 @@ public class ConfigManager {
     }
 
     public Map<BlockPos, Long> getChests() {
-        return lootrunSaveData.chests;
-    }
-
-    public List<BlockPos> getBannedChests() {
-        return lootrunSaveData.bannedChests;
+        return ChestSaving.chests;
     }
 
     public Screen getConfigScreen(Screen parent) {
@@ -81,7 +79,7 @@ public class ConfigManager {
         try {
             configFile.createNewFile();
         } catch (IOException e) {
-            System.err.println("Could not create config file!");
+            WynnAdhocClient.LOGGER.error("Could not create config file!");
             e.printStackTrace();
         }
         Config loaded = ConfigUtil.loadConfig(Config.class, configFile, gson);
@@ -90,7 +88,7 @@ public class ConfigManager {
             this.config = loaded;
         } else {
             // Config file missing or corrupted → regenerate defaults
-            System.err.println("Config file could not be loaded");
+            WynnAdhocClient.LOGGER.error("Config file could not be loaded");
             this.config = new Config();
         }
     }

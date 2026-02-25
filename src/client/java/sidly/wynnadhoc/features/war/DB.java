@@ -12,10 +12,11 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ScreenRenderEvent;
 import sidly.wynnadhoc.mixin.client.accessors.TerritoryManagementScreenAccessor;
-import sidly.wynnadhoc.utils.DebugWindow;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.FormatUtils;
 import sidly.wynnadhoc.utils.ItemUtils;
 
@@ -29,7 +30,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -113,7 +113,7 @@ public class DB {
             TerritoryApiResponse apiData = gson.fromJson(response.body(), type);
 
             if (apiData == null) {
-                System.err.println("apiData was null");
+                WynnAdhocClient.LOGGER.warn("apiData was null");
                 return;
             }
 
@@ -125,7 +125,7 @@ public class DB {
                 Territory territory = allTerritories.get(territoryName);
 
                 if (territory == null) {
-                    System.err.println("territory: " + territoryName + " not found in allTerritories");
+                    WynnAdhocClient.LOGGER.warn("territory: " + territoryName + " not found in allTerritories");
                     continue;
                 }
 
@@ -162,12 +162,12 @@ public class DB {
 
                         if (territory.isMarkedAsUnknown() || forceUpdate) {
                             territory.parseFromWynntils(wynntilsTerritory);
-                            DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "parsed info for " + wynntilsTerritory.getName());
+                            WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "parsed info for " + wynntilsTerritory.getName());
                         }
 
                         ownedTerritories.put(wynntilsTerritory.getName(), territory);
                     } else
-                        DebugWindow.getInstance().log(DebugWindow.Priority.WARNING, "couldnt find territory " + wynntilsTerritory.getName());
+                        WynnAdhocClient.LOGGER.warn("couldn't find territory " + wynntilsTerritory.getName());
                 }
 
                 Territory hq = getHQ();
@@ -328,6 +328,7 @@ public class DB {
 
     private static final Pattern upgradeCostPattern = Pattern.compile("- (\\d+) (Emeralds|Ore|Crops|Wood|Fish)\\b");
     private static final Pattern upgradeLevelPattern = Pattern.compile("\\[Lv\\. (\\d{1,2})]"); // Matches [Lv. 0] to [Lv. 99]
+
     private static void parseUpgrade(Upgrade upgrade, ItemStack itemStack) {
         Matcher matcher = upgradeLevelPattern.matcher(itemStack.getName().getString());
         int lvl = -1; // Default or error value
@@ -353,10 +354,11 @@ public class DB {
                     int dbCost = upgrade.getCost();
 
                     if (dbType != correctType || dbCost != correctCost) {
-                        DebugWindow.getInstance().log(DebugWindow.Priority.ERROR,
+                        WynnAdhocClient.LOGGER.error(
                                 "Database is wrong for " + upgrade.getName() + " lvl " + upgrade.getStackSize() +
-                                "\nis " + dbCost + " " + dbType +
-                                "\nshould be " + correctCost + " " + correctType);
+                                        "\nis " + dbCost + " " + dbType +
+                                        "\nshould be " + correctCost + " " + correctType
+                        );
                     }
                 }
                 break;
@@ -395,7 +397,7 @@ public class DB {
                     sb.append("full in ").append(time);
                 }
             } else
-                DebugWindow.getInstance().log(DebugWindow.Priority.ERROR, "null found: stored " + resourceStored + "cap " + storageCap);
+                WynnAdhocClient.LOGGER.error("null found: stored " + resourceStored + "cap " + storageCap);
         } else if (consume > produce) {
             if (resourceStored != null && storageCap != null) {
                 int netConsumption = consume - produce;
@@ -406,7 +408,7 @@ public class DB {
                     sb.append("empty in ").append(time);
                 }
             } else
-                DebugWindow.getInstance().log(DebugWindow.Priority.ERROR, "null found: stored " + resourceStored + "cap " + storageCap);
+                WynnAdhocClient.LOGGER.error("null found: stored " + resourceStored + "cap " + storageCap);
         }
         sb.append("\n");
 

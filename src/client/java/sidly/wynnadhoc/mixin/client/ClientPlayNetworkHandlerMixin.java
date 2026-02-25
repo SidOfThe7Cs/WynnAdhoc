@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import sidly.wynnadhoc.features.chests.ChestTracker;
+import sidly.wynnadhoc.event.TextDisplaySyncEvent;
 import sidly.wynnadhoc.mixin.client.accessors.TextDisplayEntityAccessor;
 
 @Mixin(ClientPlayNetworkHandler.class)
@@ -24,7 +24,7 @@ public class ClientPlayNetworkHandlerMixin {
                 // Only process if text actually changed
                 packet.trackedValues().forEach(entry -> {
                     if (entry.id() == TextDisplayEntityAccessor.getTextKey().id()) {
-                        ChestTracker.onTextDisplaySync(textDisplay);
+                        new TextDisplaySyncEvent(textDisplay);
                     }
                 });
             }

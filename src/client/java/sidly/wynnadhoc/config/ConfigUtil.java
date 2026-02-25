@@ -4,12 +4,13 @@ package sidly.wynnadhoc.config;
 
 import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
+import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.utils.Debug;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -75,7 +76,7 @@ public class ConfigUtil {
             }
 
             if (loadConfig(config.getClass(), tempFile, gson, useGzip, false) == null) {
-                System.out.println("Config verification failed for " + tempFile + ", could not save config properly.");
+                WynnAdhocClient.LOGGER.error("Config verification failed for " + tempFile + ", could not save config properly.");
                 if (!unimportantConfigs.contains(tempFile.getName())) makeBackup(tempFile, ".backup");
                 return;
             }
@@ -95,7 +96,7 @@ public class ConfigUtil {
 
     private static void makeBackup(File file, String suffix) {
         File backupFile = new File(file.getParent(), file.getName() + "-" + System.currentTimeMillis() + suffix);
-        System.out.println("trying to make backup: " + backupFile.getName());
+        WynnAdhocClient.LOGGER.info(Debug.Type.CONFIG, "trying to make backup: " + backupFile.getName());
 
         try {
             Files.move(file.toPath(), backupFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
@@ -103,7 +104,7 @@ public class ConfigUtil {
             try {
                 Files.move(file.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception __) {
-                System.out.println("WynnAdhoc config gone");
+                WynnAdhocClient.LOGGER.error("WynnAdhoc config gone");
             }
         } finally {
             file.delete();

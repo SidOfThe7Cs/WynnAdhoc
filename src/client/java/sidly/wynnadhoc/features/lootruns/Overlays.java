@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns;
 
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.config.catagories.LootrunConfig;
@@ -8,11 +9,12 @@ import sidly.wynnadhoc.config.gui.TextHudElement;
 import sidly.wynnadhoc.features.lootruns.enums.BeaconColor;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
 import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 public class Overlays {
     private static LootrunConfig config() { return ConfigManager.INSTANCE.config.lootrun; }
-    private static LootrunData data = Core.INSTANCE.getCurrentLootrunData();
+    private static LootrunData data = LootrunCore.INSTANCE.getCurrentLootrunData();
 
     public static void register() {
         HudElementManager.register(new TextHudElement(
@@ -42,7 +44,7 @@ public class Overlays {
     }
 
     public static String updateBeaconCountsOverlay() {
-        data = Core.INSTANCE.getCurrentLootrunData();
+        data = LootrunCore.INSTANCE.getCurrentLootrunData();
         StringBuilder sb = new StringBuilder();
         for (BeaconColor color : BeaconColor.values()) {
             addBeaconCountLine(sb, color);
@@ -69,7 +71,7 @@ public class Overlays {
     }
 
     public static String updateEndRewardsOverlay() {
-        data = Core.INSTANCE.getCurrentLootrunData();
+        data = LootrunCore.INSTANCE.getCurrentLootrunData();
         int rrs = data.getEndStats().getEndRerolls();
         int pulls = data.getEndStats().getEndPulls();
         String timeTillReset = "";
@@ -80,14 +82,14 @@ public class Overlays {
             if (data.getActiveCamp().getCamp().isDailyReady()) {
                 rrs += 1;
                 pulls += 10;
-            } else timeTillReset = " (" + FormatUtils.millisToHMS(Core.INSTANCE.getTimeTillDailyReset()) + ")";
+            } else timeTillReset = " (" + FormatUtils.millisToHMS(LootrunCore.INSTANCE.getTimeTillDailyReset()) + ")";
             prevSacs = data.getActiveCamp().getCamp().getSacs();
         } else sb.append("camp is null cant get sac data\n");
 
         sb.append("pulls: ").append(pulls).append(" (").append(prevSacs + pulls).append(")").append('\n')
                 .append("sacs: ").append(data.getEndStats().getEndSacs()).append('\n')
                 .append("rerolls: ").append(rrs).append(timeTillReset).append('\n')
-                .append("epulls: ").append(Core.INSTANCE.getEffectivePulls()).append('\n');
+                .append("epulls: ").append(LootrunCore.INSTANCE.getEffectivePulls()).append('\n');
 
         return sb.toString();
     }
@@ -100,7 +102,7 @@ public class Overlays {
     }
 
     public static String updateMissionOverlay() {
-        data = Core.INSTANCE.getCurrentLootrunData();
+        data = LootrunCore.INSTANCE.getCurrentLootrunData();
         StringBuilder sb = new StringBuilder();
         for (MissionOptions mission : data.getCurrentMissionsActive()){
             sb.append("§7");

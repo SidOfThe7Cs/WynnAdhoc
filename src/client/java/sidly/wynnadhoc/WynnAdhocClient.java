@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
@@ -17,15 +18,20 @@ import sidly.wynnadhoc.features.BowSpammer;
 import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
+import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.Overlays;
+import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
+import sidly.wynnadhoc.features.war.WarCore;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarTimer;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
+    public static final Debug LOGGER = new Debug(MOD_ID);
 
     @Override
     public void onInitializeClient() {
@@ -37,12 +43,13 @@ public class WynnAdhocClient implements ClientModInitializer {
         WorldRenderEvents.AFTER_ENTITIES.register(ScreenCloseEvent::onFrameRendered);
         ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register(BlockEntityLoadedEvent::new);
         WorldRenderEvents.END_MAIN.register(RenderUtils.INSTANCE::onFabricWorldRender);
-        UseEntityCallback.EVENT.register(ChestTracker::onEntityClicked);
+        UseEntityCallback.EVENT.register(EntityClickedEvent::onEntityClicked);
         ClientCommandRegistrationCallback.EVENT.register(CommandRegistrationEvent::new);
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
+        ScreenEvents.AFTER_INIT.register(ScreenOpenedEvent::new);
 
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
-        Event.register(ClientTickEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onClientTick);
+        Event.register(ClientTickEvent.class, LootrunCore.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
         Event.register(ClientTickEvent.class, OuterVoidItemPathfinder.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
@@ -50,35 +57,37 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
+        Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
-        Event.register(ChatMessageEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onChatMessage);
-        Event.register(ChatMessageEvent.class, sidly.wynnadhoc.features.war.Core::onChatMessage);
+        Event.register(ChatMessageEvent.class, LootrunCore.INSTANCE::onChatMessage);
+        Event.register(ChatMessageEvent.class, WarCore::onChatMessage);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
 
         Event.register(ScreenRenderEvent.class, DB::parseScreen);
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
-        Event.register(ScreenRenderEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onScreenRender);
+        Event.register(ScreenRenderEvent.class, LootrunCore.INSTANCE::onScreenRender);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
-        Event.register(ScreenOpenedEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onScreenOpened);
 
-        Event.register(ChestItemsLoadedEvent.class, ChestTracker::onChestItemsLoaded);
+        Event.register(ChestItemsLoadedEvent.class, ChestTracker.INSTANCE::onChestItemsLoaded);
         Event.register(ChestItemsLoadedEvent.class, AutoLootChests::onChestItemsLoaded);
 
         Event.register(WorldRenderEvent.class, OuterVoidItemPathfinder.INSTANCE::draw);
-        Event.register(WorldRenderEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onWorldRender);
+        Event.register(WorldRenderEvent.class, ChestTracker.INSTANCE::onWorldRender);
 
-        Event.register(PreInitEvent.class, sidly.wynnadhoc.features.war.Core::registerHudElements);
+        Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
 
-        Event.register(BlockEntityLoadedEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onBlockEntityLoad);
-        Event.register(ForEachEntityEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::checkIfBeacon);
+        Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
-        Event.register(SlotClickedEvent.class, sidly.wynnadhoc.features.lootruns.Core.INSTANCE::onSlotClicked);
+        Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
+        Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
+        Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
+        Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
 
         ConfigManager.INSTANCE.load();
 
@@ -89,16 +98,23 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
-better chest tracking
 save and load lootrun data
+refactor chest saving to not just be there entir tooltip as json
 Refactor render with renderable interface and make it use screen % with pixel origin offset
-resource tick display
-auto update checker
 split mod
+icon
+auto update checker
 spellcaster with queue and display and safe cast
-fix outer void database
-why doesnt war res always display full/empty in
+implement anchor points + layering
+annotation for hudelement and event
+WAR:
+    + res doesnt always display full/empty in (maybe not when onClick changes?)
+    + resource tick display
+    + notification when terr almost off cd
+    + notification on buffed terr cut off
+    + taxes support
     + add loadout support
     + check total guild cost / output diamond and compare
     + why does it sometime show less output than it should ie resource multiplier of 9.9 instead of 11
+    + confirm queueing if difficulty or cost
  */

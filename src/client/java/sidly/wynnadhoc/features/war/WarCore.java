@@ -2,26 +2,29 @@ package sidly.wynnadhoc.features.war;
 
 import com.wynntils.core.components.Models;
 import net.minecraft.client.MinecraftClient;
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.WarConfig;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.config.gui.TextHudElement;
 import sidly.wynnadhoc.event.ChatMessageEvent;
-import sidly.wynnadhoc.utils.DebugWindow;
+import sidly.wynnadhoc.utils.Debug;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Core {
-    private static WarConfig config() { return ConfigManager.INSTANCE.config.war; }
+public class WarCore {
+    private static WarConfig config() {
+        return ConfigManager.INSTANCE.config.war;
+    }
 
     public static void registerHudElements() {
         HudElementManager.register(new TextHudElement(
                 ConfigManager.INSTANCE.config.war.resourceOverlay,
-                Core::shouldShowResourceOverlay,
-                Core::updateResourceDisplay,
-                Core::onWarResourceDisplayClick,
+                WarCore::shouldShowResourceOverlay,
+                WarCore::updateResourceDisplay,
+                WarCore::onWarResourceDisplayClick,
                 DB::getSuggestedChanges)
         );
     }
@@ -48,9 +51,9 @@ public class Core {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setMarkedAsUnknown(true);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "marked " + territoryName + " as unknown (loadout: " + loadoutName + ")");
+                    WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "marked " + territoryName + " as unknown (loadout: " + loadoutName + ")");
                 } else {
-                    DebugWindow.getInstance().log(DebugWindow.Priority.WARNING, "unknown territory: " + territoryName);
+                    WynnAdhocClient.LOGGER.warn("unknown territory: " + territoryName);
                 }
             }
         }
@@ -69,7 +72,7 @@ public class Core {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setUpgrade(upgradeName, level);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "set " + upgradeName + " to " + level);
+                    WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "set " + upgradeName + " to " + level);
                 }
             }
         }
@@ -86,7 +89,7 @@ public class Core {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setUpgrade(upgradeName, 0);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "set " + upgradeName + " to " + 0);
+                    WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "set " + upgradeName + " to " + 0);
                 }
             }
         }
@@ -104,7 +107,7 @@ public class Core {
                 Territory territory = DB.ownedTerritories.get(territoryName);
                 if (territory != null) {
                     territory.setMarkedAsUnknown(true);
-                    DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "marked " + territoryName + " as unknown");
+                    WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "marked " + territoryName + " as unknown");
                 }
             }
         }
@@ -117,7 +120,7 @@ public class Core {
             String guildName = takeoverMatcher.group(2).trim();
 
             DB.ownedTerritories.put(territoryName, DB.allTerritories.get(territoryName));
-            DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "added " + territoryName + " as owned");
+            WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "added " + territoryName + " as owned");
         }
         // you lost a territory
         Pattern guildTakeoverPattern = Pattern.compile("^\\[(.*?)] has taken control of (.*?)!$");
@@ -128,7 +131,7 @@ public class Core {
             String territoryName = guildTakeoverMatcher.group(2).trim();
 
             DB.ownedTerritories.remove(territoryName);
-            DebugWindow.getInstance().log(DebugWindow.Priority.INFO, "removed " + territoryName + " from owned");
+            WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "removed " + territoryName + " from owned");
         }
 
     }

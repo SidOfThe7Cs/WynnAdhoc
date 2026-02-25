@@ -1,8 +1,9 @@
 package sidly.wynnadhoc.features.lootruns;
 
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.LootrunConfig;
-import sidly.wynnadhoc.utils.DebugWindow;
+import sidly.wynnadhoc.utils.Debug;
 
 public class EndStats {
     private int endPulls = 0;
@@ -27,9 +28,9 @@ public class EndStats {
     }
 
     public void addEndPulls(int amount) {
-        DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"added " + amount + " end pulls");
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN,"added " + amount + " end pulls");
         this.endPulls += amount;
-        Core.INSTANCE.getCurrentLootrunData().addPullsSinceLastYellow(amount);
+        LootrunCore.INSTANCE.getCurrentLootrunData().addPullsSinceLastYellow(amount);
         config().missionOverlay.updateDisplay();
         config().endRewardsOverlay.updateDisplay();
     }
