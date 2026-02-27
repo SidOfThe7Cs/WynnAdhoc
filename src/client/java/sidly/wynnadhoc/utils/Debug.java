@@ -92,6 +92,7 @@ public class Debug {
         CONFIG,
         MANUAL,
         WAR,
+        TEMP,
         HUD;
 
         public String get(String message) {

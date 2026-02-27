@@ -2,10 +2,7 @@ package sidly.wynnadhoc;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -81,6 +78,8 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(PreInitEvent.class, Overlays::register);
 
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
+        Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
+
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);

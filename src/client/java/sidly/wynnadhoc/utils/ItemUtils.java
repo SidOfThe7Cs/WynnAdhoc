@@ -2,9 +2,10 @@ package sidly.wynnadhoc.utils;
 
 import com.wynntils.core.components.Models;
 import com.wynntils.models.gear.type.GearTier;
-import com.wynntils.models.items.WynnItem;
 import com.wynntils.models.items.properties.GearTierItemProperty;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -54,5 +55,13 @@ public class ItemUtils {
         }
 
         return null;
+    }
+
+    public static Float getFirsCustomModelDataFloat(ItemStack itemStack) {
+        CustomModelDataComponent modelData = itemStack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        if (modelData == null) return null;
+        List<Float> floats = modelData.floats();
+        if (floats == null || floats.isEmpty()) return null;
+        return floats.getFirst();
     }
 }

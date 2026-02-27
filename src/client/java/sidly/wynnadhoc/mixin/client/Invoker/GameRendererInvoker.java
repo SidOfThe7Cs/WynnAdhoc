@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.mixin.client;
+package sidly.wynnadhoc.mixin.client.Invoker;
 
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;

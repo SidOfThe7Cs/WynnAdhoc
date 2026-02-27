@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDraggableList;
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 import sidly.wynnadhoc.utils.Debug;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DebugConfig {
@@ -31,5 +31,6 @@ public class DebugConfig {
         CHAT_TYPE_MESSAGES,
         DEV_PONG_EVENT,
         PAGE_NAVIGATION,
+        ACTION_BAR_FAILURE,
     }
 }

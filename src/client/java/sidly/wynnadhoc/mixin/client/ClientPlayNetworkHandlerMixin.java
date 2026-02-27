@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sidly.wynnadhoc.event.TextDisplaySyncEvent;
+import sidly.wynnadhoc.mixin.client.accessors.ItemDisplayEntityAccessor;
 import sidly.wynnadhoc.mixin.client.accessors.TextDisplayEntityAccessor;
 
 @Mixin(ClientPlayNetworkHandler.class)
@@ -25,6 +26,13 @@ public class ClientPlayNetworkHandlerMixin {
                 packet.trackedValues().forEach(entry -> {
                     if (entry.id() == TextDisplayEntityAccessor.getTextKey().id()) {
                         new TextDisplaySyncEvent(textDisplay);
+                    }
+                });
+            }
+            if (entity instanceof DisplayEntity.ItemDisplayEntity itemDisplay) {
+                packet.trackedValues().forEach(entry -> {
+                    if (entry.id() == ItemDisplayEntityAccessor.getItemKey().id()) {
+                        //new ItemDisplaySyncEvent(itemDisplay);
                     }
                 });
             }
