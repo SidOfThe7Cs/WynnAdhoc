@@ -386,32 +386,34 @@ public class DB {
                 .append(produce == 0 ? "∞" : getPercent(consume, produce))
                 .append("%) ");
 
-        if (produce > consume) {
-            if (resourceStored != null && storageCap != null) {
-                int remainingToFill = storageCap - resourceStored;
-                int netProduction = produce - consume;
-                if (netProduction > 0 && remainingToFill > 0) {
-                    double hoursToFill = remainingToFill / (double) netProduction;
-                    //DebugWindow.getInstance().log("hoursToFull = " + hoursToFill);
-                    String time = FormatUtils.formatTime(hoursToFill, ChronoUnit.HOURS);
-                    sb.append("full in ").append(time);
-                }
-            } else
-                WynnAdhocClient.LOGGER.error("null found: stored " + resourceStored + "cap " + storageCap);
-        } else if (consume > produce) {
-            if (resourceStored != null && storageCap != null) {
-                int netConsumption = consume - produce;
-                if (netConsumption > 0 && resourceStored > 0) {
-                    double hoursToEmpty = resourceStored / (double) netConsumption;
-                    //DebugWindow.getInstance().log("hoursToEmpty = " + hoursToEmpty);
-                    String time = FormatUtils.formatTime(hoursToEmpty, ChronoUnit.HOURS);
-                    sb.append("empty in ").append(time);
-                }
-            } else
-                WynnAdhocClient.LOGGER.error("null found: stored " + resourceStored + "cap " + storageCap);
+        if (resourceStored == null || storageCap == null) {
+            //TODO its failing to parse stored res it appears
+            //WynnAdhocClient.LOGGER.error("null found: stored " + resourceStored + " cap " + storageCap + " " + type);
+            sb.append("\n");
+            return sb;
         }
-        sb.append("\n");
 
+        if (produce > consume) {
+            int remainingToFill = storageCap - resourceStored;
+            int netProduction = produce - consume;
+            if (netProduction > 0 && remainingToFill > 0) {
+                double hoursToFill = remainingToFill / (double) netProduction;
+                //DebugWindow.getInstance().log("hoursToFull = " + hoursToFill);
+                String time = FormatUtils.formatTime(hoursToFill, ChronoUnit.HOURS);
+                sb.append("full in ").append(time);
+            }
+        } else if (consume > produce) {
+            int netConsumption = consume - produce;
+            if (netConsumption > 0 && resourceStored > 0) {
+                double hoursToEmpty = resourceStored / (double) netConsumption;
+                //DebugWindow.getInstance().log("hoursToEmpty = " + hoursToEmpty);
+                String time = FormatUtils.formatTime(hoursToEmpty, ChronoUnit.HOURS);
+                sb.append("empty in ").append(time);
+            }
+        } else if (consume != 0)
+            WynnAdhocClient.LOGGER.info(Debug.Type.WAR, "consume and produce are the exact same: " + type);
+
+        sb.append("\n");
         return sb;
     }
 

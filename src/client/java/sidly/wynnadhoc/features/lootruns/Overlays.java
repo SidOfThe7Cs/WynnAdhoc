@@ -1,6 +1,5 @@
 package sidly.wynnadhoc.features.lootruns;
 
-import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.config.catagories.LootrunConfig;
@@ -9,7 +8,6 @@ import sidly.wynnadhoc.config.gui.TextHudElement;
 import sidly.wynnadhoc.features.lootruns.enums.BeaconColor;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
 import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
-import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 public class Overlays {

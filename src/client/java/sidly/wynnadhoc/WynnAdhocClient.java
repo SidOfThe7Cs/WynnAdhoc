@@ -15,6 +15,7 @@ import sidly.wynnadhoc.features.BowSpammer;
 import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
+import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
@@ -59,12 +60,14 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
         Event.register(ChatMessageEvent.class, LootrunCore.INSTANCE::onChatMessage);
         Event.register(ChatMessageEvent.class, WarCore::onChatMessage);
+        Event.register(ChatMessageEvent.class, GuildLogs.INSTANCE::onChatMessage);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
 
         Event.register(ScreenRenderEvent.class, DB::parseScreen);
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
         Event.register(ScreenRenderEvent.class, LootrunCore.INSTANCE::onScreenRender);
+        Event.register(ScreenRenderEvent.class, GuildLogs.INSTANCE::onScreenRender);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
 
@@ -76,6 +79,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
+        Event.register(PreInitEvent.class, GuildLogs.INSTANCE::registerHudElements);
 
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
@@ -111,7 +115,7 @@ WAR:
     + resource tick display
     + notification when terr almost off cd
     + notification on buffed terr cut off
-    + taxes support
+    + taxes and tributes support
     + add loadout support
     + check total guild cost / output diamond and compare
     + why does it sometime show less output than it should ie resource multiplier of 9.9 instead of 11

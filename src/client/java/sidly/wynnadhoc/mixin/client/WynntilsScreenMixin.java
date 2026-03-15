@@ -1,6 +1,6 @@
 package sidly.wynnadhoc.mixin.client;
 
-import com.wynntils.screens.territorymanagement.TerritoryManagementScreen;
+import com.wynntils.core.consumers.screens.WynntilsScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,9 +12,9 @@ import sidly.wynnadhoc.event.HudRenderOnTopEvent;
 import sidly.wynnadhoc.event.ScreenRenderEvent;
 import sidly.wynnadhoc.features.war.DB;
 
-@Mixin(TerritoryManagementScreen.class)
+@Mixin(WynntilsScreen.class)
 public class WynntilsScreenMixin {
-    @Inject(method = "doRender", at = @At("TAIL"))
+    @Inject(method = "render", at = @At("TAIL"))
     private void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         new ScreenRenderEvent(client.currentScreen, context, mouseX, mouseY);
