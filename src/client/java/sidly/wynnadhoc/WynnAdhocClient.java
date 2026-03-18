@@ -1,5 +1,7 @@
 package sidly.wynnadhoc;
 
+import com.wynntils.mc.event.PlayerInteractEvent;
+import com.wynntils.mc.event.UseItemEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
@@ -23,6 +25,7 @@ import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.utils.Debug;
+import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarTimer;
@@ -53,6 +56,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, BowSpammer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
+        Event.register(ClientTickEvent.class, TickScheduler::tickAll);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
@@ -91,6 +95,11 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
+
+        NeoEvent.register(UseItemEvent.class, BowSpammer::onUseItem);
+        NeoEvent.register(PlayerInteractEvent.Interact.class, BowSpammer::onUseItem);
+        NeoEvent.register(PlayerInteractEvent.InteractAt.class, BowSpammer::onUseItem);
+        NeoEvent.register(PlayerInteractEvent.RightClickBlock.class, BowSpammer::onUseItem);
 
         ConfigManager.INSTANCE.load();
 
