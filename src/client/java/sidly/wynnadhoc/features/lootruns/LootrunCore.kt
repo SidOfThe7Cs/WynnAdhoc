@@ -90,7 +90,7 @@ object LootrunCore {
 
             // check if the first sibling is a "marker"
             if (!siblings.isEmpty() && siblings[0].style.getFont() != null && siblings[0].style
-                    .getFont().toString() == "minecraft:marker"
+                    .getFont().toString() == "Font[id=minecraft:marker]"
             ) {
                 // extract the distance
                 var distance = -1
@@ -126,12 +126,12 @@ object LootrunCore {
                                 return
                             }
                         }
+                        //WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "$baseColor beacon found at $distance")
                         if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
                             currentBeaconOptionsFromWaypoints[baseColor] = distance
                         }
                     }
                 }
-
 
                 // get beacon type
                 // Get the nested components within the marker
@@ -202,8 +202,9 @@ object LootrunCore {
         config().beaconCountsOverlay.updateDisplay()
     }
 
-    fun onChallengeCompleted(color: BeaconColor) {
+    fun onChallengeCompleted(color: BeaconColor?) {
         val data = getCurrentLootrunData() ?: return
+        if (color == null) WynnAdhocClient.LOGGER.warn("completed null beacon color: $color")
 
         // check the available beacon options to see if its vibrant or not
         var vibrant = false
@@ -372,7 +373,7 @@ object LootrunCore {
         val data = getCurrentLootrunData() ?: return
         val oldStatus = data.status
         if (oldStatus == newStatus) return
-        //DebugWindow.getInstance().log(DebugWindow.Priority.INFO,"switching lootrun status from " + oldStatus + " to " + newStatus);
+        WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "switching lootrun status from $oldStatus to $newStatus");
         when (newStatus) {
             LootrunStatus.PickingBeacon -> if (oldStatus == LootrunStatus.NotInLootrun) {
                 data.startLootrun()

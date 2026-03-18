@@ -26,6 +26,7 @@ public class ItemUtils {
 
     }
 
+    // TODO idk if this works now or if only on fruma and what wynntills version
     public static GearTier getItemRarity(ItemStack itemStack) {
         Optional<GearTierItemProperty> tieredItem = Models.Item.asWynnItemProperty(itemStack, GearTierItemProperty.class);
         return tieredItem.map(GearTierItemProperty::getGearTier).orElse(null);

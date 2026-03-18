@@ -8,7 +8,7 @@
     "FunctionManagerMixin",
     "HudMixin",
     "KeyboardMixin",
-    "MinecraftClientMixin",
+    "WynntillsModMixin",
     "MouseMixin",
     "ScreenMixin",
     "SlotClickedMixin",

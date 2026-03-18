@@ -11,10 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.ChestConfig;
 import sidly.wynnadhoc.event.ChestItemsLoadedEvent;
 import sidly.wynnadhoc.mixin.client.Invoker.IsFavoritedInvoker;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.FormatUtils;
 import sidly.wynnadhoc.utils.ItemUtils;
 import sidly.wynnadhoc.utils.TickScheduler;
@@ -34,7 +36,6 @@ public class AutoLootChests {
 
     public static void onChestItemsLoaded(ChestItemsLoadedEvent event) {
         GenericContainerScreen screen = event.containerScreen;
-        //DebugWindow.getInstance().log(formatChestContents(screen));
 
         if (!config().autoCloseChests) {
             MouseLerper.cancelAll();
@@ -65,6 +66,7 @@ public class AutoLootChests {
 
             GearTier itemRarity = ItemUtils.getItemRarity(itemStack);
             Integer pouchTier = ItemUtils.getEmeraldPouchTier(itemStack);
+            WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "itemRarity: " + itemRarity);
             if (itemRarity == GearTier.MYTHIC || (pouchTier != null && pouchTier >= 8)) {
                 result = true;
                 continue; // dont take the item out of the chest
