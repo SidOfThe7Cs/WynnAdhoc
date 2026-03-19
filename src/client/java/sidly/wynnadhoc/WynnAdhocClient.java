@@ -110,10 +110,11 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
-save and load lootrun data
+save and load lootrun data and chests
 refactor chest saving to not just be there entir tooltip as json
 Refactor render with renderable interface and make it use screen % with pixel origin offset
 split mod
+remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon
 auto update checker
 spellcaster with queue and display and safe cast

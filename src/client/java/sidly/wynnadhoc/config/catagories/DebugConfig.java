@@ -4,13 +4,17 @@ import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDraggableList;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 import sidly.wynnadhoc.utils.Debug;
 
 import java.util.List;
 
 public class DebugConfig {
+    @Expose
+    @ConfigOption(name = "Show Cmd On Chat Hover", desc = "shows what a clickable chat message will do if you click it when you hover it")
+    @ConfigEditorBoolean
+    public boolean showCmdOnChatHover = false;
+
     @Expose
     @ConfigOption(name = "Shown Debug Info", desc = "what types of debug info should be shown")
     @ConfigEditorDraggableList
