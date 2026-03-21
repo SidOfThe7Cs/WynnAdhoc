@@ -110,7 +110,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
-save and load lootrun data and chests
 refactor chest saving to not just be there entir tooltip as json
 Refactor render with renderable interface and make it use screen % with pixel origin offset
 split mod

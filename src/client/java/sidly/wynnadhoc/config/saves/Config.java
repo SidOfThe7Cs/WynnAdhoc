@@ -1,7 +1,8 @@
-package sidly.wynnadhoc.config;
+package sidly.wynnadhoc.config.saves;
 
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.Category;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.*;
 
 public class Config extends io.github.notenoughupdates.moulconfig.Config {

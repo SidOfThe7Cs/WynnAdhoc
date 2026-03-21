@@ -44,7 +44,7 @@ public class ConfigUtil {
         } catch (Exception e) {
             if (!handleError) return null;
             new RuntimeException(
-                    "Invalid config file '" + file + "'. This will reset the config to default",
+                    "Invalid config file '" + file + "'. This will reset to default",
                     e
             ).printStackTrace();
             // Try to save a version of the corrupted config for debugging purposes
@@ -59,6 +59,7 @@ public class ConfigUtil {
         saveConfig(config, file, gson, false);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void saveConfig(Object config, File file, Gson gson, boolean useGzip) {
         File tempFile = new File(file.getParent(), file.getName() + ".temp");
         try {
@@ -94,6 +95,7 @@ public class ConfigUtil {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void makeBackup(File file, String suffix) {
         File backupFile = new File(file.getParent(), file.getName() + "-" + System.currentTimeMillis() + suffix);
         WynnAdhocClient.LOGGER.info(Debug.Type.CONFIG, "trying to make backup: " + backupFile.getName());
@@ -104,7 +106,7 @@ public class ConfigUtil {
             try {
                 Files.move(file.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception __) {
-                WynnAdhocClient.LOGGER.error("WynnAdhoc config gone");
+                WynnAdhocClient.LOGGER.error("WynnAdhoc file gone " + file.getName());
             }
         } finally {
             file.delete();

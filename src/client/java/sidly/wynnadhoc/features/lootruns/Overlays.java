@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.features.lootruns;
 
 import sidly.wynnadhoc.config.ConfigManager;
-import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.config.catagories.LootrunConfig;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.config.gui.TextHudElement;
@@ -70,6 +69,7 @@ public class Overlays {
 
     public static String updateEndRewardsOverlay() {
         data = LootrunCore.INSTANCE.getCurrentLootrunData();
+        if (data == null) return "lootrun data is null";
         int rrs = data.getEndStats().getEndRerolls();
         int pulls = data.getEndStats().getEndPulls();
         String timeTillReset = "";
@@ -101,6 +101,7 @@ public class Overlays {
 
     public static String updateMissionOverlay() {
         data = LootrunCore.INSTANCE.getCurrentLootrunData();
+        if (data == null) return "lootrun data is null";
         StringBuilder sb = new StringBuilder();
         for (MissionOptions mission : data.getCurrentMissionsActive()){
             sb.append("§7");

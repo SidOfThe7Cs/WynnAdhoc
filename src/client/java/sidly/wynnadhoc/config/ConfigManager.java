@@ -1,7 +1,7 @@
 package sidly.wynnadhoc.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import io.github.notenoughupdates.moulconfig.gui.GuiContext;
 import io.github.notenoughupdates.moulconfig.gui.GuiElementComponent;
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor;
@@ -9,29 +9,78 @@ import io.github.notenoughupdates.moulconfig.platform.MoulConfigScreenComponent;
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis;
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver;
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.features.chests.ChestSaving;
-import sidly.wynnadhoc.features.lootruns.SaveData;
+import sidly.wynnadhoc.config.saves.ChestsSaveData;
+import sidly.wynnadhoc.config.saves.Config;
+import sidly.wynnadhoc.config.saves.LootrunSaveData;
+import sidly.wynnadhoc.features.lootruns.LootrunData;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
+    public static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
+                    (JsonSerializer<Map<BlockPos, Long>>) (src, typeOfSrc, context) -> {
+                        JsonArray array = new JsonArray(); // We'll use an array of entries
+                        for (Map.Entry<BlockPos, Long> entry : src.entrySet()) {
+                            JsonObject obj = new JsonObject();
+                            JsonObject posObj = new JsonObject();
+                            posObj.addProperty("x", entry.getKey().getX());
+                            posObj.addProperty("y", entry.getKey().getY());
+                            posObj.addProperty("z", entry.getKey().getZ());
+                            obj.add("pos", posObj);
+                            obj.addProperty("value", entry.getValue());
+                            array.add(obj);
+                        }
+                        return array;
+                    }
+            )
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
+                    (JsonDeserializer<Map<BlockPos, Long>>) (json, typeOfT, context) -> {
+                        Map<BlockPos, Long> map = new HashMap<>();
+                        JsonArray array = json.getAsJsonArray();
+                        for (JsonElement element : array) {
+                            JsonObject obj = element.getAsJsonObject();
+                            JsonObject posObj = obj.getAsJsonObject("pos");
+                            int x = posObj.get("x").getAsInt();
+                            int y = posObj.get("y").getAsInt();
+                            int z = posObj.get("z").getAsInt();
+                            long value = obj.get("value").getAsLong();
+                            map.put(new BlockPos(x, y, z), value);
+                        }
+                        return map;
+                    }
+            )
+            .setPrettyPrinting().create();
+    private static Path CONFIG_DIR = FabricLoader.getInstance()
+            .getConfigDir()
+            .resolve("sidly");
 
-    public Config config = new Config();  // the in-memory config
-    private final File configFile = new File("config/sidly/wynnadhoc.json");
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final File MAIN_CONFIG_FILE = getConfigDir().resolve("wynnadhoc.json").toFile();
 
-    // TODO actually save too
-    private final SaveData lootrunSaveData = new SaveData();
+    public static Path getConfigDir() {
+        if (CONFIG_DIR == null) {
+            CONFIG_DIR = FabricLoader.getInstance()
+                    .getConfigDir()
+                    .resolve("sidly");
+        }
+        return CONFIG_DIR;
+    }
+
+    public Config config = new Config();
+
+    private LootrunSaveData lootrunSaveData;
+    private ChestsSaveData chests;
 
     public LootrunData getLootrun(String uuid) {
         return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>()));
@@ -42,8 +91,9 @@ public class ConfigManager {
     }
 
     public Map<BlockPos, Long> getChests() {
-        return ChestSaving.chests;
+        return chests.chests;
     }
+
 
     public Screen getConfigScreen(Screen parent) {
 
@@ -74,27 +124,35 @@ public class ConfigManager {
         return screen;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void load() {
-        configFile.getParentFile().mkdirs();
+        ConfigManager.INSTANCE.lootrunSaveData = new LootrunSaveData();
+        ConfigManager.INSTANCE.chests = new ChestsSaveData();
+
+        lootrunSaveData.load();
+        chests.load();
+
+        MAIN_CONFIG_FILE.getParentFile().mkdirs();
         try {
-            configFile.createNewFile();
+            MAIN_CONFIG_FILE.createNewFile();
         } catch (IOException e) {
             WynnAdhocClient.LOGGER.error("Could not create config file!");
             e.printStackTrace();
         }
-        Config loaded = ConfigUtil.loadConfig(Config.class, configFile, gson);
+        Config loaded = ConfigUtil.loadConfig(Config.class, MAIN_CONFIG_FILE, GSON);
 
         if (loaded != null) {
             this.config = loaded;
         } else {
-            // Config file missing or corrupted → regenerate defaults
             WynnAdhocClient.LOGGER.error("Config file could not be loaded");
             this.config = new Config();
         }
     }
 
     public void save() {
-        ConfigUtil.saveConfig(this.config, configFile, gson);
+        lootrunSaveData.save();
+        chests.save();
+        ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
     }
 
 

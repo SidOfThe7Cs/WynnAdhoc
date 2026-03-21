@@ -5,22 +5,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.SegmentedSaveManager;
 
 import java.io.File;
 import java.io.FileReader;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChestSaving {
-    public static File saveFolder = Paths.get("config", "sidly/chest_loot_data").toFile();
-    public static SegmentedSaveManager saveManager = new SegmentedSaveManager(saveFolder, 100000, 1000000);
+    public static File SAVE_FILE = ConfigManager.getConfigDir().resolve("chest_loot_data").toFile();
+    public static SegmentedSaveManager saveManager = new SegmentedSaveManager(SAVE_FILE, 100000, 1000000);
     public static List<ChestRecord> currentLoaded = loadLatest();
-
-    public static Map<BlockPos, Long> chests = new HashMap<>();
 
     public static void saveLatest() {
         JsonArray array = new JsonArray();
@@ -47,11 +43,11 @@ public class ChestSaving {
     public static List<ChestRecord> getAllRecordsForChest(BlockPos pos) {
         List<ChestRecord> results = new ArrayList<>();
 
-        if (!saveFolder.exists() || !saveFolder.isDirectory()) return results;
+        if (!SAVE_FILE.exists() || !SAVE_FILE.isDirectory()) return results;
 
         // Get all archived files + latest
         List<File> allFiles = new ArrayList<>(saveManager.listArchivedFiles());
-        File latest = new File(saveFolder, "latest.json");
+        File latest = new File(SAVE_FILE, "latest.json");
         if (latest.exists()) allFiles.add(latest);
 
         for (File file : allFiles) {

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
-import sidly.wynnadhoc.config.LootrunData;
 import sidly.wynnadhoc.event.ClientTickEvent;
 import sidly.wynnadhoc.features.lootruns.enums.LootrunStatus;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;

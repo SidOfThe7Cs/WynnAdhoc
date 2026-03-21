@@ -13,7 +13,6 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
-import sidly.wynnadhoc.config.LootrunData
 import sidly.wynnadhoc.config.catagories.LootrunConfig
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
@@ -373,7 +372,7 @@ object LootrunCore {
         val data = getCurrentLootrunData() ?: return
         val oldStatus = data.status
         if (oldStatus == newStatus) return
-        WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "switching lootrun status from $oldStatus to $newStatus");
+        WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "switching lootrun status from $oldStatus to $newStatus")
         when (newStatus) {
             LootrunStatus.PickingBeacon -> if (oldStatus == LootrunStatus.NotInLootrun) {
                 data.startLootrun()
