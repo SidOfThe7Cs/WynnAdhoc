@@ -24,6 +24,10 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public WarConfig war = new WarConfig();
 
     @Expose
+    @Category(name = "Outer Void Settings", desc = "outer void settings")
+    public OuterVoidConfig outerVoid = new OuterVoidConfig();
+
+    @Expose
     @Category(name = "Chest Related Settings", desc = "chest related settings")
     public ChestConfig chest = new ChestConfig();
 
