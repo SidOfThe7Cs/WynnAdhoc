@@ -21,6 +21,11 @@ public class LootrunData {
     private final Map<Camps, Camp> campData;
     private final long lastCompleted; // actually time since object creation, but we create a new object as soon as we finish a lr (only used for fixing a delay in scoreboard changes)
     private int pullsSinceLastYellow = 0;
+    private final String uuid;
+
+    public String getUuid() {
+        return uuid == null ? "" : uuid;
+    }
 
     public int getPullsSinceLastYellow() {
         return pullsSinceLastYellow;
@@ -42,13 +47,15 @@ public class LootrunData {
         return lastCompleted;
     }
 
-    public LootrunData(Map<Camps, Camp> campData) {
+    public LootrunData(Map<Camps, Camp> campData, String uuid) {
         this.campData = campData;
+        this.uuid = uuid;
         lastCompleted = System.currentTimeMillis();
     }
 
     public void startLootrun() {
         setActiveCamp();
+        LootrunLogger.appendLine("started lootrun at " + activeCamp.getDisplayName());
     }
 
     public void setActiveCamp() {

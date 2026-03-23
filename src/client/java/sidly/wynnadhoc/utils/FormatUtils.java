@@ -27,14 +27,6 @@ public class FormatUtils {
         return sb.toString();
     }
 
-    public static List<Text> getTooltip(ItemStack item) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null) return new ArrayList<>();
-
-        return item.getTooltip(Item.TooltipContext.DEFAULT, client.player, TooltipType.BASIC);
-
-    }
-
     public static long timeSinceIso(String isoTimestamp, ChronoUnit timeunit) {
         if (isoTimestamp == null || isoTimestamp.isEmpty()) return Long.MAX_VALUE;
         try {

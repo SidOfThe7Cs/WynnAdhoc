@@ -65,7 +65,7 @@ public class ScoreboardInfo {
 
     public static void parseScoreboard(ClientTickEvent event){
         if (event.client.world == null) return;
-        clearLootrunData();
+        clearLootrunData(); // TODO if refactor chane everything to have a getCurrent and getLast method
         inLootrun = false;
         List<List<String>> sections = getSections(event.client);
 

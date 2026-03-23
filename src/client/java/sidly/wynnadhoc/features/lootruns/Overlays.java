@@ -56,7 +56,11 @@ public class Overlays {
         sb.append(color.getColorCode());
         sb.append(color.getDisplayName()).append(": ");
         sb.append(num);
-        if (!left.isEmpty()) sb.append(" (").append(left).append(")");
+        if (!left.isEmpty()) {
+            if (color != BeaconColor.Orange) sb.append(" (");
+            sb.append(left);
+            if (color != BeaconColor.Orange) sb.append(")");
+        }
         sb.append('\n');
     }
 

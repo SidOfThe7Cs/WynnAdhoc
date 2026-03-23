@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import static sidly.wynnadhoc.config.ConfigManager.GSON;
+
 public class ConfigUtil {
     public static <T> @Nullable T loadConfig(Class<T> configClass, File file, Gson gson) {
         return loadConfig(configClass, file, gson, false);
@@ -54,6 +56,10 @@ public class ConfigUtil {
     }
 
     private static final List<String> unimportantConfigs = List.of();
+
+    public static void saveConfig(Object config, File file) {
+        saveConfig(config, file, GSON, false);
+    }
 
     public static void saveConfig(Object config, File file, Gson gson) {
         saveConfig(config, file, gson, false);

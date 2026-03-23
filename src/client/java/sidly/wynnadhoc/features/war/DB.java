@@ -190,7 +190,7 @@ public class DB {
             if (title.equals(Models.Guild.getGuildName() + ": Manage")) {
                 // get info from the guild output diamond
                 Slot slot = containerScreen.getScreenHandler().slots.get(17);
-                List<Text> tooltip = FormatUtils.getTooltip(slot.getStack());
+                List<Text> tooltip = ItemUtils.getTooltip(slot.getStack());
                 if (tooltip.isEmpty()) return;
 
                 String firstLine = tooltip.getFirst().getString();

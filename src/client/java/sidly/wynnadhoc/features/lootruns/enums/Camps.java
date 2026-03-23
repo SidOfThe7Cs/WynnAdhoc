@@ -15,6 +15,10 @@ public enum Camps {
     private final String displayName;
     private final Vec3d pos;
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
     public static Camps getClosestCamp(){
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.world == null) return null;

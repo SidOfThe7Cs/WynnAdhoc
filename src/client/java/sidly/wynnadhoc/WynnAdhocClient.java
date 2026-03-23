@@ -19,6 +19,7 @@ import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
+import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
@@ -101,6 +102,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         NeoEvent.register(PlayerInteractEvent.InteractAt.class, BowSpammer::onUseItem);
         NeoEvent.register(PlayerInteractEvent.RightClickBlock.class, BowSpammer::onUseItem);
 
+        LootrunLogger.load();
         ConfigManager.INSTANCE.load();
 
         new PreInitEvent();

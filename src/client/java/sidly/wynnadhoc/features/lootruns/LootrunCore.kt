@@ -41,7 +41,8 @@ object LootrunCore {
     }
 
     // this is the actual text displays rendered in the world cleared every tick
-    var currentBeaconOptionsFromWaypoints: MutableMap<BeaconColor, Int> = HashMap<BeaconColor, Int>()
+    var currentBeaconOptionsFromWaypoints: MutableMap<BeaconColor, Int> = mutableMapOf()
+    var beaconOptionsLastTick = false
 
     // i just don't care right now (or ever) its both broken and useless
     var mobHealthIncrease: Int = 0
@@ -168,6 +169,7 @@ object LootrunCore {
 
                 if (!alreadyExists) {
                     data.currentMissionsActive.add(opt)
+                    LootrunLogger.appendLine("Mission started: ${opt.displayName}")
                 }
 
                 config().missionOverlay.updateDisplay()
@@ -184,6 +186,7 @@ object LootrunCore {
 
                 if (!alreadyExists) {
                     data.currentTrialsActive.add(opt)
+                    LootrunLogger.appendLine("started trial: ${opt.displayName}")
                 }
 
                 config().missionOverlay.updateDisplay()
@@ -191,8 +194,11 @@ object LootrunCore {
         }
     }
 
+    // TODO dont think this works + it should reduce the cap of limited beacons if you fail a limited
     fun onChallengeFailed() {
         val data = getCurrentLootrunData() ?: return
+
+        LootrunLogger.appendLine("failed challenge")
 
         data.clearActiveBeaconColor()
         data.aquaStatus = AquaStatus.Inactive
@@ -216,10 +222,9 @@ object LootrunCore {
         }
         if (beaconCompleted.startsWith("Vibrant")) vibrant = true
 
-        WynnAdhocClient.LOGGER.info(
-            Debug.Type.LOOTRUN,
-            "completed " + (if (vibrant) "vibrant " else "") + color + " beacon"
-        )
+        val message = "completed " + (if (vibrant) "vibrant " else "") + color + " beacon"
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
+        LootrunLogger.appendLine(message)
 
         data.beaconCounts.decreaseRemaining()
         data.beaconCounts.incrementCount(color)
@@ -264,7 +269,9 @@ object LootrunCore {
     }
 
     fun completeChaosChallengeCompleted(beacon: BeaconOptions) {
-        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "complete chaos gave " + beacon.displayName)
+        val message = "complete chaos gave " + beacon.displayName
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
+        LootrunLogger.appendLine(message)
         val data = getCurrentLootrunData() ?: return
 
         val vibrant = beacon.displayName.startsWith("Vibrant")
@@ -308,8 +315,10 @@ object LootrunCore {
     }
 
     fun onMissionCompleted(mission: String) {
+        val message = "Mission completed: $mission"
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
+        LootrunLogger.appendLine(message)
         val data = getCurrentLootrunData() ?: return
-        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "Mission completed: $mission")
         when (mission) {
             "High Roller" -> {
                 data.endStats.addEndRerolls(1)
@@ -332,8 +341,10 @@ object LootrunCore {
     }
 
     fun onTrialCompleted(trial: String) {
+        val message = "Trial completed: $trial"
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
+        LootrunLogger.appendLine(message)
         val data = getCurrentLootrunData() ?: return
-        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "Trial completed: $trial")
         when (trial) {
             "All In" -> {
                 // in reality this happens at the end of lootrun not instantly
@@ -372,7 +383,7 @@ object LootrunCore {
         val data = getCurrentLootrunData() ?: return
         val oldStatus = data.status
         if (oldStatus == newStatus) return
-        WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "switching lootrun status from $oldStatus to $newStatus")
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "switching lootrun status from $oldStatus to $newStatus")
         when (newStatus) {
             LootrunStatus.PickingBeacon -> if (oldStatus == LootrunStatus.NotInLootrun) {
                 data.startLootrun()
@@ -389,7 +400,9 @@ object LootrunCore {
                 onChallengeCompleted(data.activeBeaconColor)
             }
 
-            LootrunStatus.NotInLootrun -> endLootrun()
+            LootrunStatus.NotInLootrun -> {
+                endLootrun()
+            }
         }
         data.status = newStatus
     }
@@ -426,6 +439,7 @@ object LootrunCore {
     }
 
     fun endLootrun() {
+        LootrunLogger.endRun()
         val data = getCurrentLootrunData() ?: return
 
         ScoreboardInfo.clearLootrunData() // this is data that is cleared every frame anyway
@@ -442,15 +456,19 @@ object LootrunCore {
 
     fun onClientTick(event: ClientTickEvent) {
         val data = getCurrentLootrunData() ?: return
-        if (event.client.world == null || currentBeaconOptionsFromWaypoints.isEmpty()) return
-
-        // get the waypoint if we might be about to start it
-        for (entry in currentBeaconOptionsFromWaypoints.entries) {
-            if (entry.value == -1) {
-                data.possibleActiveBeaconColor = entry.key
-                break
+        if (event.client.world != null && !currentBeaconOptionsFromWaypoints.isEmpty()) {
+            // get the waypoint if we might be about to start it
+            for (entry in currentBeaconOptionsFromWaypoints.entries) {
+                if (entry.value == -1) {
+                    data.possibleActiveBeaconColor = entry.key
+                    break
+                }
+            }
+            if (!beaconOptionsLastTick) {
+                LootrunLogger.appendLine("new beacon options: ${currentBeaconOptionsFromWaypoints.keys}")
             }
         }
+        beaconOptionsLastTick = !currentBeaconOptionsFromWaypoints.isEmpty()
         currentBeaconOptionsFromWaypoints.clear()
     }
 

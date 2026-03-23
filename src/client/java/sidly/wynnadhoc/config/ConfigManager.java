@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.config.saves.ChestsSaveData;
 import sidly.wynnadhoc.config.saves.Config;
 import sidly.wynnadhoc.config.saves.LootrunSaveData;
@@ -83,11 +84,15 @@ public class ConfigManager {
     private ChestsSaveData chests;
 
     public LootrunData getLootrun(String uuid) {
-        return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>()));
+        if (uuid.isEmpty()) {
+            WynnAdhocClient.LOGGER.warn("got lootrun data while uuid was null this is not real data");
+            return new LootrunData(new HashMap<>(), "");
+        }
+        return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>(), uuid));
     }
 
     public void resetLootrun(String uuid) {
-        lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData())); // create new object but preserve camp data
+        lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData(), uuid)); // create new object but preserve camp data
     }
 
     public Map<BlockPos, Long> getChests() {
@@ -129,8 +134,7 @@ public class ConfigManager {
         ConfigManager.INSTANCE.lootrunSaveData = new LootrunSaveData();
         ConfigManager.INSTANCE.chests = new ChestsSaveData();
 
-        lootrunSaveData.load();
-        chests.load();
+        BasicSavable.loadAll();
 
         MAIN_CONFIG_FILE.getParentFile().mkdirs();
         try {
@@ -150,8 +154,7 @@ public class ConfigManager {
     }
 
     public void save() {
-        lootrunSaveData.save();
-        chests.save();
+        BasicSavable.saveAll();
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
     }
 
