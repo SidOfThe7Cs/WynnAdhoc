@@ -6,6 +6,11 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 
 public class ChestConfig {
+    @Expose
+    @ConfigOption(name = "Auto Close", desc = "Automatically takes favorited items and then closes loot chests")
+    @ConfigEditorBoolean
+    public boolean autoCloseChests = false;
+
     // TODO esp accordion
     @Expose
     @ConfigOption(name = "Force Chest Esp", desc = "Turns on chest esp, green is > 3d, yellow is > 30m, red is < 30m, white is unknown ")
@@ -30,5 +35,5 @@ public class ChestConfig {
     @Expose
     @ConfigOption(name = "Display Level", desc = "Display the % of the items you have gotten from a chest that are in each level range")
     @ConfigEditorBoolean
-    public boolean displayLevel = false;
+    public boolean displayLevel = true;
 }
