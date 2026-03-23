@@ -32,9 +32,6 @@ public class StatusEffectMixin {
                 case ALWAYS -> cir.setReturnValue(true);
             }
         }
-        if (effect == StatusEffects.BLINDNESS && config().disableDarkness) {
-            cir.setReturnValue(false);
-        }
     }
 
     @Inject(method = "getStatusEffect", at = @At("HEAD"), cancellable = true)
@@ -48,9 +45,6 @@ public class StatusEffectMixin {
                 }
                 case ALWAYS -> cir.setReturnValue(nightVision);
             }
-        }
-        if (effect == StatusEffects.BLINDNESS && config().disableDarkness) {
-            cir.setReturnValue(null);
         }
     }
 }

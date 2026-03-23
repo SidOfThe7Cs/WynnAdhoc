@@ -1,7 +1,5 @@
 package sidly.wynnadhoc;
 
-import com.wynntils.mc.event.PlayerInteractEvent;
-import com.wynntils.mc.event.UseItemEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
@@ -14,14 +12,12 @@ import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.Event;
 import sidly.wynnadhoc.features.HealthRegenTick;
-import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
-import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.utils.Debug;
@@ -52,12 +48,10 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
         Event.register(ClientTickEvent.class, LootrunCore.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
-        Event.register(ClientTickEvent.class, OuterVoidItemPathfinder.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
 
-        Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
@@ -75,9 +69,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
 
         Event.register(ChestItemsLoadedEvent.class, ChestTracker.INSTANCE::onChestItemsLoaded);
-        Event.register(ChestItemsLoadedEvent.class, AutoLootChests::onChestItemsLoaded);
 
-        Event.register(WorldRenderEvent.class, OuterVoidItemPathfinder.INSTANCE::draw);
         Event.register(WorldRenderEvent.class, ChestTracker.INSTANCE::onWorldRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
@@ -108,7 +100,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 fruma:
 refactor chest saving to not just be there entir tooltip as json
 
-split mod
 auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon

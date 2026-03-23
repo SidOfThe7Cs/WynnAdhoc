@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.config.catagories;
 
 import com.google.gson.annotations.Expose;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 
@@ -16,9 +15,4 @@ public class SimpleFeatureToggles {
         ONLY_END,
         ALWAYS
     }
-
-    @Expose
-    @ConfigOption(name = "Disable Darkness", desc = "Disables all darkness effects")
-    @ConfigEditorBoolean
-    public boolean disableDarkness = true;
 }
