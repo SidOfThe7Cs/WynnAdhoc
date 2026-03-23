@@ -139,6 +139,7 @@ object GuildLogs {
     }
 
     fun shouldShowAspectsOverlay(): Boolean {
+        if (!config.showAspectsOverlay) return false
         val wynntillsLogScreen = MinecraftClient.getInstance().currentScreen is GuildLogScreen
         val vanillaScreen = Models.Container.currentContainer is GuildMemberListContainer
         return wynntillsLogScreen || vanillaScreen
