@@ -6,10 +6,7 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
-import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.awt.*;
@@ -37,12 +34,13 @@ public abstract class HudElement {
         if (isVisible() && isHovering(mousePos.getLeft(), mousePos.getRight())) {
             List<Text> tooltip = getHoverTooltip();
             TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            Vector2i pos = renderPos();
             for (int i = 0; i < tooltip.size(); i++) {
                 drawContext.drawText(
                         textRenderer,
                         tooltip.get(i),
-                        (int) (data.x + 2 + (stringWidth)),
-                        data.y + i * textRenderer.fontHeight,
+                        (int) (pos.x + 2 + (stringWidth)),
+                        pos.y + i * textRenderer.fontHeight,
                         Color.white.getRGB(),
                         true);
             }
@@ -58,8 +56,9 @@ public abstract class HudElement {
     }
 
     void onMouseClicked(Click click, boolean doubled) {
-        grabDifX = x() - click.x();
-        grabDifY = y() - click.y();
+        Vector2i pos = renderPos();
+        grabDifX = pos.x() - click.x();
+        grabDifY = pos.y() - click.y();
     }
 
     void onMouseReleased() {
@@ -70,7 +69,8 @@ public abstract class HudElement {
     }
 
     boolean isHovering(double mouseX, double mouseY) {
-        return mouseX >= x() && mouseX < x() + stringWidth && mouseY >= y() && mouseY < y() + stringHeight;
+        Vector2i pos = renderPos();
+        return mouseX >= pos.x() && mouseX < pos.x() + stringWidth && mouseY >= pos.y() && mouseY < pos.y() + stringHeight;
     }
 
     void setScale(float scale) {
@@ -85,12 +85,8 @@ public abstract class HudElement {
         return data.scale;
     }
 
-    int x() {
-        return data.x;
-    }
-
-    int y() {
-        return data.y;
+    Vector2i renderPos() {
+        return data.getRenderPos();
     }
 
     HudElementData data() {
@@ -98,6 +94,7 @@ public abstract class HudElement {
     }
 
     private void move(Vector2i to) {
+        // TODO redo all the linking lol
         if (data.linkData != null) { // we are a child
             this.data.linkData.move(this.data, to);
         }
@@ -110,8 +107,7 @@ public abstract class HudElement {
                 element.data.y = to.y + element.data.linkData.getOffsetY();
             }
         }
-        this.data.x = to.x();
-        this.data.y = to.y();
+        data.move(to);
     }
 
     public void linkChild(HudElementData child) {

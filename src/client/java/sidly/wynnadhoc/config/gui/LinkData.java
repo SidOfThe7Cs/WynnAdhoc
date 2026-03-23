@@ -24,7 +24,8 @@ public class LinkData {
     }
 
     public void move(HudElementData self, Vector2i absolutePos) {
-        Vector2i parentData = new Vector2i(self.x - offsetX, self.y - offsetY);
+        Vector2i pos = self.getRenderPos();
+        Vector2i parentData = new Vector2i(pos.x - offsetX, pos.y - offsetY);
         offsetX = absolutePos.x - parentData.x;
         offsetY = absolutePos.y - parentData.y;
     }

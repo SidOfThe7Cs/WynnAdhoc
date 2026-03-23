@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.joml.Matrix3x2fStack;
+import org.joml.Vector2i;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 
@@ -40,9 +41,10 @@ public class TextHudElement extends HudElement {
             Matrix3x2fStack matrixStack = drawContext.getMatrices();
             matrixStack.pushMatrix();
 
+            Vector2i pos = renderPos();
             // offset keeps the top left position the same when scaling
-            float offsetX = (scale() - 1) * x();
-            float offsetY = (scale() - 1) * y();
+            float offsetX = (scale() - 1) * pos.x();
+            float offsetY = (scale() - 1) * pos.y();
             matrixStack.translate(-offsetX, -offsetY);
             matrixStack.scale(scale(), scale());
 
@@ -55,7 +57,7 @@ public class TextHudElement extends HudElement {
             float maxWidth = 0;
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
-                drawContext.drawText(textRenderer, line, x(), y() + i * lineHeight, Color.RED.getRGB(), true);
+                drawContext.drawText(textRenderer, line, pos.x(), pos.y() + i * lineHeight, Color.RED.getRGB(), true);
                 float width = textRenderer.getWidth(line) * scale();
                 if (width > maxWidth) maxWidth = width;
             }

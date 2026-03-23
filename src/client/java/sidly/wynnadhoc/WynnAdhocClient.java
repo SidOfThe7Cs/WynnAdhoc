@@ -112,12 +112,15 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
+fruma:
 refactor chest saving to not just be there entir tooltip as json
+
+
 Refactor render with renderable interface and make it use screen % with pixel origin offset
 split mod
+auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon
-auto update checker
 spellcaster with queue and display and safe cast
 implement anchor points + layering
 annotation for hudelement and event
