@@ -16,8 +16,8 @@ class WarConfig {
     @JvmField
     var resourceOverlay: HudElementData = HudElementData(
         "War Resource Overlay",
-        10,
-        10,
+        0.5f,
+        0.2f,
         1.0f
     )
 
@@ -31,8 +31,8 @@ class WarConfig {
     @JvmField
     var warTimer: HudElementData = HudElementData(
         "War Timer",
-        10,
-        40,
+        0.5f,
+        0.4f,
         1.0f
     )
 }

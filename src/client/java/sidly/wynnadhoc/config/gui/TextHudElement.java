@@ -32,6 +32,7 @@ public class TextHudElement extends HudElement {
         this.tooltipSupplier = tooltipSupplier;
     }
 
+    // TODO have an anchor point in hudelement and use it for aligning left/right/center
     @Override
     public void render(DrawContext drawContext, boolean override) {
         if (text.isEmpty()) updateDisplay();

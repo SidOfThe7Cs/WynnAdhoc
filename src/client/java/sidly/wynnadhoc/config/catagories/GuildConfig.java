@@ -14,8 +14,8 @@ public class GuildConfig {
     @Expose
     public HudElementData aspectOverlayData = new HudElementData(
             "Aspect Overlay",
-            20,
-            20,
+            0.65f,
+            0.2f,
             1.0f
     );
 }

@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns.enums;
 
+// TODO fruma
 public enum MissionOptions {
     // should work
     CleansingGreed("Cleansing Greed", "After opening a Flying Chest, remove one of your Curses."),

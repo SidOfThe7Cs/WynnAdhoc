@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns.enums;
 
+// TODO fruma
 public enum TrialOptions {
     AllIn("All In",
             "For the next 10 challenges, Curse effects are doubled.",

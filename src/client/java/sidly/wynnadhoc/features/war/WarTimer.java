@@ -10,8 +10,8 @@ import java.time.temporal.ChronoUnit;
 public class WarTimer {
     private static long startAt = 0; // epoch millis
 
-    public static boolean isActive() {
-        return startAt >= System.currentTimeMillis();
+    public static boolean isVisible() {
+        return ConfigManager.INSTANCE.config.war.showWarTimer && startAt >= System.currentTimeMillis();
     }
 
     public static void setTo25s() {
@@ -19,7 +19,6 @@ public class WarTimer {
     }
 
     public static String getDisplay() {
-        if (!isActive()) return "";
         long millisUntilStart = startAt - System.currentTimeMillis();
         return FormatUtils.formatTime(millisUntilStart, ChronoUnit.MILLIS);
     }
@@ -31,6 +30,6 @@ public class WarTimer {
     }
 
     public static void onClientTick() {
-        if (isActive()) ConfigManager.INSTANCE.config.war.warTimer.updateDisplay();
+        if (isVisible()) ConfigManager.INSTANCE.config.war.warTimer.updateDisplay();
     }
 }

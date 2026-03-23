@@ -13,7 +13,6 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.Event;
-import sidly.wynnadhoc.features.BowSpammer;
 import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -55,7 +54,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
         Event.register(ClientTickEvent.class, OuterVoidItemPathfinder.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
-        Event.register(ClientTickEvent.class, BowSpammer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
 
@@ -97,11 +95,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
 
-        NeoEvent.register(UseItemEvent.class, BowSpammer::onUseItem);
-        NeoEvent.register(PlayerInteractEvent.Interact.class, BowSpammer::onUseItem);
-        NeoEvent.register(PlayerInteractEvent.InteractAt.class, BowSpammer::onUseItem);
-        NeoEvent.register(PlayerInteractEvent.RightClickBlock.class, BowSpammer::onUseItem);
-
         LootrunLogger.load();
         ConfigManager.INSTANCE.load();
 
@@ -115,8 +108,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 fruma:
 refactor chest saving to not just be there entir tooltip as json
 
-
-Refactor render with renderable interface and make it use screen % with pixel origin offset
 split mod
 auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft

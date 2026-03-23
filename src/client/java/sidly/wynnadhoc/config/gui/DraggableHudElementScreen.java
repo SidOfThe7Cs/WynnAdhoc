@@ -104,12 +104,7 @@ public class DraggableHudElementScreen extends Screen {
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         for (HudElement e : HudElementManager.getHudElements()) {
             if (e.isHovering(mouseX, mouseY)) {
-                float currentScale = e.scale();
-                float newScale = (float) (currentScale + verticalAmount / 5);
-                if (newScale > 0.3) {
-                    e.setScale(newScale);
-                    return true;
-                }
+                return e.setScale(verticalAmount);
             }
         }
         return false;

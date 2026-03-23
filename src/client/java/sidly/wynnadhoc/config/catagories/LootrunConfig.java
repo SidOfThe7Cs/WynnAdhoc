@@ -14,8 +14,8 @@ public class LootrunConfig {
     @Expose
     public HudElementData beaconCountsOverlay = new HudElementData(
         "Beacon Overlay",
-                10,
-                20,
+                0f,
+                0.5f,
                 1.0f
     );
 
@@ -27,8 +27,8 @@ public class LootrunConfig {
     @Expose
     public HudElementData endRewardsOverlay = new HudElementData(
             "End Rewards Overlay",
-            10,
-            30,
+            0.2f,
+            0.2f,
             1.0f
     );
 
@@ -40,8 +40,8 @@ public class LootrunConfig {
     @Expose
     public HudElementData missionOverlay = new HudElementData(
             "End Rewards Overlay",
-            10,
-            30,
+            0.6f,
+            0.2f,
             1.0f
     );
 }

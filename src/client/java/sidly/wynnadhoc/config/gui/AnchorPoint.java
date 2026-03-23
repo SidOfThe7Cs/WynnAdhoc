@@ -1,7 +1,5 @@
 package sidly.wynnadhoc.config.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -26,17 +24,14 @@ public enum AnchorPoint {
         this.location = new Vector2f(x, y);
     }
 
-    public static AnchorPointResult findClosestWithOffset(Vector2i screenPos) {
-        Window window = MinecraftClient.getInstance().getWindow();
-        int screenWidth = window.getScaledWidth();
-        int screenHeight = window.getScaledHeight();
+    public static AnchorPointResult findClosestWithOffset(Vector2i screenPos, int width, int height) {
         AnchorPoint closest = null;
         double closestDistance = Double.MAX_VALUE;
         Vector2f closestOffset = new Vector2f();
         Vector2f target = new Vector2f(screenPos);
         for (AnchorPoint anchor : values()) {
             if (anchor == CENTER) continue;
-            Vector2f scaledAnchorPoint = new Vector2f(screenWidth * anchor.getLocation().x, screenHeight * anchor.getLocation().y);
+            Vector2f scaledAnchorPoint = new Vector2f(width * anchor.getLocation().x, height * anchor.getLocation().y);
             double distance = scaledAnchorPoint.distanceSquared(target);
             if (distance < closestDistance) {
                 closestDistance = distance;

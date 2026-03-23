@@ -16,52 +16,13 @@ public class HudElementData {
     @Expose
     protected float y;
     @Expose
-    protected float xOffset;
-    @Expose
-    protected float yOffset;
-    @Expose
     protected float scale;
-    @Expose
-    protected AnchorPoint anchor;
-    @Expose
-    protected LinkData linkData;
 
-    public HudElementData(String name, int x, int y, float scale) {
+    public HudElementData(String name, float x, float y, float scale) {
         this.name = name;
         this.x = x;
         this.y = y;
         this.scale = scale;
-        this.anchor = AnchorPoint.TOP_LEFT;
-    }
-
-    public HudElementData(String name, int x, int y, float scale, AnchorPoint anchor) {
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.scale = scale;
-        this.anchor = anchor;
-    }
-
-    public Vector2i getRenderPos() {
-        Window window = MinecraftClient.getInstance().getWindow();
-        int width = window.getScaledWidth();
-        int height = window.getScaledHeight();
-        Vector2f anchorVec = anchor.getLocation();
-
-        float realXOffset = width * (this.x > 1 ? 0 : this.x) + this.xOffset;
-        float realYOffset = height * (this.y > 1 ? 0 : this.y) + this.yOffset;
-
-        float xPos = width * anchorVec.x + realXOffset;
-        float yPos = height * anchorVec.y + realYOffset;
-
-        return new Vector2i((int)  xPos, (int) yPos);
-    }
-
-    public void move(Vector2i to) {
-        AnchorPoint.AnchorPointResult newAnchor = AnchorPoint.findClosestWithOffset(to);
-        this.anchor = newAnchor.anchor();
-        this.xOffset = newAnchor.offset().x;
-        this.yOffset = newAnchor.offset().y;
     }
 
     public void updateDisplay() {
@@ -81,7 +42,6 @@ public class HudElementData {
                 ", x=" + x +
                 ", y=" + y +
                 ", scale=" + scale +
-                ", linkData=" + linkData +
                 '}';
     }
 }

@@ -25,8 +25,14 @@ public class WarCore {
                 WarCore::shouldShowResourceOverlay,
                 WarCore::updateResourceDisplay,
                 WarCore::onWarResourceDisplayClick,
-                DB::getSuggestedChanges)
-        );
+                DB::getSuggestedChanges
+        ));
+
+        HudElementManager.register(new TextHudElement(
+                ConfigManager.INSTANCE.config.war.warTimer,
+                WarTimer::isVisible,
+                WarTimer::getDisplay
+        ));
     }
 
     public static void onChatMessage(ChatMessageEvent event) {
