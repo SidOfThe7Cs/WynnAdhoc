@@ -3,7 +3,7 @@ package sidly.wynnadhoc.config.catagories;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
-import sidly.wynnadhoc.config.gui.HudElementData;
+import sidly.wynnadhoc.config.gui.HudComponentData;
 
 public class GuildConfig {
     @Expose
@@ -12,7 +12,7 @@ public class GuildConfig {
     public boolean showAspectsOverlay = true;
 
     @Expose
-    public HudElementData aspectOverlayData = new HudElementData(
+    public HudComponentData aspectOverlayData = new HudComponentData(
             "Aspect Overlay",
             0.65f,
             0.2f,

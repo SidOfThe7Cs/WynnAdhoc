@@ -12,22 +12,22 @@ import java.util.Map;
 import java.util.Set;
 
 public class HudElementManager {
-    private static final Map<String, HudElement> hudElements = new HashMap<>();
+    private static final Map<String, HudComponent> hudElements = new HashMap<>();
 
-    public static Set<HudElement> getHudElements() {
+    public static Set<HudComponent> getHudElements() {
         return new HashSet<>(hudElements.values());
     }
 
-    public static HudElement getHudElement(String name) {
+    public static HudComponent getHudElement(String name) {
         return hudElements.get(name);
     }
 
-    public static void register(HudElement e) {
+    public static void register(HudComponent e) {
         hudElements.put(e.name(), e);
     }
 
     public static void onHudRender(HudRenderOnTopEvent event) {
-        for (HudElement e : getHudElements()) {
+        for (HudComponent e : getHudElements()) {
             e.render(event.context, false);
         }
     }
@@ -39,10 +39,10 @@ public class HudElementManager {
         Pair<Double, Double> mousePos = GuiUtils.getScaledMousePos();
         if (mousePos == null) return;
 
-        for (HudElement hudElement : getHudElements()) {
-            if (hudElement != null && hudElement.isVisible() && hudElement.isHovering(mousePos.getLeft(), mousePos.getRight())) {
+        for (HudComponent hudComponent : getHudElements()) {
+            if (hudComponent != null && hudComponent.isVisible() && hudComponent.isHovering(mousePos.getLeft(), mousePos.getRight())) {
                 Click click = new Click(mousePos.getLeft(), mousePos.getRight(), event.input);
-                hudElement.onMouseClicked(click, false);
+                hudComponent.onMouseClicked(click, false);
             }
         }
     }

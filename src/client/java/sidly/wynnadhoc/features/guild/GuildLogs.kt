@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.gui.HudElementManager
-import sidly.wynnadhoc.config.gui.TextHudElement
+import sidly.wynnadhoc.config.gui.TextHudComponent
 import sidly.wynnadhoc.event.ChatMessageEvent
 import sidly.wynnadhoc.event.ScreenRenderEvent
 import sidly.wynnadhoc.mixin.client.accessors.GuildLogScreenAccessor
@@ -39,11 +39,13 @@ object GuildLogs {
     val seenMembers = mutableSetOf<String>()
 
     fun registerHudElements() {
-        HudElementManager.register(TextHudElement(
-            config.aspectOverlayData,
-            GuildLogs::shouldShowAspectsOverlay,
-            GuildLogs::updateAspectsOverlay,
-        ))
+        HudElementManager.register(
+            TextHudComponent(
+                config.aspectOverlayData,
+                GuildLogs::shouldShowAspectsOverlay,
+                GuildLogs::updateAspectsOverlay,
+            )
+        )
     }
 
     fun onScreenRender(event: ScreenRenderEvent) {

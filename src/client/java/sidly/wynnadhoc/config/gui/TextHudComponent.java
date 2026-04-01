@@ -14,17 +14,17 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TextHudElement extends HudElement {
+public class TextHudComponent extends HudComponent {
     private transient String text = "";
     private transient final Supplier<Boolean> visibleCondition;
     private transient final Supplier<String> updater;
     private transient final Runnable onClick;
     private transient final Supplier<List<Text>> tooltipSupplier;
 
-    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater) {
+    public TextHudComponent(HudComponentData data, Supplier<Boolean> visibleCondition, Supplier<String> updater) {
         this(data, visibleCondition, updater, () -> {}, null);
     }
-    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick,  Supplier<List<Text>> tooltipSupplier) {
+    public TextHudComponent(HudComponentData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick, Supplier<List<Text>> tooltipSupplier) {
         super(data);
         this.visibleCondition = visibleCondition;
         this.updater = updater;
@@ -34,7 +34,8 @@ public class TextHudElement extends HudElement {
 
     // TODO have an anchor point in hudelement and use it for aligning left/right/center
     @Override
-    public void render(DrawContext drawContext, boolean override) {
+    public void render(Vector2i pos, DrawContext drawContext, boolean override) {
+        super.renderBackground(drawContext);
         if (text.isEmpty()) updateDisplay();
         if (isVisible() || override) {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -42,7 +43,6 @@ public class TextHudElement extends HudElement {
             Matrix3x2fStack matrixStack = drawContext.getMatrices();
             matrixStack.pushMatrix();
 
-            Vector2i pos = renderPos();
             // offset keeps the top left position the same when scaling
             float offsetX = (scale() - 1) * pos.x();
             float offsetY = (scale() - 1) * pos.y();
@@ -68,7 +68,7 @@ public class TextHudElement extends HudElement {
 
             matrixStack.popMatrix();
         }
-        super.render(drawContext, override);
+        if (!override) super.renderHover(drawContext);
     }
 
     @Override

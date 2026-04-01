@@ -1,24 +1,19 @@
 package sidly.wynnadhoc.config.gui;
 
 import com.google.gson.annotations.Expose;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.Window;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
 import sidly.wynnadhoc.WynnAdhocClient;
 
-public class HudElementData {
+public class HudComponentData {
     @Expose
-    protected String name;
+    protected String name; // TODO probably remove
     @Expose
-    protected float x;
+    protected float x; // 0-1, % of screen
     @Expose
-    protected float y;
+    protected float y; // 0-1, % of screen
     @Expose
     protected float scale;
 
-    public HudElementData(String name, float x, float y, float scale) {
+    public HudComponentData(String name, float x, float y, float scale) {
         this.name = name;
         this.x = x;
         this.y = y;
@@ -26,12 +21,12 @@ public class HudElementData {
     }
 
     public void updateDisplay() {
-        HudElement hudElement = HudElementManager.getHudElement(name);
-        if (hudElement != null) hudElement.updateDisplay();
+        HudComponent hudComponent = HudElementManager.getHudElement(name);
+        if (hudComponent != null) hudComponent.updateDisplay();
         else WynnAdhocClient.LOGGER.error("Hud element with name " + name + " not found");
     }
 
-    public HudElement getElement() {
+    public HudComponent getElement() {
         return HudElementManager.getHudElement(name);
     }
 

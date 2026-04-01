@@ -3,7 +3,7 @@ package sidly.wynnadhoc.features.lootruns;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.LootrunConfig;
 import sidly.wynnadhoc.config.gui.HudElementManager;
-import sidly.wynnadhoc.config.gui.TextHudElement;
+import sidly.wynnadhoc.config.gui.TextHudComponent;
 import sidly.wynnadhoc.features.lootruns.enums.BeaconColor;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
 import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
@@ -14,19 +14,19 @@ public class Overlays {
     private static LootrunData data = LootrunCore.INSTANCE.getCurrentLootrunData();
 
     public static void register() {
-        HudElementManager.register(new TextHudElement(
+        HudElementManager.register(new TextHudComponent(
                 config().beaconCountsOverlay,
                 Overlays::shouldShowBeaconCountsOverlay,
                 Overlays::updateBeaconCountsOverlay)
         );
 
-        HudElementManager.register(new TextHudElement(
+        HudElementManager.register(new TextHudComponent(
                 config().endRewardsOverlay,
                 Overlays::shouldShowEndRewardsOverlay,
                 Overlays::updateEndRewardsOverlay)
         );
 
-        HudElementManager.register(new TextHudElement(
+        HudElementManager.register(new TextHudComponent(
                 config().missionOverlay,
                 Overlays::shouldShowMissionOverlay,
                 Overlays::updateMissionOverlay)

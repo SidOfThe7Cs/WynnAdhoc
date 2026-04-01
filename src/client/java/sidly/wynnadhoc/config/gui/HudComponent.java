@@ -13,10 +13,10 @@ import sidly.wynnadhoc.utils.GuiUtils;
 import java.awt.*;
 import java.util.List;
 
-public abstract class HudElement {
-    private final HudElementData data;
+public abstract class HudComponent {
+    private final HudComponentData data;
 
-    public HudElement(HudElementData data) {
+    public HudComponent(HudComponentData data) {
         this.data = data;
     }
 
@@ -26,7 +26,8 @@ public abstract class HudElement {
     protected double grabDifX;
     protected double grabDifY;
 
-    void render(DrawContext drawContext, boolean override) {
+    void renderHover(DrawContext drawContext) {
+        // render hover tooltip
         Pair<Double, Double> mousePos = GuiUtils.getScaledMousePos();
         if (mousePos == null) return;
         if (isVisible() && isHovering(mousePos.getLeft(), mousePos.getRight())) {
@@ -43,6 +44,22 @@ public abstract class HudElement {
                         true);
             }
         }
+    }
+
+    void renderBackground(DrawContext drawContext) {
+        if (data instanceof SubViewPort viewPort && isVisible()) {
+            viewPort.render(drawContext);
+        }
+    }
+
+    abstract void render(Vector2i pos, DrawContext drawContext, boolean override);
+
+    void render(DrawContext drawContext, boolean override) {
+        render(renderPos(), drawContext, override);
+    }
+
+    void render(SubViewPort viewPort, DrawContext drawContext, boolean override) {
+        render(renderPos(viewPort), drawContext, override);
     }
 
     abstract void updateDisplay();
@@ -76,7 +93,11 @@ public abstract class HudElement {
     }
 
     float scale() {
-        return data.scale * (float) MinecraftClient.getInstance().getWindow().getWidth() / 1920;
+        return data.scale;
+    }
+
+    public HudComponentData data() {
+        return data;
     }
 
     boolean setScale(double verticalAmount) {
@@ -89,11 +110,7 @@ public abstract class HudElement {
         return false;
     }
 
-    Vector2i renderPos() {
-        Window window = MinecraftClient.getInstance().getWindow();
-        int width = window.getScaledWidth();
-        int height = window.getScaledHeight();
-
+    private Vector2i renderPos(int width, int height) {
         // force rendering on screen
         float xPos = width * (data.x < 0 ? 0 : data.x);
         if (xPos + stringWidth > width) xPos = width - stringWidth;
@@ -101,6 +118,17 @@ public abstract class HudElement {
         if (yPos + stringHeight > height) yPos = height - stringHeight;
 
         return new Vector2i((int) xPos, (int) yPos);
+    }
+
+    Vector2i renderPos(SubViewPort viewPort) {
+        return renderPos(viewPort.getWidth(), viewPort.getHeight());
+    }
+
+    Vector2i renderPos() {
+        Window window = MinecraftClient.getInstance().getWindow();
+        int width = window.getScaledWidth();
+        int height = window.getScaledHeight();
+        return renderPos(width, height);
     }
 
     private void move(Vector2i to) {

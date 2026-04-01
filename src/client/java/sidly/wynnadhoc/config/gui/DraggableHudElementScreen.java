@@ -15,7 +15,7 @@ import java.awt.*;
 public class DraggableHudElementScreen extends Screen {
     private static GuiConfig config() { return ConfigManager.INSTANCE.config.gui; }
 
-    private static HudElement draggingElement = null;
+    private static HudComponent draggingElement = null;
     private static String desc = "";
     private static double mouseXGlobal = 0;
     private static double mouseYGlobal = 0;
@@ -52,7 +52,7 @@ public class DraggableHudElementScreen extends Screen {
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         if (click.button() == 0) { // Left click
-            for (HudElement e : HudElementManager.getHudElements()) {
+            for (HudComponent e : HudElementManager.getHudElements()) {
                 if (e.isHovering(click.x(), click.y())) {
                     draggingElement = e;
                     e.onMouseClicked(click, doubled);
@@ -89,7 +89,7 @@ public class DraggableHudElementScreen extends Screen {
         mouseYGlobal = mouseY;
 
         boolean isHoveringSomething = false;
-        for (HudElement e : HudElementManager.getHudElements()) {
+        for (HudComponent e : HudElementManager.getHudElements()) {
             if (e.isHovering(mouseX, mouseY)) {
                 desc = e.name();
                 isHoveringSomething = true;
@@ -102,7 +102,7 @@ public class DraggableHudElementScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        for (HudElement e : HudElementManager.getHudElements()) {
+        for (HudComponent e : HudElementManager.getHudElements()) {
             if (e.isHovering(mouseX, mouseY)) {
                 return e.setScale(verticalAmount);
             }
@@ -114,7 +114,7 @@ public class DraggableHudElementScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
 
-        for (HudElement e : HudElementManager.getHudElements()) {
+        for (HudComponent e : HudElementManager.getHudElements()) {
             e.render(drawContext, true);
         }
 

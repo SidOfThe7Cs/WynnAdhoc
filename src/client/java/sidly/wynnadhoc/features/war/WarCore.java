@@ -6,7 +6,7 @@ import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.WarConfig;
 import sidly.wynnadhoc.config.gui.HudElementManager;
-import sidly.wynnadhoc.config.gui.TextHudElement;
+import sidly.wynnadhoc.config.gui.TextHudComponent;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.utils.Debug;
 
@@ -20,7 +20,7 @@ public class WarCore {
     }
 
     public static void registerHudElements() {
-        HudElementManager.register(new TextHudElement(
+        HudElementManager.register(new TextHudComponent(
                 ConfigManager.INSTANCE.config.war.resourceOverlay,
                 WarCore::shouldShowResourceOverlay,
                 WarCore::updateResourceDisplay,
@@ -28,7 +28,7 @@ public class WarCore {
                 DB::getSuggestedChanges
         ));
 
-        HudElementManager.register(new TextHudElement(
+        HudElementManager.register(new TextHudComponent(
                 ConfigManager.INSTANCE.config.war.warTimer,
                 WarTimer::isVisible,
                 WarTimer::getDisplay

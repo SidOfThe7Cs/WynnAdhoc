@@ -30,6 +30,7 @@ import java.util.Map;
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
     public static final Gson GSON = new GsonBuilder()
+            // serializer & deserializer for a map of blockPos -> time
             .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
                     (JsonSerializer<Map<BlockPos, Long>>) (src, typeOfSrc, context) -> {
                         JsonArray array = new JsonArray(); // We'll use an array of entries

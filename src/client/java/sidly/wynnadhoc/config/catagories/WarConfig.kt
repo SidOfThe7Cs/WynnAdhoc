@@ -3,7 +3,7 @@ package sidly.wynnadhoc.config.catagories
 import com.google.gson.annotations.Expose
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption
-import sidly.wynnadhoc.config.gui.HudElementData
+import sidly.wynnadhoc.config.gui.HudComponentData
 
 class WarConfig {
     @Expose
@@ -14,7 +14,7 @@ class WarConfig {
 
     @Expose
     @JvmField
-    var resourceOverlay: HudElementData = HudElementData(
+    var resourceOverlay: HudComponentData = HudComponentData(
         "War Resource Overlay",
         0.5f,
         0.2f,
@@ -29,7 +29,7 @@ class WarConfig {
 
     @Expose
     @JvmField
-    var warTimer: HudElementData = HudElementData(
+    var warTimer: HudComponentData = HudComponentData(
         "War Timer",
         0.5f,
         0.4f,

@@ -3,7 +3,7 @@ package sidly.wynnadhoc.config.catagories;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
-import sidly.wynnadhoc.config.gui.HudElementData;
+import sidly.wynnadhoc.config.gui.HudComponentData;
 
 public class LootrunConfig {
     @Expose
@@ -12,7 +12,7 @@ public class LootrunConfig {
     public boolean showBeaconCountsOverlay = false;
 
     @Expose
-    public HudElementData beaconCountsOverlay = new HudElementData(
+    public HudComponentData beaconCountsOverlay = new HudComponentData(
         "Beacon Overlay",
                 0f,
                 0.5f,
@@ -25,7 +25,7 @@ public class LootrunConfig {
     public boolean showEndRewardsOverlay = false;
 
     @Expose
-    public HudElementData endRewardsOverlay = new HudElementData(
+    public HudComponentData endRewardsOverlay = new HudComponentData(
             "End Rewards Overlay",
             0.2f,
             0.2f,
@@ -38,7 +38,7 @@ public class LootrunConfig {
     public boolean showMissionOverlay = false;
 
     @Expose
-    public HudElementData missionOverlay = new HudElementData(
+    public HudComponentData missionOverlay = new HudComponentData(
             "End Rewards Overlay",
             0.6f,
             0.2f,

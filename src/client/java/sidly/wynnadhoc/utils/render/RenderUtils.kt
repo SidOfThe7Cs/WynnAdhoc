@@ -2,6 +2,7 @@ package sidly.wynnadhoc.utils.render
 
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider.Immediate
 import net.minecraft.client.util.math.MatrixStack
@@ -16,8 +17,6 @@ import sidly.wynnadhoc.utils.datatypes.toBlockPos
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.datatypes.toVec3d
 import java.awt.Color
-import kotlin.math.ln
-import kotlin.math.sqrt
 
 object RenderUtils {
     private val config get() = ConfigManager.INSTANCE.config.gui
@@ -113,6 +112,7 @@ fun List<Vec3d>.toLines(): List<Line> {
     return result
 }
 
+// TODO its my own class i dont need to use extensions :sob: (refactor WorldRenderEvent to kotlin)
 fun WorldRenderEvent.drawLines(lines: List<Line>, color: Color, xray: Boolean) {
     RenderUtils.drawLines(this, lines, color, xray)
 }
@@ -257,4 +257,33 @@ private fun addChainedFilledBoxVertices(
     vertexConsumer.vertex(matrix4f, i, j, k).color(l, m, n, o)
     vertexConsumer.vertex(matrix4f, i, j, k).color(l, m, n, o)
     vertexConsumer.vertex(matrix4f, i, j, k).color(l, m, n, o)
+}
+
+fun DrawContext.drawBackground(
+    x1: Int,
+    y1: Int,
+    x2: Int,
+    y2: Int,
+    color: Int,
+    r: Int = 3
+) {
+    // Main center rectangle
+    this.fill(x1 + r, y1, x2 - r, y2, color)
+
+    // Left and right strips
+    this.fill(x1, y1 + r, x1 + r, y2 - r, color)
+    this.fill(x2 - r, y1 + r, x2, y2 - r, color)
+
+    // Corner fills (excluding the actual corner pixel for rounded effect)
+    // Top-left
+    this.fill(x1 + 1, y1 + 1, x1 + r, y1 + r, color)
+
+    // Top-right
+    this.fill(x2 - r, y1 + 1, x2 - 1, y1 + r, color)
+
+    // Bottom-left
+    this.fill(x1 + 1, y2 - r, x1 + r, y2 - 1, color)
+
+    // Bottom-right
+    this.fill(x2 - r, y2 - r, x2 - 1, y2 - 1, color)
 }
