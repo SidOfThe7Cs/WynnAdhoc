@@ -74,7 +74,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
         Event.register(PreInitEvent.class, GuildLogs.INSTANCE::registerHudElements);
-        Event.register(PreInitEvent.class, TradeMarketOverlay.INSTANCE::registerHudElements);
+        Event.register(PreInitEvent.class, TradeMarketOverlay::registerHudElements);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 

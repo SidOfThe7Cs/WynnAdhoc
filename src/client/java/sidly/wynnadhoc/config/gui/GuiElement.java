@@ -3,25 +3,25 @@ package sidly.wynnadhoc.config.gui;
 import net.minecraft.client.gui.DrawContext;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GuiElement extends HudComponent {
     // TODO this should not extend hubComponents nor should viewport extend data each element should have one viweport
-    private final List<HudComponent> children = new ArrayList<>();
+    private final Map<String, HudComponent> children = new HashMap<>();
 
     public GuiElement(SubViewPort viewPort, HudComponent... children) {
         super(viewPort);
-        this.children.addAll(Arrays.asList(children));
+        for (HudComponent child : children) {
+            child.setViewPort(viewPort);
+            this.children.put(child.name(), child);
+        }
     }
 
     @Override
     public void render(Vector2i pos, DrawContext drawContext, boolean override) {
         super.renderBackground(drawContext);
-        if (data() instanceof SubViewPort viewPort) {
-            children.forEach(child -> child.render(viewPort, drawContext, override));
-        }
+        children.values().forEach(child -> child.render(drawContext, override));
         super.renderHover(drawContext);
     }
 
@@ -32,6 +32,6 @@ public class GuiElement extends HudComponent {
 
     @Override
     boolean isVisible() {
-        return false;
+        return true;
     }
 }

@@ -25,7 +25,7 @@ public class SimpleFeatureToggles {
     public boolean showTradeMarketFilter = true;
 
     @Expose
-    public HudComponentData TMOverlayTitle = new HudComponentData("TMTitle", 0.5f, 0.1f, 1f);
+    public HudComponentData TMOverlayTitle = new HudComponentData("TMTitle", 0.5f, 0.5f, 1f);
     @Expose
-    public SubViewPort TMOverlayMain = new SubViewPort(0.2f, 0.2f, 20, 50, 0xCC1a1a1a);
+    public SubViewPort TMOverlayMain = new SubViewPort(0.5f, 0.5f, 120, 300, 0xCC1a1a1a);
 }

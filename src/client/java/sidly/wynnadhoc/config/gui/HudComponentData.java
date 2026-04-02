@@ -12,12 +12,19 @@ public class HudComponentData {
     protected float y; // 0-1, % of screen
     @Expose
     protected float scale;
+    @Expose
+    protected SubViewPort viewPort;
 
     public HudComponentData(String name, float x, float y, float scale) {
+        this(name, x, y, scale, null);
+    }
+
+    public HudComponentData(String name, float x, float y, float scale, SubViewPort viewPort) {
         this.name = name;
         this.x = x;
         this.y = y;
         this.scale = scale;
+        this.viewPort = viewPort;
     }
 
     public void updateDisplay() {

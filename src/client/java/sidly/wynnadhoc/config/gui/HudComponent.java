@@ -58,10 +58,6 @@ public abstract class HudComponent {
         render(renderPos(), drawContext, override);
     }
 
-    void render(SubViewPort viewPort, DrawContext drawContext, boolean override) {
-        render(renderPos(viewPort), drawContext, override);
-    }
-
     abstract void updateDisplay();
 
     abstract boolean isVisible();
@@ -85,7 +81,10 @@ public abstract class HudComponent {
 
     boolean isHovering(double mouseX, double mouseY) {
         Vector2i pos = renderPos();
-        return mouseX >= pos.x() && mouseX < pos.x() + stringWidth && mouseY >= pos.y() && mouseY < pos.y() + stringHeight;
+        boolean isViewPort = data instanceof SubViewPort;
+        float width = isViewPort ? ((SubViewPort) data).width : stringWidth;
+        float height = isViewPort ? ((SubViewPort) data).height : stringHeight;
+        return mouseX >= pos.x() && mouseX < pos.x() + width && mouseY >= pos.y() && mouseY < pos.y() + height;
     }
 
     String name() {
@@ -110,25 +109,30 @@ public abstract class HudComponent {
         return false;
     }
 
-    private Vector2i renderPos(int width, int height) {
+    private Vector2i renderPos() {
+        Window window = MinecraftClient.getInstance().getWindow();
+        Vector2i offset = new Vector2i(0, 0);
+        int width;
+        int height;
+        if (data.viewPort != null) {
+            offset = data.viewPort.renderPos();
+            width = data.viewPort.getWidth();
+            height = data.viewPort.getHeight();
+
+        } else {
+            width = window.getScaledWidth();
+            height = window.getScaledHeight();
+        }
+
         // force rendering on screen
-        float xPos = width * (data.x < 0 ? 0 : data.x);
+        float xPos = width * (data.x < 0 ? 0 : data.x) + offset.x;
+        float yPos = height * (data.y < 0 ? 0 : data.y) + offset.y;
+        /*
         if (xPos + stringWidth > width) xPos = width - stringWidth;
-        float yPos = height * (data.y < 0 ? 0 : data.y);
         if (yPos + stringHeight > height) yPos = height - stringHeight;
+         */
 
         return new Vector2i((int) xPos, (int) yPos);
-    }
-
-    Vector2i renderPos(SubViewPort viewPort) {
-        return renderPos(viewPort.getWidth(), viewPort.getHeight());
-    }
-
-    Vector2i renderPos() {
-        Window window = MinecraftClient.getInstance().getWindow();
-        int width = window.getScaledWidth();
-        int height = window.getScaledHeight();
-        return renderPos(width, height);
     }
 
     private void move(Vector2i to) {
@@ -138,5 +142,9 @@ public abstract class HudComponent {
 
         data.x = (float) to.x / width;
         data.y = (float) to.y / height;
+    }
+
+    protected void setViewPort(SubViewPort viewPort) {
+        data.viewPort = viewPort;
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
+import org.joml.Vector2i;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.utils.render.RenderUtilsKt;
 
@@ -30,8 +31,7 @@ public class SubViewPort extends HudComponentData {
         return height;
     }
 
-    public void render(DrawContext context) {
-        if (background == null) return;
+    public Vector2i renderPos() {
         Window window = MinecraftClient.getInstance().getWindow();
         int screenWidth = window.getScaledWidth();
         int screenHeight = window.getScaledHeight();
@@ -39,7 +39,13 @@ public class SubViewPort extends HudComponentData {
         int x = (int) (this.x * screenWidth);
         int y = (int) (this.y * screenHeight);
 
-        RenderUtilsKt.drawBackground(context, x, y, (x * this.width), (y * this.height), background, 3);
+        return new Vector2i(x, y);
+    }
+
+    public void render(DrawContext context) {
+        if (background == null) return;
+        Vector2i pos = renderPos();
+        RenderUtilsKt.drawBackground(context, pos.x, pos.y, (pos.x + this.width), (pos.y + this.height), background, 3);
     }
 
     @Override
