@@ -62,13 +62,15 @@ public abstract class HudComponent {
 
     abstract boolean isVisible();
 
-    void onMouseClicked(Click click, boolean doubled, boolean editing) {
+    boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
         if (editing) {
             HudElementManager.setDragging(this);
             Vector2i pos = renderPos();
             grabDifX = pos.x() - click.x();
             grabDifY = pos.y() - click.y();
+            return true;
         }
+        return false;
     }
 
     void onMouseScrolled(double x, double y, double verticalAmount) {

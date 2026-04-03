@@ -108,12 +108,14 @@ public class GuiElement extends HudComponent {
  */
 
     @Override
-    public void onMouseClicked(Click click, boolean doubled, boolean editing) {
-        super.onMouseClicked(click, doubled, editing);
+    public boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
+        boolean thisConsumed = super.onMouseClicked(click, doubled, editing);
         HudComponent hoveredChild = getHoveredChild(click.x(), click.y());
+        boolean childConsumed = false;
         if (hoveredChild != null) {
-            hoveredChild.onMouseClicked(click, doubled, isEditMode());
+            childConsumed = hoveredChild.onMouseClicked(click, doubled, isEditMode());
         }
+        return thisConsumed || childConsumed;
     }
 
     @Override

@@ -111,6 +111,7 @@ icon
 
 HUD:
     EVENTS - make kb&m events consumable
+    MOUSE - fix mouse not staying unlocked
     CONFIG - fix setting for when to open the editor + add executor
     RESIZE VIEWPORTS - allow resizing viewports
     ANCHOR - implement anchor points

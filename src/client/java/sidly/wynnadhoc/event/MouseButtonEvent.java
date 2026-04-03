@@ -6,16 +6,25 @@ import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 import sidly.wynnadhoc.utils.GuiUtils;
 
-public class MouseButtonEvent extends Event<MouseButtonEvent> { // TODO consumable
+public class MouseButtonEvent extends Event<MouseButtonEvent> {
     public MouseInput input;
     public int action;
     public Vector2d pos;
+    private boolean consumed = false;
 
     public MouseButtonEvent(MouseInput input, int action) {
         this.input = input;
         this.action = action;
         this.pos = GuiUtils.getScaledMousePos();
         this.fire();
+    }
+
+    public void consume() {
+        consumed = true;
+    }
+
+    public boolean consumed() {
+        return consumed;
     }
 
     public boolean isRightClick() {

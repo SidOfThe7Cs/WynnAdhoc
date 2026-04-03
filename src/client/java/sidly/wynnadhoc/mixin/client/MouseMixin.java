@@ -22,9 +22,10 @@ public class MouseMixin {
     @Shadow
     private double y;
 
-    @Inject(method = "onMouseButton", at = @At("HEAD"))
+    @Inject(method = "onMouseButton", at = @At("HEAD"), cancellable = true)
     private void onMouseButton(long window, MouseInput input, int action, CallbackInfo ci) {
-        new MouseButtonEvent(input, action);
+        MouseButtonEvent event = new MouseButtonEvent(input, action);
+        if (event.consumed()) ci.cancel();
     }
 
     @Inject(method = "onMouseScroll", at = @At("HEAD"))

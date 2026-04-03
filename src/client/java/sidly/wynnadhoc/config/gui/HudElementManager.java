@@ -64,7 +64,9 @@ public class HudElementManager {
 
         HudComponent hoveredChild = INSTANCE.getHoveredChild(event.pos.x, event.pos.y);
         if (hoveredChild != null) {
-            hoveredChild.onMouseClicked(event.asClick(), false, INSTANCE.isEditMode());
+            if (hoveredChild.onMouseClicked(event.asClick(), false, INSTANCE.isEditMode())) {
+                event.consume();
+            }
         }
     }
 

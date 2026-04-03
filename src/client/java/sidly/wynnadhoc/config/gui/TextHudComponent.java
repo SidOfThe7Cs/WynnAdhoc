@@ -84,8 +84,8 @@ public class TextHudComponent extends HudComponent {
     }
 
     @Override
-    public void onMouseClicked(Click click, boolean doubled, boolean editing) {
-        super.onMouseClicked(click, doubled, editing);
+    public boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
+        boolean thisConsumed = super.onMouseClicked(click, doubled, editing);
         if (!editing) {
             try {
                 this.onClick.run();
@@ -93,6 +93,7 @@ public class TextHudComponent extends HudComponent {
                 ChatMessageUtils.sendChatMessage("Failed to run click " + e.getMessage());
             }
         }
+        return thisConsumed;
     }
 
     @Override
