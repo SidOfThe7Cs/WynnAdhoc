@@ -12,10 +12,9 @@ public class GuildConfig {
     public boolean showAspectsOverlay = true;
 
     @Expose
-    public HudComponentData aspectOverlayData = new HudComponentData(
+    public HudComponentData aspectOverlayData = new HudComponentData.Builder(
             "Aspect Overlay",
             0.65f,
-            0.2f,
-            1.0f
-    );
+            0.2f
+    ).build();
 }

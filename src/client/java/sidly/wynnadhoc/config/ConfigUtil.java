@@ -3,6 +3,8 @@
 package sidly.wynnadhoc.config;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import org.jetbrains.annotations.Nullable;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.utils.Debug;
@@ -43,13 +45,45 @@ public class ConfigUtil {
                         new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8))
         ) {
             return gson.fromJson(reader, configClass);
-        } catch (Exception e) {
+        } catch (JsonSyntaxException e) {
+            // JSON structure error (wrong types, missing fields, etc.)
+            WynnAdhocClient.LOGGER.error("JSON Syntax Error in " + file.getName() + ": " + e.getMessage());
+
+            // Get more details about the error location
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                WynnAdhocClient.LOGGER.error("Cause: " + cause.getMessage());
+            }
+
+            // Try to find line/position from the error message
+            String errorMsg = e.getMessage();
+            // Example: "Expected BEGIN_OBJECT but was STRING at line 5 column 12"
+            if (errorMsg.contains("line") && errorMsg.contains("column")) {
+                WynnAdhocClient.LOGGER.error("Error location: " + errorMsg);
+            }
+
             if (!handleError) return null;
-            new RuntimeException(
-                    "Invalid config file '" + file + "'. This will reset to default",
-                    e
-            ).printStackTrace();
-            // Try to save a version of the corrupted config for debugging purposes
+            e.printStackTrace();
+            makeBackup(file, ".corrupted");
+
+        } catch (JsonParseException e) {
+            // Generic JSON parsing error
+            WynnAdhocClient.LOGGER.error("JSON Parse Error in " + file.getName() + ": " + e.getMessage());
+            if (!handleError) return null;
+            e.printStackTrace();
+            makeBackup(file, ".corrupted");
+
+        } catch (IOException e) {
+            // File reading error
+            WynnAdhocClient.LOGGER.error("IO Error reading " + file.getName() + ": " + e.getMessage());
+            if (!handleError) return null;
+            e.printStackTrace();
+
+        } catch (Exception e) {
+            // Any other error
+            WynnAdhocClient.LOGGER.error("Unexpected error loading " + file.getName() + ": " + e.getMessage());
+            if (!handleError) return null;
+            e.printStackTrace();
             makeBackup(file, ".corrupted");
         }
         return null;

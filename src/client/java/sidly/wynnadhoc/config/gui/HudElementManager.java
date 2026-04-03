@@ -17,7 +17,7 @@ public class HudElementManager {
     }
 
     // the main viewport that contains all other hud elements including viewports
-    private static final SubViewPort screenView = new SubViewPort("full screen", 0, 0, 1, 1, null);
+    private static final HudComponentData screenView = new HudComponentData.Builder("full screen", 0, 0).width(1).height(1).build();
     public static final GuiElement INSTANCE = new GuiElement(screenView);
 
     private static final Map<Integer, HudComponent> hudElementsMap = new HashMap<>(); // allows getting the component from just its data

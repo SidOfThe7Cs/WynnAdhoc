@@ -12,12 +12,11 @@ public class LootrunConfig {
     public boolean showBeaconCountsOverlay = false;
 
     @Expose
-    public HudComponentData beaconCountsOverlay = new HudComponentData(
+    public HudComponentData beaconCountsOverlay = new HudComponentData.Builder(
             "Beacon Overlay",
             0f,
-            0.5f,
-            1.0f
-    );
+            0.5f
+    ).build();
 
     @Expose
     @ConfigOption(name = "Show End Rewards Overlay", desc = "shows an overlay with your end rolls, sacs, pull, and effective pulls")
@@ -25,12 +24,11 @@ public class LootrunConfig {
     public boolean showEndRewardsOverlay = false;
 
     @Expose
-    public HudComponentData endRewardsOverlay = new HudComponentData(
+    public HudComponentData endRewardsOverlay = new HudComponentData.Builder(
             "End Rewards Overlay",
             0.2f,
-            0.2f,
-            1.0f
-    );
+            0.2f
+    ).build();
 
     @Expose
     @ConfigOption(name = "Show Mission", desc = "shows an overlay with your active missions and trials")
@@ -38,10 +36,9 @@ public class LootrunConfig {
     public boolean showMissionOverlay = false;
 
     @Expose
-    public HudComponentData missionOverlay = new HudComponentData(
+    public HudComponentData missionOverlay = new HudComponentData.Builder(
             "End Rewards Overlay",
             0.6f,
-            0.2f,
-            1.0f
-    );
+            0.2f
+    ).build();
 }

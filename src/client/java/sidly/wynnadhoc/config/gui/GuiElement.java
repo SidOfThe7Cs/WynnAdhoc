@@ -27,15 +27,15 @@ public class GuiElement extends HudComponent {
         return editMode;
     }
 
-    public GuiElement(SubViewPort viewPort, HudComponent... children) {
+    public GuiElement(HudComponentData viewPort, HudComponent... children) {
         super(viewPort);
         for (HudComponent child : children) {
-            child.setViewPort(viewPort);
             addChild(child);
         }
     }
 
     public void addChild(HudComponent newChild) {
+        newChild.setParent(this);
         float area = newChild.getWidth() * newChild.getHeight(); // TODO reorder when size changes
 
         // Find insertion position based on area

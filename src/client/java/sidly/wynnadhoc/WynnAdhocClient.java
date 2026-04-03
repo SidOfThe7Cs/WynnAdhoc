@@ -108,9 +108,9 @@ refactor chest saving to not just be there entir tooltip as json
 
 auto update checker
 icon
+clear backups when the real config loads correctly
 
 HUD:
-    NON PIXEL VIEWPORTS - make viewports 2 corner and not pixel based? (remove subviewport merge it into data and then rename guielement to viewport)
     RESIZE VIEWPORTS - allow resizing viewports
     SUBELEMENTS - actually make way to enter edit mode recursivly
     ANCHOR - implement anchor points

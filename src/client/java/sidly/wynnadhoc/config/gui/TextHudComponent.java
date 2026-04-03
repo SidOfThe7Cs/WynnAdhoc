@@ -99,7 +99,7 @@ public class TextHudComponent extends HudComponent {
     @Override
     public void updateDisplay() {
         if (updater == null) {
-            WynnAdhocClient.LOGGER.warn("no updater set for TextHudElement at " + data().x + ", " + data().y + " in " + data().viewPort);
+            WynnAdhocClient.LOGGER.warn("no updater set for TextHudElement " + name());
             return;
         }
         try {
@@ -112,7 +112,7 @@ public class TextHudComponent extends HudComponent {
     @Override
     public boolean isVisible() {
         if (visibleCondition == null) {
-            WynnAdhocClient.LOGGER.warn("no visibility condition set for TextHudElement  at " + data().x + ", " + data().y + " in " + data().viewPort);
+            WynnAdhocClient.LOGGER.warn("no visibility condition set for TextHudElement " + name());
             return false;
         }
         try {

@@ -17,7 +17,7 @@ class GuiConfig {
     @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_UNKNOWN)
     var guiEditorKeybind: Int = GLFW.GLFW_KEY_UNKNOWN
 
-    @Expose
+    @Transient
     @JvmField
     @ConfigOption(name = "Open Hud Editor", desc = "Click to instantly open the hud editor.")
     @ConfigEditorButton(buttonText = "Click")

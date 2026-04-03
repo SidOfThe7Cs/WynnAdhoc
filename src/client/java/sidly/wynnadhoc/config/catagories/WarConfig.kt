@@ -14,12 +14,11 @@ class WarConfig {
 
     @Expose
     @JvmField
-    var resourceOverlay: HudComponentData = HudComponentData(
+    var resourceOverlay: HudComponentData = HudComponentData.Builder(
         "War Resource Overlay",
         0.5f,
-        0.2f,
-        1.0f
-    )
+        0.2f
+    ).build()
 
     @Expose
     @JvmField
@@ -29,10 +28,9 @@ class WarConfig {
 
     @Expose
     @JvmField
-    var warTimer: HudComponentData = HudComponentData(
+    var warTimer: HudComponentData = HudComponentData.Builder(
         "War Timer",
         0.5f,
-        0.4f,
-        1.0f
-    )
+        0.4f
+    ).build()
 }

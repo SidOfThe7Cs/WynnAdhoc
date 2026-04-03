@@ -5,7 +5,6 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 import sidly.wynnadhoc.config.gui.HudComponentData;
-import sidly.wynnadhoc.config.gui.SubViewPort;
 
 public class SimpleFeatureToggles {
     @Expose
@@ -25,7 +24,14 @@ public class SimpleFeatureToggles {
     public boolean showTradeMarketFilter = true;
 
     @Expose
-    public HudComponentData TMOverlayTitle = new HudComponentData("TMTitle", 0.5f, 0.5f, 1f);
+    public HudComponentData TMOverlayTitle = new HudComponentData.Builder("TMTitle", 0.5f, 0.5f).build();
     @Expose
-    public SubViewPort TMOverlayMain = new SubViewPort("Trade Market Highlighter", 0.5f, 0.5f, 120, 300, 0xCC1a1a1a);
+    public HudComponentData TMOverlayMain = new HudComponentData.Builder(
+            "Trade Market Highlighter",
+            0.5f,
+            0.5f)
+            .width(0.18f)
+            .height(0.6f)
+            .background(0xCC1a1a1a)
+            .build();
 }

@@ -10,6 +10,7 @@ import org.joml.Vector2d;
 import org.joml.Vector2i;
 import sidly.wynnadhoc.event.MouseMoveEvent;
 import sidly.wynnadhoc.utils.GuiUtils;
+import sidly.wynnadhoc.utils.render.RenderUtilsKt;
 
 import java.awt.*;
 import java.util.List;
@@ -27,6 +28,8 @@ public abstract class HudComponent {
     protected double grabDifX;
     protected double grabDifY;
 
+    protected HudComponent parent;
+
     void renderHover(DrawContext drawContext) {
         // render hover tooltip
         Vector2d mousePos = GuiUtils.getScaledMousePos();
@@ -43,12 +46,6 @@ public abstract class HudComponent {
                         Color.white.getRGB(),
                         true);
             }
-        }
-    }
-
-    void renderBackground(DrawContext drawContext) {
-        if (data instanceof SubViewPort viewPort && isVisible()) {
-            viewPort.render(drawContext);
         }
     }
 
@@ -90,11 +87,35 @@ public abstract class HudComponent {
     }
 
     float getWidth() {
-        return data instanceof SubViewPort ? ((SubViewPort) data).width : contentWidth;
+        if (data.width == 0) {
+            return contentWidth;
+        } else {
+            Window window = MinecraftClient.getInstance().getWindow();
+            if (window == null) return 0;
+            float parentWidth = parent == null ? window.getScaledWidth() : parent.getWidth();
+            return data.width * parentWidth;
+        }
     }
 
     float getHeight() {
-        return data instanceof SubViewPort ? ((SubViewPort) data).height : contentHeight;
+        if (data.height == 0) {
+            return contentHeight;
+        } else {
+            Window window = MinecraftClient.getInstance().getWindow();
+            if (window == null) return 0;
+            float parentHeight = parent == null ? window.getScaledHeight() : parent.getHeight();
+            return data.height * parentHeight;
+        }
+    }
+
+    void renderBackground(DrawContext context) {
+        if (data.background == null) return;
+        Vector2i parentRenderPos = parent.renderPos();
+        int x = (int) (data.x * parent.getWidth()) + parentRenderPos.x;
+        int x2 = (int) (x + getWidth());
+        int y = (int) (data.y * parent.getHeight()) + parentRenderPos.y;
+        int y2 = (int) (y + getHeight());
+        RenderUtilsKt.drawBackground(context, x, y, x2, y2, data.background, 3);
     }
 
     boolean isHovering(double mouseX, double mouseY) {
@@ -125,19 +146,10 @@ public abstract class HudComponent {
     }
 
     private Vector2i renderPos() {
-        Window window = MinecraftClient.getInstance().getWindow();
-        Vector2i offset = new Vector2i(0, 0);
-        int width;
-        int height;
-        if (data.viewPort != null) {
-            offset = data.viewPort.renderPos();
-            width = data.viewPort.getWidth();
-            height = data.viewPort.getHeight();
-
-        } else {
-            width = window.getScaledWidth();
-            height = window.getScaledHeight();
-        }
+        if (parent == null) return new Vector2i(0, 0);
+        Vector2i offset = parent.renderPos();
+        float width = parent.getWidth();
+        float height = parent.getHeight();
 
         // force rendering on screen
         float xPos = width * (data.x < 0 ? 0 : data.x) + offset.x;
@@ -159,7 +171,7 @@ public abstract class HudComponent {
         data.y = (float) to.y / height;
     }
 
-    protected void setViewPort(SubViewPort viewPort) {
-        data.viewPort = viewPort;
+    protected void setParent(HudComponent viewPort) {
+        this.parent = viewPort;
     }
 }
