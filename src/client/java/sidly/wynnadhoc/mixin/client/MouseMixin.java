@@ -28,9 +28,10 @@ public class MouseMixin {
         if (event.consumed()) ci.cancel();
     }
 
-    @Inject(method = "onMouseScroll", at = @At("HEAD"))
+    @Inject(method = "onMouseScroll", at = @At("HEAD"), cancellable = true)
     private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo ci) {
-        new MouseScrollEvent(vertical);
+        MouseScrollEvent event = new MouseScrollEvent(vertical);
+        if (event.consumed()) ci.cancel();
     }
 
     @Inject(method = "onCursorPos", at = @At("HEAD"))

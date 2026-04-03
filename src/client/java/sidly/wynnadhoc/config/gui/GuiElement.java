@@ -136,12 +136,19 @@ public class GuiElement extends HudComponent {
     }
 
     @Override
-    public void onMouseScrolled(double x, double y, double verticalAmount) {
+    public boolean onMouseScrolled(double x, double y, double verticalAmount) {
         if (editMode) {
             HudComponent hoveredChild = getHoveredChild(x, y);
             if (hoveredChild != null) {
-                hoveredChild.onMouseScrolled(x, y, verticalAmount);
-            } else increaseScale(verticalAmount);
-        } else if (this != HudElementManager.INSTANCE) increaseScale(verticalAmount);
+                return hoveredChild.onMouseScrolled(x, y, verticalAmount);
+            } else {
+                increaseScale(verticalAmount);
+                return true;
+            }
+        } else if (this != HudElementManager.INSTANCE) {
+            increaseScale(verticalAmount);
+            return true;
+        }
+        return false;
     }
 }

@@ -73,8 +73,9 @@ public abstract class HudComponent {
         return false;
     }
 
-    void onMouseScrolled(double x, double y, double verticalAmount) {
+    boolean onMouseScrolled(double x, double y, double verticalAmount) {
         increaseScale(verticalAmount);
+        return true;
     }
 
     void onMouseMoved(MouseMoveEvent event) {

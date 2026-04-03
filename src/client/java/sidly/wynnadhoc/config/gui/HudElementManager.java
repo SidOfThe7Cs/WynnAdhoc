@@ -71,7 +71,9 @@ public class HudElementManager {
     }
 
     public static void onMouseScrollEvent(MouseScrollEvent event) {
-        INSTANCE.onMouseScrolled(event.pos.x, event.pos.y, event.amount);
+        if (INSTANCE.onMouseScrolled(event.pos.x, event.pos.y, event.amount)) {
+            event.consume();
+        }
     }
 
     public static void onMouseMoveEvent(MouseMoveEvent event) {
