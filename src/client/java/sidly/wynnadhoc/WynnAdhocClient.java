@@ -111,6 +111,7 @@ icon
 clear backups when the real config loads correctly
 
 HUD:
+dont allow scaling INSTANCE
     RESIZE VIEWPORTS - allow resizing viewports
     SUBELEMENTS - actually make way to enter edit mode recursivly
     ANCHOR - implement anchor points

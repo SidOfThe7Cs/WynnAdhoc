@@ -36,12 +36,12 @@ public class GuiElement extends HudComponent {
 
     public void addChild(HudComponent newChild) {
         newChild.setParent(this);
-        float area = newChild.getWidth() * newChild.getHeight(); // TODO reorder when size changes
+        float area = newChild.getScaledWidth() * newChild.getScaledHeight(); // TODO reorder when size changes
 
         // Find insertion position based on area
         int insertIndex = 0;
         for (HudComponent existingChild : children) {
-            float existingArea = existingChild.getWidth() * existingChild.getHeight();
+            float existingArea = existingChild.getScaledWidth() * existingChild.getScaledHeight();
             if (area < existingArea) break;
             insertIndex++;
         }
@@ -50,7 +50,7 @@ public class GuiElement extends HudComponent {
     }
 
     private void sortChildren() {
-        children.sort(Comparator.comparingDouble(c -> c.getWidth() * c.getHeight()));
+        children.sort(Comparator.comparingDouble(c -> c.getScaledWidth() * c.getScaledHeight()));
     }
 
     public HudComponent getHoveredChild(double x, double y) {
@@ -61,10 +61,10 @@ public class GuiElement extends HudComponent {
     }
 
     @Override
-    public void render(Vector2i pos, DrawContext drawContext, boolean override, float extraScale) {
+    public void render(Vector2i pos, DrawContext drawContext, boolean override) {
         if (isVisible() || override) {
             super.renderBackground(drawContext);
-            children.forEach(child -> child.render(drawContext, editMode, scale(extraScale)));
+            children.forEach(child -> child.render(drawContext, editMode));
             if (!editMode) super.renderHover(drawContext);
         }
     }
@@ -120,19 +120,14 @@ public class GuiElement extends HudComponent {
 
     @Override
     public void onMouseMoved(MouseMoveEvent event) {
-        // if we are edit mode render the name of the hovered child
-        if (!editMode) {
-            super.onMouseMoved(event);
-            return;
-        }
+        if (!editMode) return;
+        super.onMouseMoved(event);
 
         HudComponent hoveredChild = getHoveredChild(event.newPosScaled.x, event.newPosScaled.y);
         if (hoveredChild != null) {
             HudElementManager.setDescription(hoveredChild.name());
             hoveredChild.onMouseMoved(event);
-        } else {
-            if (editMode) HudElementManager.setDescription("");
-        }
+        } else HudElementManager.setDescription("");
     }
 
     @Override
@@ -142,7 +137,7 @@ public class GuiElement extends HudComponent {
             if (hoveredChild != null) {
                 return hoveredChild.onMouseScrolled(x, y, verticalAmount);
             } else {
-                increaseScale(verticalAmount);
+                if (this != HudElementManager.INSTANCE) increaseScale(verticalAmount);
                 return true;
             }
         } else if (this != HudElementManager.INSTANCE) {

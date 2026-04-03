@@ -30,6 +30,10 @@ public abstract class HudComponent {
 
     protected HudComponent parent;
 
+    // TODO config
+    private final static int TOLERANCE = 5;
+    private final static float SCALE_INCREASE_FACTOR = 1;
+
     void renderHover(DrawContext drawContext) {
         // render hover tooltip
         Vector2d mousePos = GuiUtils.getScaledMousePos();
@@ -49,10 +53,10 @@ public abstract class HudComponent {
         }
     }
 
-    abstract void render(Vector2i pos, DrawContext drawContext, boolean override, float extraScale);
+    abstract void render(Vector2i pos, DrawContext drawContext, boolean override);
 
-    void render(DrawContext drawContext, boolean override, float extraScale) {
-        render(renderPos(), drawContext, override, extraScale);
+    void render(DrawContext drawContext, boolean override) {
+        render(renderPos(), drawContext, override);
     }
 
     abstract void updateDisplay();
@@ -61,10 +65,19 @@ public abstract class HudComponent {
 
     boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
         if (editing) {
-            HudElementManager.setDragging(this);
             Vector2i pos = renderPos();
             grabDifX = pos.x() - click.x();
             grabDifY = pos.y() - click.y();
+
+            if (data.width != 0 && data.height != 0) {
+                Side side = Side.from(pos.x, (int) (pos.x + getScaledWidth()), pos.y, (int) (pos.y + getScaledHeight()), click, TOLERANCE);
+                if (side != Side.NONE) {
+                    HudElementManager.setExpanding(this, side);
+                    return true;
+                }
+            }
+
+            HudElementManager.setDragging(this);
             return true;
         }
         return false;
@@ -80,6 +93,10 @@ public abstract class HudComponent {
 
     void moveTo(MouseMoveEvent event) {
         move(new Vector2i((int) (event.newPosScaled.x + grabDifX), (int) (event.newPosScaled.y + grabDifY)));
+    }
+
+    void expandTo(Side expandingSide, MouseMoveEvent event) {
+        Vector2d dest = event.newPosScaled;
     }
 
     List<Text> getHoverTooltip() {
@@ -108,20 +125,28 @@ public abstract class HudComponent {
         }
     }
 
+    float getScaledWidth() {
+        return getWidth() * scale();
+    }
+
+    float getScaledHeight() {
+        return getHeight() * scale();
+    }
+
     void renderBackground(DrawContext context) {
         if (data.background == null) return;
         Vector2i parentRenderPos = parent.renderPos();
-        int x = (int) (data.x * parent.getWidth()) + parentRenderPos.x;
-        int x2 = (int) (x + getWidth());
-        int y = (int) (data.y * parent.getHeight()) + parentRenderPos.y;
-        int y2 = (int) (y + getHeight());
+        int x = (int) (data.x * parent.getScaledWidth()) + parentRenderPos.x;
+        int x2 = (int) (x + getScaledWidth());
+        int y = (int) (data.y * parent.getScaledHeight()) + parentRenderPos.y;
+        int y2 = (int) (y + getScaledHeight());
         RenderUtilsKt.drawBackground(context, x, y, x2, y2, data.background, 3);
     }
 
     boolean isHovering(double mouseX, double mouseY) {
         Vector2i pos = renderPos();
-        float width = getWidth();
-        float height = getHeight();
+        float width = getScaledWidth();
+        float height = getScaledHeight();
         return mouseX >= pos.x() && mouseX < pos.x() + width && mouseY >= pos.y() && mouseY < pos.y() + height;
     }
 
@@ -129,8 +154,8 @@ public abstract class HudComponent {
         return data.name == null ? "Un-named Hud Element" : data.name;
     }
 
-    float scale(float extraScale) {
-        return data.scale * extraScale;
+    float scale() {
+        return parent == null ? data.scale : data.scale * parent.scale();
     }
 
     public HudComponentData data() {
@@ -139,7 +164,7 @@ public abstract class HudComponent {
 
     void increaseScale(double verticalAmount) {
         float currentScale = data.scale;
-        float newScale = (float) (currentScale + verticalAmount / 5);
+        float newScale = (float) (currentScale + verticalAmount / 10 * SCALE_INCREASE_FACTOR);
         if (newScale > 0.3) {
             this.data.scale = newScale;
         }
@@ -148,12 +173,14 @@ public abstract class HudComponent {
     private Vector2i renderPos() {
         if (parent == null) return new Vector2i(0, 0);
         Vector2i offset = parent.renderPos();
-        float width = parent.getWidth();
-        float height = parent.getHeight();
+        float width = parent.getScaledWidth();
+        float height = parent.getScaledHeight();
 
         // force rendering on screen
         float xPos = width * (data.x < 0 ? 0 : data.x) + offset.x;
         float yPos = height * (data.y < 0 ? 0 : data.y) + offset.y;
+
+        //WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "name: " + name() + " offset: " + offset + " width: " + width + " height: " + height + " x: " + xPos + " y: " + yPos + " scale: " + scale());
         /*
         if (xPos + stringWidth > width) xPos = width - stringWidth;
         if (yPos + stringHeight > height) yPos = height - stringHeight;
@@ -164,8 +191,8 @@ public abstract class HudComponent {
 
     void move(Vector2i to) {
         Window window = MinecraftClient.getInstance().getWindow();
-        int width = window.getScaledWidth();
-        int height = window.getScaledHeight();
+        float width = parent.getWidth();
+        float height = parent.getHeight();
 
         data.x = (float) to.x / width;
         data.y = (float) to.y / height;
@@ -174,4 +201,5 @@ public abstract class HudComponent {
     protected void setParent(HudComponent viewPort) {
         this.parent = viewPort;
     }
+
 }

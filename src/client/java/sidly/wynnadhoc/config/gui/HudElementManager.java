@@ -24,6 +24,7 @@ public class HudElementManager {
 
     private static String description = "";
     private static HudComponent dragging = null;
+    private static Side expandingSide = Side.NONE;
 
     public static void setDescription(String description) {
         HudElementManager.description = description;
@@ -31,6 +32,12 @@ public class HudElementManager {
 
     public static void setDragging(HudComponent dragging) {
         HudElementManager.dragging = dragging;
+        expandingSide = Side.NONE;
+    }
+
+    public static void setExpanding(HudComponent hudComponent, Side side) {
+        dragging = hudComponent;
+        expandingSide = side;
     }
 
     public static HudComponent getHudElement(HudComponentData data) {
@@ -43,7 +50,7 @@ public class HudElementManager {
     }
 
     public static void onHudRender(HudRenderOnTopEvent event) {
-        INSTANCE.render(event.context, false, 1f);
+        INSTANCE.render(event.context, false);
         if (!description.isEmpty() && INSTANCE.isEditMode()) {
             Vector2d mousePos = GuiUtils.getScaledMousePos();
             event.context.drawText(
@@ -80,7 +87,9 @@ public class HudElementManager {
     public static void onMouseMoveEvent(MouseMoveEvent event) {
         INSTANCE.onMouseMoved(event);
         if (dragging != null) {
-            dragging.moveTo(event);
+            if (expandingSide != Side.NONE) {
+                dragging.expandTo(expandingSide, event);
+            } else dragging.moveTo(event);
         }
     }
 
