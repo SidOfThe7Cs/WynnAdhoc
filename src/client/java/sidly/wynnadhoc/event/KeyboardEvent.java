@@ -1,11 +1,13 @@
 package sidly.wynnadhoc.event;
 
-public class KeyboardEvent extends Event<KeyboardEvent> {
-    public int key;
-    public int action;
+import net.minecraft.client.input.KeyInput;
 
-    public KeyboardEvent(int key, int action) {
-        this.key = key;
+public class KeyboardEvent extends Event<KeyboardEvent> {
+    public int action;
+    public KeyInput keyInput;
+
+    public KeyboardEvent(KeyInput key, int action) {
+        this.keyInput = key;
         this.action = action;
         this.fire();
     }

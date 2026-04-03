@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.features.war;
 
 import com.wynntils.core.components.Models;
+import com.wynntils.models.containers.containers.GuildMemberListContainer;
 import net.minecraft.client.MinecraftClient;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
@@ -144,15 +145,15 @@ public class WarCore {
 
     public static boolean shouldShowResourceOverlay() {
         MinecraftClient client = MinecraftClient.getInstance();
+        if (Models.Container.getCurrentContainer() instanceof GuildMemberListContainer) return false;
         if (config().showResourceOverlay && client != null && client.currentScreen != null) {
             String title = client.currentScreen.getTitle().getString();
+            String guildName = Models.Guild.getGuildName();
             int colonIndex = title.indexOf(':');
             if (colonIndex != -1) {
                 title = title.substring(0, colonIndex).trim();
             }
-            if (DB.allTerritories.containsKey(title)) {
-                return true;
-            } else if (title.equals(Models.Guild.getGuildName())) {
+            if (!guildName.isEmpty() && guildName.equals(title)) {
                 return true;
             } else return title.equals("Territory Management");
         }

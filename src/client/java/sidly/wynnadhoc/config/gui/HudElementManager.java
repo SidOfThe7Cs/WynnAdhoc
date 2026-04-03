@@ -58,6 +58,7 @@ public class HudElementManager {
     }
 
     public static void onMouseButtonEvent(MouseButtonEvent event) {
+        if (INSTANCE.isEditMode()) event.consume();
         if (!event.isLeftClick()) return;
         if (event.isRelease()) setDragging(null);
         if (!event.isPress()) return;
@@ -84,10 +85,15 @@ public class HudElementManager {
     }
 
     public static void onKeyboardEvent(KeyboardEvent event) {
-        if (event.action == 1 && event.key == config().guiEditorKeybind) {
+        if (event.action == 1) {
             boolean wasInEdit = INSTANCE.isEditMode();
-            GuiUtils.setMouseGrabbed(wasInEdit);
-            INSTANCE.setEditMode(!wasInEdit); // TODO this reverts when you click disable that or smth
+            if (event.keyInput.key() == config().guiEditorKeybind) {
+                GuiUtils.setMouseGrabbed(wasInEdit);
+                INSTANCE.setEditMode(!wasInEdit);
+            } else if (event.keyInput.isEscape()) {
+                if (wasInEdit) INSTANCE.setEditMode(false);
+                GuiUtils.setMouseGrabbed(true);
+            }
         }
     }
 }

@@ -110,15 +110,16 @@ auto update checker
 icon
 
 HUD:
-    MOUSE - fix mouse not staying unlocked
     CONFIG - fix setting for when to open the editor + add executor
+    NON PIXEL VIEWPORTS - make viewports 2 corner and not pixel based? (remove subviewport merge it into data and then rename guielement to viewport)
     RESIZE VIEWPORTS - allow resizing viewports
     ANCHOR - implement anchor points
         keybind when holding to change anchor point and swap to allow movement inside viewports
+    RESORT - resort children anytime there size changes (maybe only when we open the editor)
     INFO TEXT - static element in center of screen with general info
     KEYBOARD - add keyboard controls (store last clicked add a boolean for dragging)
     FIX SCREEN EDGES: fix it not forcing hudelements on screen for viewports and bottom and right
-    NON PIXEL VIEWPORTS - make viewports 2 corner and not pixel based?
+    VISIBILITY CONDITION - every hudelement needs one not just text
 
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft (maybe a simpler way as well like an anotation or smth to make features wynn only)
 spellcaster with queue and display and safe cast

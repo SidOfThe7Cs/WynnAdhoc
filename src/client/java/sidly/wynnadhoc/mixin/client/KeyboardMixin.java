@@ -25,9 +25,8 @@ public class KeyboardMixin {
         if (currentScreen instanceof ChatScreen) return;
         if (currentScreen instanceof MoulConfigScreenComponent) return;
 
-        int key = input.key();
         if (MinecraftClient.getInstance().player == null) return;
-        if (key == GLFW.GLFW_KEY_UNKNOWN) return;
-        new KeyboardEvent(key, action);
+        if (input.key() == GLFW.GLFW_KEY_UNKNOWN) return;
+        new KeyboardEvent(input, action);
     }
 }
