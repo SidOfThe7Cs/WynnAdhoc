@@ -14,7 +14,7 @@ public class GuiUtils {
 
     public static void setMouseGrabbed(boolean grabbed) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (grabbed) client.mouse.lockCursor();
+        if (grabbed && MinecraftClient.getInstance().currentScreen == null) client.mouse.lockCursor();
         else client.mouse.unlockCursor();
     }
 }
