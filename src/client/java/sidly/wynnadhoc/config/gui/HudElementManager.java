@@ -44,7 +44,7 @@ public class HudElementManager {
 
     public static void onHudRender(HudRenderOnTopEvent event) {
         INSTANCE.render(event.context, false, 1f);
-        if (!description.isEmpty()) {
+        if (!description.isEmpty() && INSTANCE.isEditMode()) {
             Vector2d mousePos = GuiUtils.getScaledMousePos();
             event.context.drawText(
                     MinecraftClient.getInstance().textRenderer,
@@ -86,14 +86,24 @@ public class HudElementManager {
 
     public static void onKeyboardEvent(KeyboardEvent event) {
         if (event.action == 1) {
-            boolean wasInEdit = INSTANCE.isEditMode();
-            if (event.keyInput.key() == config().guiEditorKeybind) {
-                GuiUtils.setMouseGrabbed(wasInEdit);
-                INSTANCE.setEditMode(!wasInEdit);
-            } else if (event.keyInput.isEscape()) {
-                if (wasInEdit) INSTANCE.setEditMode(false);
-                GuiUtils.setMouseGrabbed(true);
-            }
+            if (event.keyInput.key() == config().guiEditorKeybind) toggleEditor();
+            else if (event.keyInput.isEscape()) closeEditor();
         }
+    }
+
+    public static void openEditor() {
+        if (!INSTANCE.isEditMode()) INSTANCE.setEditMode(true);
+        GuiUtils.setMouseGrabbed(false);
+    }
+
+    public static void closeEditor() {
+        if (INSTANCE.isEditMode()) INSTANCE.setEditMode(false);
+        GuiUtils.setMouseGrabbed(true);
+    }
+
+    public static void toggleEditor() {
+        boolean wasInEdit = INSTANCE.isEditMode();
+        GuiUtils.setMouseGrabbed(wasInEdit);
+        INSTANCE.setEditMode(!wasInEdit);
     }
 }

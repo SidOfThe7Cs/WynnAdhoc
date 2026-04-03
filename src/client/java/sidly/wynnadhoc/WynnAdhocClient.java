@@ -110,9 +110,9 @@ auto update checker
 icon
 
 HUD:
-    CONFIG - fix setting for when to open the editor + add executor
     NON PIXEL VIEWPORTS - make viewports 2 corner and not pixel based? (remove subviewport merge it into data and then rename guielement to viewport)
     RESIZE VIEWPORTS - allow resizing viewports
+    SUBELEMENTS - actually make way to enter edit mode recursivly
     ANCHOR - implement anchor points
         keybind when holding to change anchor point and swap to allow movement inside viewports
     RESORT - resort children anytime there size changes (maybe only when we open the editor)
