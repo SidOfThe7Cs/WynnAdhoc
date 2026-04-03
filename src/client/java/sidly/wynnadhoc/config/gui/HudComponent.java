@@ -7,10 +7,13 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 import org.joml.Vector2d;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import sidly.wynnadhoc.event.MouseMoveEvent;
 import sidly.wynnadhoc.utils.GuiUtils;
-import sidly.wynnadhoc.utils.render.RenderUtilsKt;
+import sidly.wynnadhoc.utils.datatypes.Box;
+import sidly.wynnadhoc.utils.datatypes.ExtensionsKt;
+import sidly.wynnadhoc.utils.datatypes.NormalizedBox;
 
 import java.awt.*;
 import java.util.List;
@@ -31,22 +34,22 @@ public abstract class HudComponent {
     protected HudComponent parent;
 
     // TODO config
-    private final static int TOLERANCE = 5;
-    private final static float SCALE_INCREASE_FACTOR = 1;
+    public final static int TOLERANCE = 5;
+    private final static float SCROLL_SCALE_FACTOR = 1;
 
     void renderHover(DrawContext drawContext) {
         // render hover tooltip
         Vector2d mousePos = GuiUtils.getScaledMousePos();
-        if (isVisible() && isHovering(mousePos.x(), mousePos.y())) {
+        if (isVisible() && isHovering(mousePos)) {
             List<Text> tooltip = getHoverTooltip();
             TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-            Vector2i pos = renderPos();
+            Vector2f pos = getScaledRenderPos();
             for (int i = 0; i < tooltip.size(); i++) {
                 drawContext.drawText(
                         textRenderer,
                         tooltip.get(i),
                         (int) (pos.x + 2 + (contentWidth)),
-                        pos.y + i * textRenderer.fontHeight,
+                        (int) (pos.y + i * textRenderer.fontHeight),
                         Color.white.getRGB(),
                         true);
             }
@@ -56,7 +59,7 @@ public abstract class HudComponent {
     abstract void render(Vector2i pos, DrawContext drawContext, boolean override);
 
     void render(DrawContext drawContext, boolean override) {
-        render(renderPos(), drawContext, override);
+        render(ExtensionsKt.to2i(getScaledRenderPos()), drawContext, override);
     }
 
     abstract void updateDisplay();
@@ -65,12 +68,12 @@ public abstract class HudComponent {
 
     boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
         if (editing) {
-            Vector2i pos = renderPos();
+            Vector2f pos = getScaledRenderPos();
             grabDifX = pos.x() - click.x();
             grabDifY = pos.y() - click.y();
 
             if (data.width != 0 && data.height != 0) {
-                Side side = Side.from(pos.x, (int) (pos.x + getScaledWidth()), pos.y, (int) (pos.y + getScaledHeight()), click, TOLERANCE);
+                Side side = Side.from((int) pos.x, (int) (pos.x + getScaledWidth()), (int) pos.y, (int) (pos.y + getScaledHeight()), click, TOLERANCE);
                 if (side != Side.NONE) {
                     HudElementManager.setExpanding(this, side);
                     return true;
@@ -96,7 +99,26 @@ public abstract class HudComponent {
     }
 
     void expandTo(Side expandingSide, MouseMoveEvent event) {
+        if (parent == null || data.width == 0 || data.height == 0) return;
         Vector2d dest = event.newPosScaled;
+        Box newBounds = getBounds().extend(expandingSide, dest);
+        Box parentBounds = parent.getBounds();
+        NormalizedBox result = newBounds.forceInside(parentBounds).toNormalizedOf(parentBounds, scale());
+        data.updateFromNormalizedBox(result);
+    }
+
+    Box getBounds() {
+        Vector2f renderPos = getRenderPos();
+        float x2 = (renderPos.x + getWidth());
+        float y2 = (renderPos.y + getHeight());
+        return new Box(renderPos.x, renderPos.y, x2, y2);
+    }
+
+    Box getScaledBounds() {
+        Vector2f renderPos = getScaledRenderPos();
+        int x2 = (int) (renderPos.x + getScaledWidth());
+        int y2 = (int) (renderPos.y + getScaledHeight());
+        return new Box(renderPos.x, renderPos.y, x2, y2);
     }
 
     List<Text> getHoverTooltip() {
@@ -135,19 +157,11 @@ public abstract class HudComponent {
 
     void renderBackground(DrawContext context) {
         if (data.background == null) return;
-        Vector2i parentRenderPos = parent.renderPos();
-        int x = (int) (data.x * parent.getScaledWidth()) + parentRenderPos.x;
-        int x2 = (int) (x + getScaledWidth());
-        int y = (int) (data.y * parent.getScaledHeight()) + parentRenderPos.y;
-        int y2 = (int) (y + getScaledHeight());
-        RenderUtilsKt.drawBackground(context, x, y, x2, y2, data.background, 3);
+        getScaledBounds().draw(context, data.background, 3);
     }
 
-    boolean isHovering(double mouseX, double mouseY) {
-        Vector2i pos = renderPos();
-        float width = getScaledWidth();
-        float height = getScaledHeight();
-        return mouseX >= pos.x() && mouseX < pos.x() + width && mouseY >= pos.y() && mouseY < pos.y() + height;
+    boolean isHovering(Vector2d mousePos) {
+        return getScaledBounds().contains(mousePos);
     }
 
     String name() {
@@ -164,18 +178,29 @@ public abstract class HudComponent {
 
     void increaseScale(double verticalAmount) {
         float currentScale = data.scale;
-        float newScale = (float) (currentScale + verticalAmount / 10 * SCALE_INCREASE_FACTOR);
+        float newScale = (float) (currentScale + verticalAmount / 10 * SCROLL_SCALE_FACTOR);
         if (newScale > 0.3) {
             this.data.scale = newScale;
         }
     }
 
-    private Vector2i renderPos() {
-        if (parent == null) return new Vector2i(0, 0);
-        Vector2i offset = parent.renderPos();
+    Vector2f getRenderPos() {
+        if (parent == null) return new Vector2f(0, 0);
+        Vector2f offset = parent.getRenderPos();
+        float width = parent.getWidth();
+        float height = parent.getHeight();
+        return renderPos(offset, width, height);
+    }
+
+    Vector2f getScaledRenderPos() {
+        if (parent == null) return new Vector2f(0, 0);
+        Vector2f offset = parent.getRenderPos();
         float width = parent.getScaledWidth();
         float height = parent.getScaledHeight();
+        return renderPos(offset, width, height);
+    }
 
+    private Vector2f renderPos(Vector2f offset, float width, float height) {
         // force rendering on screen
         float xPos = width * (data.x < 0 ? 0 : data.x) + offset.x;
         float yPos = height * (data.y < 0 ? 0 : data.y) + offset.y;
@@ -186,11 +211,10 @@ public abstract class HudComponent {
         if (yPos + stringHeight > height) yPos = height - stringHeight;
          */
 
-        return new Vector2i((int) xPos, (int) yPos);
+        return new Vector2f(xPos, yPos);
     }
 
     void move(Vector2i to) {
-        Window window = MinecraftClient.getInstance().getWindow();
         float width = parent.getWidth();
         float height = parent.getHeight();
 

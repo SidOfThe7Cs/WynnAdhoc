@@ -4,6 +4,8 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
+import org.joml.Vector2f
+import org.joml.Vector2i
 import org.joml.Vector3f
 import sidly.wynnadhoc.utils.render.Line
 
@@ -33,6 +35,10 @@ fun Vec3d.down(amount: Int): Vec3d {
 
 fun Vec3d.up(amount: Int): Vec3d {
     return Vec3d(this.x, this.y + amount, this.z)
+}
+
+fun Vector2f.to2i(): Vector2i {
+    return Vector2i(this.x.toInt(), this.y.toInt())
 }
 
 fun Box.getCorners(): Array<Vec3i> {

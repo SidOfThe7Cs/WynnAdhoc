@@ -2,6 +2,7 @@ package sidly.wynnadhoc.config.gui;
 
 import com.google.gson.annotations.Expose;
 import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.utils.datatypes.NormalizedBox;
 
 public class HudComponentData {
     @Expose
@@ -27,6 +28,13 @@ public class HudComponentData {
         this.width = builder.width;
         this.height = builder.height;
         this.background = builder.background;
+    }
+
+    public void updateFromNormalizedBox(NormalizedBox box) {
+        this.x = box.x();
+        this.y = box.y();
+        this.width = box.width();
+        this.height = box.height();
     }
 
     public static class Builder {

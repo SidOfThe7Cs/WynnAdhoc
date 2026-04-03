@@ -2,9 +2,11 @@ package sidly.wynnadhoc.config.gui;
 
 import net.minecraft.client.MinecraftClient;
 import org.joml.Vector2d;
+import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.GuiConfig;
 import sidly.wynnadhoc.event.*;
+import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.awt.*;
@@ -25,6 +27,7 @@ public class HudElementManager {
     private static String description = "";
     private static HudComponent dragging = null;
     private static Side expandingSide = Side.NONE;
+    public static boolean cursorChanged = false;
 
     public static void setDescription(String description) {
         HudElementManager.description = description;
@@ -38,6 +41,15 @@ public class HudElementManager {
     public static void setExpanding(HudComponent hudComponent, Side side) {
         dragging = hudComponent;
         expandingSide = side;
+        if (side != Side.NONE) side.setCursor();
+        WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "setting cursor to: " + side.name());
+    }
+
+    public static void resetCursor() {
+        if (cursorChanged && dragging == null) {
+            Side.NONE.setCursor();
+            cursorChanged = false;
+        }
     }
 
     public static HudComponent getHudElement(HudComponentData data) {
@@ -85,6 +97,7 @@ public class HudElementManager {
     }
 
     public static void onMouseMoveEvent(MouseMoveEvent event) {
+        resetCursor();
         INSTANCE.onMouseMoved(event);
         if (dragging != null) {
             if (expandingSide != Side.NONE) {

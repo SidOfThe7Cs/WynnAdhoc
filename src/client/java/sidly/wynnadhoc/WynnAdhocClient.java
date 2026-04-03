@@ -111,12 +111,14 @@ icon
 clear backups when the real config loads correctly
 
 HUD:
-dont allow scaling INSTANCE
-    RESIZE VIEWPORTS - allow resizing viewports
+    RENDER - onRender function that calls renderBackground -> render -> renderHover
+    CURSOR - fix diagonal cursor add all cursor fix cursor appearing on texthud
     SUBELEMENTS - actually make way to enter edit mode recursivly
     ANCHOR - implement anchor points
         keybind when holding to change anchor point and swap to allow movement inside viewports
+        hold shift and then is renderes a white box where the origin is and when you move mouse it moves the origin to the closest option + dont change edited element until shift is released
     RESORT - resort children anytime there size changes (maybe only when we open the editor)
+    TEMP - make temp element list that can remove last entered always takes priority and consumes event before non-temp and can also clear all added after
     INFO TEXT - static element in center of screen with general info
     KEYBOARD - add keyboard controls (store last clicked add a boolean for dragging)
     FIX SCREEN EDGES: fix it not forcing hudelements on screen for viewports and bottom and right

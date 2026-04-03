@@ -2,6 +2,7 @@ package sidly.wynnadhoc.config.gui;
 
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.GuiConfig;
@@ -55,7 +56,7 @@ public class GuiElement extends HudComponent {
 
     public HudComponent getHoveredChild(double x, double y) {
         return children.stream()
-                .filter(child -> child.isHovering(x, y))
+                .filter(child -> child.isHovering(new Vector2d(x, y)))
                 .findFirst()
                 .orElse(null);
     }
@@ -125,6 +126,7 @@ public class GuiElement extends HudComponent {
 
         HudComponent hoveredChild = getHoveredChild(event.newPosScaled.x, event.newPosScaled.y);
         if (hoveredChild != null) {
+            Side.from(hoveredChild, event).setCursor();
             HudElementManager.setDescription(hoveredChild.name());
             hoveredChild.onMouseMoved(event);
         } else HudElementManager.setDescription("");
