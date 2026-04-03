@@ -27,5 +27,5 @@ public class SimpleFeatureToggles {
     @Expose
     public HudComponentData TMOverlayTitle = new HudComponentData("TMTitle", 0.5f, 0.5f, 1f);
     @Expose
-    public SubViewPort TMOverlayMain = new SubViewPort(0.5f, 0.5f, 120, 300, 0xCC1a1a1a);
+    public SubViewPort TMOverlayMain = new SubViewPort("Trade Market Highlighter", 0.5f, 0.5f, 120, 300, 0xCC1a1a1a);
 }

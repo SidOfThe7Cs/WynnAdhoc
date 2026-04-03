@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ItemUtils {
-    public static List<Text> getTooltip(ItemStack item){
+    public static List<Text> getTooltip(ItemStack item) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return new ArrayList<>();
 
@@ -48,7 +48,8 @@ public class ItemUtils {
             try {
                 int tier = Integer.parseInt(tierStr);
                 return (tier >= 1 && tier <= 10) ? tier : null;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
 
             // Convert Roman numeral to number
             int tier = FormatUtils.romanToInt(tierStr);

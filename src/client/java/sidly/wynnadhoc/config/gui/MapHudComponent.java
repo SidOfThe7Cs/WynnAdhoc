@@ -10,7 +10,7 @@ public class MapHudComponent extends HudComponent {
     }
 
     @Override
-    void render(Vector2i pos, DrawContext drawContext, boolean override) {
+    void render(Vector2i pos, DrawContext drawContext, boolean override, float extraScale) {
 
     }
 

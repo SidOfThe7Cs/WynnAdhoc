@@ -11,7 +11,7 @@ public class BeaconCounters {
     private int rainbowBeaconChallengesLeft;
 
     public String getChallengesRemaining(BeaconColor color) {
-        return switch (color){
+        return switch (color) {
             case Red -> String.valueOf(redBeaconChallengesLeft);
             case Rainbow -> String.valueOf(rainbowBeaconChallengesLeft);
             case Orange -> {
@@ -23,7 +23,7 @@ public class BeaconCounters {
                     for (Integer remaining : sorted) {
                         if (remaining > 0) {
                             sb.append(" (").append(remaining).append(")");
-                        }else break;
+                        } else break;
                     }
                 }
                 yield sb.toString();
@@ -49,6 +49,7 @@ public class BeaconCounters {
     public int getCount(BeaconColor color) {
         return counters.get(color);
     }
+
     public void incrementCount(BeaconColor color) {
         counters.merge(color, 1, Integer::sum);
     }

@@ -31,7 +31,7 @@ public class LootrunLogger {
     public static void endRun() {
         LootrunData data = LootrunCore.INSTANCE.getCurrentLootrunData();
         if (data == null) {
-            throw  new IllegalStateException("uuid is null");
+            throw new IllegalStateException("uuid is null");
         }
         LootrunLogger logger = getLogger();
         if (logger == null) {

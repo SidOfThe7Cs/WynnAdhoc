@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.event;
 
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
@@ -10,6 +9,7 @@ import java.util.List;
 
 public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
     public final GenericContainerScreen containerScreen;
+
     public List<ItemStack> getItems() {
         int containerSlots = containerScreen.getScreenHandler().slots.size() - 36; // inventory is 36 size
 

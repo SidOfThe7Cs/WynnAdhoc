@@ -25,7 +25,7 @@ public class EntityClickedEvent extends Event<EntityClickedEvent> {
     }
 
     public static ActionResult onEntityClicked(PlayerEntity playerEntity, World world, Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
-        new  EntityClickedEvent(playerEntity, world, hand, entity, entityHitResult);
+        new EntityClickedEvent(playerEntity, world, hand, entity, entityHitResult);
         return ActionResult.PASS;
     }
 }

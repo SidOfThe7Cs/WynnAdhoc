@@ -5,7 +5,7 @@ public class TowerUpgrades {
 
     public final UpgradeContainer upgrades = new UpgradeContainer();
 
-    public TowerUpgrades(){
+    public TowerUpgrades() {
         int damageIndex = 11;
         upgrades.add("Damage", damageIndex, ResourceType.Ore);
         upgrades.getBySlot(damageIndex).addLevel(0, 0, 0);

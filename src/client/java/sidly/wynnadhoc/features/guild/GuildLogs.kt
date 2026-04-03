@@ -27,9 +27,12 @@ object GuildLogs {
     private var lastSize: Int = 0
     private var lastItem: GuildLogItem? = null
 
-    val RAID_COMPLETED_PATTERN = """(?<p1>[a-zA-Z0-9_]+), (?<p2>[a-zA-Z0-9_]+), (?<p3>[a-zA-Z0-9_]+), and (?<p4>[a-zA-Z0-9_]+) finished (?<raid>.+?) and claimed.*?\+?(?<xp>[0-9.]+)m Guild Experience""".toRegex()
-    val ASPECT_REWARDED_PATTERN = """(?<giver>[a-zA-Z0-9_]+) rewarded an Aspect to (?<receiver>[a-zA-Z0-9_]+)""".toRegex()
-    val MEMBER_FOR_7DAYS_PATTERN = """(?<p1>[a-zA-Z0-9_]+) needs to be a member for at least 7 days to receive rewards.""".toRegex()
+    val RAID_COMPLETED_PATTERN =
+        """(?<p1>[a-zA-Z0-9_]+), (?<p2>[a-zA-Z0-9_]+), (?<p3>[a-zA-Z0-9_]+), and (?<p4>[a-zA-Z0-9_]+) finished (?<raid>.+?) and claimed.*?\+?(?<xp>[0-9.]+)m Guild Experience""".toRegex()
+    val ASPECT_REWARDED_PATTERN =
+        """(?<giver>[a-zA-Z0-9_]+) rewarded an Aspect to (?<receiver>[a-zA-Z0-9_]+)""".toRegex()
+    val MEMBER_FOR_7DAYS_PATTERN =
+        """(?<p1>[a-zA-Z0-9_]+) needs to be a member for at least 7 days to receive rewards.""".toRegex()
 
     var raidCompletions = mutableMapOf<String, Int>()
     var givenAspects = mutableMapOf<String, Int>()
@@ -119,7 +122,10 @@ object GuildLogs {
                     val name = FormatUtils.removeColorCodes(slotItem.stack.name.string)
                     if (seenMembers.add(name)) config.aspectOverlayData.updateDisplay()
                     aspectsNeeded[name]?.let { quantity ->
-                        var color = if (quantity >= 1) CommonColors.GREEN.withAlpha(0.7f) else CommonColors.YELLOW.withAlpha(0.7f)
+                        var color =
+                            if (quantity >= 1) CommonColors.GREEN.withAlpha(0.7f) else CommonColors.YELLOW.withAlpha(
+                                0.7f
+                            )
                         if (notEligible.contains(name)) color = CommonColors.RED.withAlpha(0.5f)
                         if (quantity > 0) {
                             val accessor = event.screen as HandledScreenAccessor

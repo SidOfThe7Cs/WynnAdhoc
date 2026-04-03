@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.utils;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.DebugConfig;
 
@@ -9,10 +10,11 @@ import java.awt.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import org.apache.logging.log4j.Logger;
 
 public class Debug {
-    private static DebugConfig config() { return ConfigManager.INSTANCE.config.debug; }
+    private static DebugConfig config() {
+        return ConfigManager.INSTANCE.config.debug;
+    }
 
     private final JFrame frame;
     private final JTextArea textArea;
@@ -57,9 +59,11 @@ public class Debug {
         } else LOGGER.info(type.get(message));
     }
 
-    /** Logs a message to the popup window.
+    /**
+     * Logs a message to the popup window.
      * doesn't use the info system or have colors
-     * */
+     *
+     */
     @Deprecated // needs colors and type
     public void log(Priority level, String message) {
         if (config().newWindow) {
@@ -74,7 +78,9 @@ public class Debug {
         }
     }
 
-    /** Clears all messages from the log window. */
+    /**
+     * Clears all messages from the log window.
+     */
     public void clear() {
         if (textArea == null) return;
         SwingUtilities.invokeLater(() -> textArea.setText(""));

@@ -46,15 +46,15 @@ public class Upgrade {
         }
     }
 
-    public int getCost(){
+    public int getCost() {
         return levels.get(stackSize).cost;
     }
 
-    public double getEffect(){
+    public double getEffect() {
         return levels.get(stackSize).effect;
     }
 
-    public void addLevel(int level, double effect, int cost){
+    public void addLevel(int level, double effect, int cost) {
         levels.put(level, new Level(effect, cost));
     }
 

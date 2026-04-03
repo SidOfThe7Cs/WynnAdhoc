@@ -28,7 +28,9 @@ public class ChestSaving {
         if (rolledOver) currentLoaded.clear();
     }
 
-    /** Loads the latest chest record data from disk */
+    /**
+     * Loads the latest chest record data from disk
+     */
     public static List<ChestRecord> loadLatest() {
         JsonArray array = saveManager.loadLatest();
         List<ChestRecord> result = new ArrayList<>();

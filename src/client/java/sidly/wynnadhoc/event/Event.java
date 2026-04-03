@@ -28,6 +28,7 @@ public abstract class Event<T extends Event<T>> {
     }
 
     // Helper record to store type-safe listener mappings
-    private record ListenerEntry<E extends Event<E>>(Class<E> eventType, Consumer<E> listener) {}
+    private record ListenerEntry<E extends Event<E>>(Class<E> eventType, Consumer<E> listener) {
+    }
 }
 

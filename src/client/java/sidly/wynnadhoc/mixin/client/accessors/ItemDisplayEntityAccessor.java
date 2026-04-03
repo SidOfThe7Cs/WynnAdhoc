@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(DisplayEntity.ItemDisplayEntity.class)
 public interface ItemDisplayEntityAccessor {
-    @Accessor("ITEM") static TrackedData<ItemStack> getItemKey() {
+    @Accessor("ITEM")
+    static TrackedData<ItemStack> getItemKey() {
         throw new UnsupportedOperationException();
     }
 }

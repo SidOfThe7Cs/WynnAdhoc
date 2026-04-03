@@ -4,8 +4,6 @@ import com.wynntils.models.gear.type.GearTier;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.entity.ItemEntity;
-import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.utils.Debug;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -13,18 +11,18 @@ import java.util.Map;
 import java.util.Objects;
 
 public class OuterVoidItemDatabase {
-    public static class Pair{
+    public static class Pair {
         public String name;
         public float model;
 
-        Pair(String name, float model){
+        Pair(String name, float model) {
             this.name = name;
             this.model = model;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Pair pair2){
+            if (obj instanceof Pair pair2) {
                 return Objects.equals(pair2.name, this.name) && Float.compare(pair2.model, this.model) == 0;
             }
             return false;
@@ -188,6 +186,7 @@ public class OuterVoidItemDatabase {
         }
         return GearTier.CRAFTED;
     }
+
     public static GearTier getRarity(ItemEntity item) {
         String name = item.getStack().getName().getString();
         CustomModelDataComponent modelData = item.getStack().get(DataComponentTypes.CUSTOM_MODEL_DATA);

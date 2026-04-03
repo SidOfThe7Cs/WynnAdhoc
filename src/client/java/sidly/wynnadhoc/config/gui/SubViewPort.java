@@ -16,18 +16,24 @@ public class SubViewPort extends HudComponentData {
     @Expose
     protected Integer background;
 
-    public SubViewPort(float x, float y, int width, int height, Integer background) {
-        super("ViewPort", x, y, 1);
+    public SubViewPort(String name, float x, float y, int width, int height, Integer background) {
+        super(name, x, y, 1);
         this.width = width;
         this.height = height;
         this.background = background;
     }
 
     public int getWidth() {
+        if (width <= 1) {
+            return MinecraftClient.getInstance().getWindow().getScaledWidth() * width;
+        }
         return width;
     }
 
     public int getHeight() {
+        if (height <= 1) {
+            return MinecraftClient.getInstance().getWindow().getScaledHeight() * height;
+        }
         return height;
     }
 

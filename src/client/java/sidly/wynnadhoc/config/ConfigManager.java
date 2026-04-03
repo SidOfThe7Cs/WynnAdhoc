@@ -31,7 +31,8 @@ public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
     public static final Gson GSON = new GsonBuilder()
             // serializer & deserializer for a map of blockPos -> time
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>() {
+                    }.getType(),
                     (JsonSerializer<Map<BlockPos, Long>>) (src, typeOfSrc, context) -> {
                         JsonArray array = new JsonArray(); // We'll use an array of entries
                         for (Map.Entry<BlockPos, Long> entry : src.entrySet()) {
@@ -47,7 +48,8 @@ public class ConfigManager {
                         return array;
                     }
             )
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>() {
+                    }.getType(),
                     (JsonDeserializer<Map<BlockPos, Long>>) (json, typeOfT, context) -> {
                         Map<BlockPos, Long> map = new HashMap<>();
                         JsonArray array = json.getAsJsonArray();

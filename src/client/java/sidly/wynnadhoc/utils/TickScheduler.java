@@ -11,7 +11,8 @@ public class TickScheduler {
     private final List<ScheduledTask> tasks = new ArrayList<>();
     private boolean cancelPending = false;
 
-    private TickScheduler() {} // private constructor forces to use the getter
+    private TickScheduler() {
+    } // private constructor forces to use the getter
 
     /**
      * Register this scheduler in the static registry.
@@ -25,7 +26,9 @@ public class TickScheduler {
         return scheduler;
     }
 
-    /** Tick all registered schedulers */
+    /**
+     * Tick all registered schedulers
+     */
     public static void tickAll() {
         for (TickScheduler scheduler : registeredSchedulers) {
             scheduler.tick();
@@ -34,16 +37,19 @@ public class TickScheduler {
 
     /**
      * Schedule a task
-     * @param delayTicks Delay between executions (in ticks)
-     * @param repeatCount How many times to repeat
-     * @param task The task, receives remaining repeats
+     *
+     * @param delayTicks   Delay between executions (in ticks)
+     * @param repeatCount  How many times to repeat
+     * @param task         The task, receives remaining repeats
      * @param runInstantly If true, first run happens immediately
      */
     public void schedule(int delayTicks, int repeatCount, Consumer<Integer> task, boolean runInstantly) {
         tasks.add(new ScheduledTask(delayTicks, repeatCount, task, runInstantly));
     }
 
-    /** Call this once per tick to update all scheduled tasks */
+    /**
+     * Call this once per tick to update all scheduled tasks
+     */
     public void tick() {
         if (cancelPending) {
             tasks.clear();
@@ -67,12 +73,16 @@ public class TickScheduler {
         }
     }
 
-    /** Cancel all tasks in this scheduler instance */
+    /**
+     * Cancel all tasks in this scheduler instance
+     */
     public void cancelAll() {
         cancelPending = true; // safely cleared at start of next tick
     }
 
-    /** Inner class representing a scheduled task */
+    /**
+     * Inner class representing a scheduled task
+     */
     private static class ScheduledTask {
         int ticksLeft;
         final int initialDelay;

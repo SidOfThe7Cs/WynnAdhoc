@@ -10,7 +10,9 @@ public class EndStats {
     private int endSacs = 0;
     private int endRerolls = 0;
 
-    private static LootrunConfig config() { return ConfigManager.INSTANCE.config.lootrun; }
+    private static LootrunConfig config() {
+        return ConfigManager.INSTANCE.config.lootrun;
+    }
 
     public EndStats() {
     }
@@ -28,7 +30,7 @@ public class EndStats {
     }
 
     public void addEndPulls(int amount) {
-        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN,"added " + amount + " end pulls");
+        WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "added " + amount + " end pulls");
         this.endPulls += amount;
         LootrunCore.INSTANCE.getCurrentLootrunData().addPullsSinceLastYellow(amount);
         config().missionOverlay.updateDisplay();

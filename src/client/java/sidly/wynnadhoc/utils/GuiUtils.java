@@ -1,14 +1,20 @@
 package sidly.wynnadhoc.utils;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Pair;
+import org.joml.Vector2d;
 
 public class GuiUtils {
-    public static Pair<Double, Double> getScaledMousePos() {
+    public static Vector2d getScaledMousePos() {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.mouse == null) return null;
+        if (client == null || client.mouse == null) return new Vector2d(-1, -1);
         double mouseX = client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth();
         double mouseY = client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight();
-        return new Pair<>(mouseX, mouseY);
+        return new Vector2d(mouseX, mouseY);
+    }
+
+    public static void setMouseGrabbed(boolean grabbed) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (grabbed) client.mouse.lockCursor();
+        else client.mouse.unlockCursor();
     }
 }

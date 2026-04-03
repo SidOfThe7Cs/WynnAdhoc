@@ -53,12 +53,10 @@ public class ChatMessageUtils {
             // Extract text after the specific string
             afterSpecific = input.substring(matcher.end()).trim();
             remaining = beforeSpecific + afterSpecific;
-        }
-        else return new String[] {"", input};
+        } else return new String[]{"", input};
 
-        return new String[] { extracted, remaining };
+        return new String[]{extracted, remaining};
     }
-
 
 
 }

@@ -6,7 +6,7 @@ import java.util.Map;
 public enum SlotType {
     NEXT_PAGE,
     LAST_PAGE;
-    
+
     public static Map<String, Map<Integer, SlotType>> slotTypeMap = new HashMap<>();
 
     public static void addSlotType(String title, Integer slot, SlotType slotType) {

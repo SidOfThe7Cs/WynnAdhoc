@@ -13,10 +13,10 @@ public class LootrunConfig {
 
     @Expose
     public HudComponentData beaconCountsOverlay = new HudComponentData(
-        "Beacon Overlay",
-                0f,
-                0.5f,
-                1.0f
+            "Beacon Overlay",
+            0f,
+            0.5f,
+            1.0f
     );
 
     @Expose

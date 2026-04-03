@@ -1,6 +1,6 @@
 package sidly.wynnadhoc.event;
 
-public class KeyboardEvent extends Event<KeyboardEvent> {
+public class KeyboardEvent extends Event<KeyboardEvent> { // TODO consumable
     public int key;
     public int action;
 

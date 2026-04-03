@@ -4,7 +4,7 @@ public class BonusUpgrades {
 
     public final UpgradeContainer upgrades = new UpgradeContainer();
 
-    public BonusUpgrades(){
+    public BonusUpgrades() {
         int strongerMinionsIndex = 2;
         upgrades.add("Stronger Minions", strongerMinionsIndex, ResourceType.Wood);
         upgrades.getBySlot(strongerMinionsIndex).addLevel(0, 0, 0);

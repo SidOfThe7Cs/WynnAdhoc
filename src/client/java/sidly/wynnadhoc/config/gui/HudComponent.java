@@ -6,8 +6,9 @@ import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
-import net.minecraft.util.Pair;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
+import sidly.wynnadhoc.event.MouseMoveEvent;
 import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.awt.*;
@@ -20,17 +21,16 @@ public abstract class HudComponent {
         this.data = data;
     }
 
-    protected float stringWidth;
-    protected float stringHeight;
+    protected float contentWidth;
+    protected float contentHeight;
 
     protected double grabDifX;
     protected double grabDifY;
 
     void renderHover(DrawContext drawContext) {
         // render hover tooltip
-        Pair<Double, Double> mousePos = GuiUtils.getScaledMousePos();
-        if (mousePos == null) return;
-        if (isVisible() && isHovering(mousePos.getLeft(), mousePos.getRight())) {
+        Vector2d mousePos = GuiUtils.getScaledMousePos();
+        if (isVisible() && isHovering(mousePos.x(), mousePos.y())) {
             List<Text> tooltip = getHoverTooltip();
             TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
             Vector2i pos = renderPos();
@@ -38,7 +38,7 @@ public abstract class HudComponent {
                 drawContext.drawText(
                         textRenderer,
                         tooltip.get(i),
-                        (int) (pos.x + 2 + (stringWidth)),
+                        (int) (pos.x + 2 + (contentWidth)),
                         pos.y + i * textRenderer.fontHeight,
                         Color.white.getRGB(),
                         true);
@@ -52,61 +52,73 @@ public abstract class HudComponent {
         }
     }
 
-    abstract void render(Vector2i pos, DrawContext drawContext, boolean override);
+    abstract void render(Vector2i pos, DrawContext drawContext, boolean override, float extraScale);
 
-    void render(DrawContext drawContext, boolean override) {
-        render(renderPos(), drawContext, override);
+    void render(DrawContext drawContext, boolean override, float extraScale) {
+        render(renderPos(), drawContext, override, extraScale);
     }
 
     abstract void updateDisplay();
 
     abstract boolean isVisible();
 
-    void onMouseDragged(double mouseX, double mouseY) {
-        move(new Vector2i((int) (mouseX + grabDifX), (int) (mouseY + grabDifY)));
+    void onMouseClicked(Click click, boolean doubled, boolean editing) {
+        if (editing) {
+            HudElementManager.setDragging(this);
+            Vector2i pos = renderPos();
+            grabDifX = pos.x() - click.x();
+            grabDifY = pos.y() - click.y();
+        }
     }
 
-    void onMouseClicked(Click click, boolean doubled) {
-        Vector2i pos = renderPos();
-        grabDifX = pos.x() - click.x();
-        grabDifY = pos.y() - click.y();
+    void onMouseScrolled(double x, double y, double verticalAmount) {
+        increaseScale(verticalAmount);
     }
 
-    void onMouseReleased() {
+    void onMouseMoved(MouseMoveEvent event) {
+    }
+
+    void moveTo(MouseMoveEvent event) {
+        move(new Vector2i((int) (event.newPosScaled.x + grabDifX), (int) (event.newPosScaled.y + grabDifY)));
     }
 
     List<Text> getHoverTooltip() {
         return List.of();
     }
 
+    float getWidth() {
+        return data instanceof SubViewPort ? ((SubViewPort) data).width : contentWidth;
+    }
+
+    float getHeight() {
+        return data instanceof SubViewPort ? ((SubViewPort) data).height : contentHeight;
+    }
+
     boolean isHovering(double mouseX, double mouseY) {
         Vector2i pos = renderPos();
-        boolean isViewPort = data instanceof SubViewPort;
-        float width = isViewPort ? ((SubViewPort) data).width : stringWidth;
-        float height = isViewPort ? ((SubViewPort) data).height : stringHeight;
+        float width = getWidth();
+        float height = getHeight();
         return mouseX >= pos.x() && mouseX < pos.x() + width && mouseY >= pos.y() && mouseY < pos.y() + height;
     }
 
     String name() {
-        return data.name;
+        return data.name == null ? "Un-named Hud Element" : data.name;
     }
 
-    float scale() {
-        return data.scale;
+    float scale(float extraScale) {
+        return data.scale * extraScale;
     }
 
     public HudComponentData data() {
         return data;
     }
 
-    boolean setScale(double verticalAmount) {
+    void increaseScale(double verticalAmount) {
         float currentScale = data.scale;
         float newScale = (float) (currentScale + verticalAmount / 5);
         if (newScale > 0.3) {
             this.data.scale = newScale;
-            return true;
         }
-        return false;
     }
 
     private Vector2i renderPos() {
@@ -135,7 +147,7 @@ public abstract class HudComponent {
         return new Vector2i((int) xPos, (int) yPos);
     }
 
-    private void move(Vector2i to) {
+    void move(Vector2i to) {
         Window window = MinecraftClient.getInstance().getWindow();
         int width = window.getScaledWidth();
         int height = window.getScaledHeight();

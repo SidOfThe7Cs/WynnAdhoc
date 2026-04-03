@@ -18,7 +18,7 @@ public class DebugConfig {
     @Expose
     @ConfigOption(name = "Shown Debug Info", desc = "what types of debug info should be shown")
     @ConfigEditorDraggableList
-    public List<Debug.Type> shownDebugging = Lists.newArrayList(Debug.Type.MANUAL);
+    public List<Debug.Type> shownDebugging = Lists.newArrayList(Debug.Type.MANUAL, Debug.Type.TEMP);
 
     @Expose
     @ConfigOption(name = "Show Debug Window", desc = "@Deprecated Uses a new window for logging")

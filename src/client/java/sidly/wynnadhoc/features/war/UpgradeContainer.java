@@ -38,8 +38,8 @@ public class UpgradeContainer {
 
     public int getEmeraldsPerHourConsume() {
         int result = 0;
-        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()){
-            if (entry.getValue().getResourceType().equals(ResourceType.Emeralds)){
+        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()) {
+            if (entry.getValue().getResourceType().equals(ResourceType.Emeralds)) {
                 result += entry.getValue().getCost();
             }
         }
@@ -48,8 +48,8 @@ public class UpgradeContainer {
 
     public int getOrePerHourConsume() {
         int result = 0;
-        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()){
-            if (entry.getValue().getResourceType().equals(ResourceType.Ore)){
+        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()) {
+            if (entry.getValue().getResourceType().equals(ResourceType.Ore)) {
                 result += entry.getValue().getCost();
             }
         }
@@ -58,8 +58,8 @@ public class UpgradeContainer {
 
     public int getCropsPerHourConsume() {
         int result = 0;
-        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()){
-            if (entry.getValue().getResourceType().equals(ResourceType.Crops)){
+        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()) {
+            if (entry.getValue().getResourceType().equals(ResourceType.Crops)) {
                 result += entry.getValue().getCost();
             }
         }
@@ -68,8 +68,8 @@ public class UpgradeContainer {
 
     public int getFishPerHourConsume() {
         int result = 0;
-        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()){
-            if (entry.getValue().getResourceType().equals(ResourceType.Fish)){
+        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()) {
+            if (entry.getValue().getResourceType().equals(ResourceType.Fish)) {
                 result += entry.getValue().getCost();
             }
         }
@@ -78,8 +78,8 @@ public class UpgradeContainer {
 
     public int getWoodPerHourConsume() {
         int result = 0;
-        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()){
-            if (entry.getValue().getResourceType().equals(ResourceType.Wood)){
+        for (Map.Entry<Integer, Upgrade> entry : bySlot.entrySet()) {
+            if (entry.getValue().getResourceType().equals(ResourceType.Wood)) {
                 result += entry.getValue().getCost();
             }
         }

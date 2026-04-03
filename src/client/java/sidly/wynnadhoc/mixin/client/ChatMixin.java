@@ -2,6 +2,7 @@ package sidly.wynnadhoc.mixin.client;
 
 import com.wynntils.mc.event.SystemMessageEvent;
 import net.minecraft.text.*;
+import net.minecraft.text.ClickEvent.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.mixin.client.accessors.StyledTextAccessor;
-import net.minecraft.text.ClickEvent.*;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class ChatMixin {
         String plain = event.getMessage().getString();
         new ChatMessageEvent(plain);
 
-        StyledTextAccessor accessor = ((StyledTextAccessor)(Object)event.getStyledText());
+        StyledTextAccessor accessor = ((StyledTextAccessor) (Object) event.getStyledText());
         if (accessor == null) return;
         List<ClickEvent> clickEvents = accessor.getClickEvents();
         HoverEvent hoverEvent = null;
@@ -37,11 +37,12 @@ public class ChatMixin {
         if (noHoverEvents && hoverEvent != null) {
             Style style = event.getMessage().getStyle();
             Style newStyle = style.withHoverEvent(hoverEvent);
-            ((MutableText)event.getMessage()).setStyle(newStyle);
+            ((MutableText) event.getMessage()).setStyle(newStyle);
         }
     }
 
-    @Unique String clickEventToString(ClickEvent clickEvent) {
+    @Unique
+    String clickEventToString(ClickEvent clickEvent) {
         if (clickEvent != null) {
             Action action = clickEvent.getAction();
             String whatDO = String.valueOf(switch (action) {
@@ -89,7 +90,7 @@ public class ChatMixin {
                     yield custom.id() + " " + custom.payload();
                 }
             });
-           return action.asString() + " " + whatDO;
+            return action.asString() + " " + whatDO;
         }
         return "";
     }

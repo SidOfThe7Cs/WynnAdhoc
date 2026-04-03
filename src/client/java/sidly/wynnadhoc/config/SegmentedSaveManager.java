@@ -29,7 +29,9 @@ public class SegmentedSaveManager {
         if (!folder.exists()) folder.mkdirs();
     }
 
-    /** Loads the latest file into memory */
+    /**
+     * Loads the latest file into memory
+     */
     public JsonArray loadLatest() {
         if (!latestFile.exists()) return new JsonArray();
         try (FileReader reader = new FileReader(latestFile)) {
@@ -40,7 +42,9 @@ public class SegmentedSaveManager {
         }
     }
 
-    /** Saves entries, rolling over if needed */
+    /**
+     * Saves entries, rolling over if needed
+     */
     public boolean save(JsonArray data) {
         boolean rolledOver = false;
         try {
@@ -62,7 +66,9 @@ public class SegmentedSaveManager {
         return rolledOver;
     }
 
-    /** Renames the latest file to a timestamped archive file */
+    /**
+     * Renames the latest file to a timestamped archive file
+     */
     private void archiveLatest() {
         if (!latestFile.exists()) return;
 
@@ -75,7 +81,9 @@ public class SegmentedSaveManager {
         }
     }
 
-    /** Iterates over all archived files (oldest to newest) */
+    /**
+     * Iterates over all archived files (oldest to newest)
+     */
     public List<File> listArchivedFiles() {
         File[] files = folder.listFiles((dir, name) ->
                 name.startsWith("data_") && name.endsWith(".json"));

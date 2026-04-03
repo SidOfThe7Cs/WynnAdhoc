@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 // TODO refactor into not a bunch of individual variables each can have current req and pattern
 public class ScoreboardInfo {
     private static boolean shouldPrint = false;
+
     public static void printScoreboardInfo() {
         shouldPrint = true;
     }
@@ -63,28 +64,28 @@ public class ScoreboardInfo {
     private static final Pattern missionTimePattern = Pattern.compile("- Add (\\d+(?:\\.\\d+)?)/(\\d+)m to your timer");
     private static final Pattern splunkChestPattern = Pattern.compile("Loot (\\d+)/(\\d+) chests!");
 
-    public static void parseScoreboard(ClientTickEvent event){
+    public static void parseScoreboard(ClientTickEvent event) {
         if (event.client.world == null) return;
         clearLootrunData(); // TODO if refactor chane everything to have a getCurrent and getLast method
         inLootrun = false;
         List<List<String>> sections = getSections(event.client);
 
-        for (List<String> sect : sections){
+        for (List<String> sect : sections) {
             int index = 0;
             int missionIndex = -1;
             int trialIndex = -1;
-            if (sect.getFirst().startsWith("Lootrun:")){
+            if (sect.getFirst().startsWith("Lootrun:")) {
                 inLootrun = true;
                 boolean isMissionInProgress = false;
                 boolean isTrialInProgress = false;
-                for (String line : sect){
+                for (String line : sect) {
                     // get current splunk progress
-                    if (index == 1){
-                        if (line.equals("Collect your rewards!")){
+                    if (index == 1) {
+                        if (line.equals("Collect your rewards!")) {
                             LootrunCore.INSTANCE.changeStatus(LootrunStatus.ClaimingRewards);
-                        }else if(line.equals("Choose a beacon!")){
+                        } else if (line.equals("Choose a beacon!")) {
                             LootrunCore.INSTANCE.changeStatus(LootrunStatus.PickingBeacon);
-                        }else if(line.startsWith("Slay!") || line.startsWith("Defend") || line.startsWith("Destroy")){
+                        } else if (line.startsWith("Slay!") || line.startsWith("Defend") || line.startsWith("Destroy")) {
                             LootrunCore.INSTANCE.changeStatus(LootrunStatus.InChallenge);
                         }
 
@@ -157,7 +158,7 @@ public class ScoreboardInfo {
                 }
 
                 index = -1;
-                for (String line : sect){
+                for (String line : sect) {
                     index++;
                     if (index <= missionIndex && index <= trialIndex) continue;
 
@@ -194,7 +195,7 @@ public class ScoreboardInfo {
                     matcher = missionTimePattern.matcher(line);
                     if (matcher.matches()) {
                         double timeCur = Double.parseDouble(matcher.group(1));
-                        missionTimeCurrent = (int)(timeCur * 60);
+                        missionTimeCurrent = (int) (timeCur * 60);
                         missionTimeReq = Integer.parseInt(matcher.group(2)) * 60;
                     }
                 }
@@ -210,8 +211,8 @@ public class ScoreboardInfo {
             StringBuilder sb = new StringBuilder();
             sb.append("\n");
             sb.append("SCOREBOARD:\n");
-            for (List<String> sect : sections){
-                for (String line : sect){
+            for (List<String> sect : sections) {
+                for (String line : sect) {
                     sb.append(line);
                 }
                 sb.append("SECTION SEPARATOR\n");
@@ -255,7 +256,7 @@ public class ScoreboardInfo {
 
     private static @NotNull List<List<String>> getSections(@NotNull MinecraftClient client) {
         ClientWorld world = client.world;
-        if  (world == null) return Collections.emptyList();
+        if (world == null) return Collections.emptyList();
         Scoreboard scoreboard = world.getScoreboard();
         Collection<ScoreboardObjective> objectives = scoreboard.getObjectives();
 
@@ -291,7 +292,7 @@ public class ScoreboardInfo {
         return sections;
     }
 
-    public static void clearLootrunData(){
+    public static void clearLootrunData() {
         missionInProgress = "";
         trialInProgress = "";
         currentMaxMissions = -1;

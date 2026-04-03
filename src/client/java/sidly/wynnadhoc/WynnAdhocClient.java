@@ -2,15 +2,16 @@ package sidly.wynnadhoc;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import sidly.wynnadhoc.config.ConfigManager;
-import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.event.Event;
 import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.TradeMarketOverlay;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -18,14 +19,14 @@ import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
-import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
+import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
+import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
+import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.render.RenderUtils;
-import sidly.wynnadhoc.features.war.DB;
-import sidly.wynnadhoc.features.war.WarTimer;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -81,8 +82,11 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
 
-        Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
-        Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
+        Event.register(MouseButtonEvent.class, HudElementManager::onMouseButtonEvent);
+        Event.register(MouseScrollEvent.class, HudElementManager::onMouseScrollEvent);
+        Event.register(MouseMoveEvent.class, HudElementManager::onMouseMoveEvent);
+        Event.register(KeyboardEvent.class, HudElementManager::onKeyboardEvent);
+
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
@@ -103,12 +107,23 @@ fruma:
 refactor chest saving to not just be there entir tooltip as json
 
 auto update checker
-move stuff from texthudelement to multihudelement and force everythign to be a multi even if its only one thing
-remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon
+
+HUD:
+    EVENTS - make kb&m events consumable
+    CONFIG - fix setting for when to open the editor + add executor
+    RESIZE VIEWPORTS - allow resizing viewports
+    ANCHOR - implement anchor points
+        keybind when holding to change anchor point and swap to allow movement inside viewports
+    INFO TEXT - static element in center of screen with general info
+    KEYBOARD - add keyboard controls (store last clicked add a boolean for dragging)
+    FIX SCREEN EDGES: fix it not forcing hudelements on screen for viewports and bottom and right
+    NON PIXEL VIEWPORTS - make viewports 2 corner and not pixel based?
+
+remove wynntills as depend and add function for hasWynntils and isOnWynncraft (maybe a simpler way as well like an anotation or smth to make features wynn only)
 spellcaster with queue and display and safe cast
-implement anchor points + layering
 annotation for hudelement and event
+
 WAR:
     + res doesnt always display full/empty in (maybe not when onClick changes?)
     + resource tick display

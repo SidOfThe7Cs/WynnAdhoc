@@ -11,6 +11,7 @@ public class HudRenderOnTopEvent extends Event<HudRenderOnTopEvent> {
     }
 
     public DrawContext context;
+
     public HudRenderOnTopEvent(DrawContext context) {
         this.context = context;
         this.fire();

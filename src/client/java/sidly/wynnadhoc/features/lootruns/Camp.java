@@ -21,7 +21,7 @@ public class Camp {
         lastCompleted = System.currentTimeMillis();
     }
 
-    public boolean isDailyReady(){
+    public boolean isDailyReady() {
         boolean dailyReady;
         if (getLastCompleted() != -1) {
             ZoneId estZone = ZoneId.of("America/New_York");
@@ -35,7 +35,7 @@ public class Camp {
                 lastReset = lastReset.minusDays(1);
             }
             dailyReady = lastCompletedTime.isBefore(lastReset);
-        }else dailyReady = true; // never completed
+        } else dailyReady = true; // never completed
         return dailyReady;
     }
 

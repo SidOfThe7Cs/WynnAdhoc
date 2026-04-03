@@ -22,8 +22,10 @@ public class TextHudComponent extends HudComponent {
     private transient final Supplier<List<Text>> tooltipSupplier;
 
     public TextHudComponent(HudComponentData data, Supplier<Boolean> visibleCondition, Supplier<String> updater) {
-        this(data, visibleCondition, updater, () -> {}, null);
+        this(data, visibleCondition, updater, () -> {
+        }, null);
     }
+
     public TextHudComponent(HudComponentData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick, Supplier<List<Text>> tooltipSupplier) {
         super(data);
         this.visibleCondition = visibleCondition;
@@ -34,7 +36,7 @@ public class TextHudComponent extends HudComponent {
 
     // TODO have an anchor point in hudelement and use it for aligning left/right/center
     @Override
-    public void render(Vector2i pos, DrawContext drawContext, boolean override) {
+    public void render(Vector2i pos, DrawContext drawContext, boolean override, float extraScale) {
         super.renderBackground(drawContext);
         if (text.isEmpty()) updateDisplay();
         if (isVisible() || override) {
@@ -44,27 +46,27 @@ public class TextHudComponent extends HudComponent {
             matrixStack.pushMatrix();
 
             // offset keeps the top left position the same when scaling
-            float offsetX = (scale() - 1) * pos.x();
-            float offsetY = (scale() - 1) * pos.y();
+            float offsetX = (scale(extraScale) - 1) * pos.x();
+            float offsetY = (scale(extraScale) - 1) * pos.y();
             matrixStack.translate(-offsetX, -offsetY);
-            matrixStack.scale(scale(), scale());
+            matrixStack.scale(scale(extraScale), scale(extraScale));
 
             String[] lines = text.split("\n");
             if (override && text.isEmpty()) lines[0] = name();
 
             int lineHeight = textRenderer.fontHeight;
-            float scaledLineHeight = lineHeight * scale();
+            float scaledLineHeight = lineHeight * scale(extraScale);
 
             float maxWidth = 0;
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
                 drawContext.drawText(textRenderer, line, pos.x(), pos.y() + i * lineHeight, Color.RED.getRGB(), true);
-                float width = textRenderer.getWidth(line) * scale();
+                float width = textRenderer.getWidth(line) * scale(extraScale);
                 if (width > maxWidth) maxWidth = width;
             }
 
-            stringWidth = maxWidth;
-            stringHeight = scaledLineHeight * lines.length;
+            contentWidth = maxWidth;
+            contentHeight = scaledLineHeight * lines.length;
 
             matrixStack.popMatrix();
         }
@@ -82,19 +84,21 @@ public class TextHudComponent extends HudComponent {
     }
 
     @Override
-    public void onMouseClicked(Click click, boolean doubled) {
-        super.onMouseClicked(click, doubled);
-        try {
-            this.onClick.run();
-        } catch (Exception e) {
-            ChatMessageUtils.sendChatMessage("Failed to run click " + e.getMessage());
+    public void onMouseClicked(Click click, boolean doubled, boolean editing) {
+        super.onMouseClicked(click, doubled, editing);
+        if (!editing) {
+            try {
+                this.onClick.run();
+            } catch (Exception e) {
+                ChatMessageUtils.sendChatMessage("Failed to run click " + e.getMessage());
+            }
         }
     }
 
     @Override
     public void updateDisplay() {
         if (updater == null) {
-            WynnAdhocClient.LOGGER.warn("no updater set for TextHudElement " + this.name());
+            WynnAdhocClient.LOGGER.warn("no updater set for TextHudElement at " + data().x + ", " + data().y + " in " + data().viewPort);
             return;
         }
         try {
@@ -107,7 +111,7 @@ public class TextHudComponent extends HudComponent {
     @Override
     public boolean isVisible() {
         if (visibleCondition == null) {
-            WynnAdhocClient.LOGGER.warn("no visibility condition set for TextHudElement " + this.name());
+            WynnAdhocClient.LOGGER.warn("no visibility condition set for TextHudElement  at " + data().x + ", " + data().y + " in " + data().viewPort);
             return false;
         }
         try {

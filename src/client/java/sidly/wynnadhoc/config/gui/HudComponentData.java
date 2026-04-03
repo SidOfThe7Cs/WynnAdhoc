@@ -5,7 +5,7 @@ import sidly.wynnadhoc.WynnAdhocClient;
 
 public class HudComponentData {
     @Expose
-    protected String name; // TODO probably remove
+    protected String name;
     @Expose
     protected float x; // 0-1, % of screen
     @Expose
@@ -28,19 +28,14 @@ public class HudComponentData {
     }
 
     public void updateDisplay() {
-        HudComponent hudComponent = HudElementManager.getHudElement(name);
+        HudComponent hudComponent = HudElementManager.getHudElement(this);
         if (hudComponent != null) hudComponent.updateDisplay();
-        else WynnAdhocClient.LOGGER.error("Hud element with name " + name + " not found");
-    }
-
-    public HudComponent getElement() {
-        return HudElementManager.getHudElement(name);
+        else WynnAdhocClient.LOGGER.error("Hud element with name not found");
     }
 
     @Override
     public String toString() {
         return "HudElementData{" +
-                "name='" + name + '\'' +
                 ", x=" + x +
                 ", y=" + y +
                 ", scale=" + scale +

@@ -1,12 +1,13 @@
 package sidly.wynnadhoc.event;
 
 
+import net.neoforged.bus.api.Event;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import net.neoforged.bus.api.Event;
 
 public abstract class NeoEvent extends Event {
     private static final Map<Class<? extends Event>, List<Consumer<?>>> listeners = new HashMap<>();

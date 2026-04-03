@@ -12,6 +12,7 @@ import static sidly.wynnadhoc.config.ConfigManager.GSON;
 
 public abstract class BasicSavable<T> {
     private static final Set<BasicSavable<?>> all = new HashSet<>();
+
     public static void loadAll() {
         Set<BasicSavable<?>> snapshot = new HashSet<>(all);
         for (BasicSavable<?> basicSavable : snapshot) {

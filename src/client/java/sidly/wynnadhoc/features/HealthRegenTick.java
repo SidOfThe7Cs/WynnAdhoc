@@ -22,10 +22,13 @@ public class HealthRegenTick {
     }
 
     public static class NextHealthRegenTickFunction extends Function<Double> {
-        @Override public Double getValue(FunctionArguments arguments) {
+        @Override
+        public Double getValue(FunctionArguments arguments) {
             return getProjectedSeconds();
         }
-        @Override protected List<String> getAliases() {
+
+        @Override
+        protected List<String> getAliases() {
             return List.of("next_hpr_tick");
         }
     }
