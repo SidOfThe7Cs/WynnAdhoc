@@ -111,7 +111,6 @@ icon
 clear backups when the real config loads correctly
 
 HUD:
-    RENDER - onRender function that calls renderBackground -> render -> renderHover
     CURSOR - fix diagonal cursor add all cursor fix cursor appearing on texthud
     SUBELEMENTS - actually make way to enter edit mode recursivly
     ANCHOR - implement anchor points

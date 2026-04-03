@@ -63,11 +63,9 @@ public class GuiElement extends HudComponent {
 
     @Override
     public void render(Vector2i pos, DrawContext drawContext, boolean override) {
-        if (isVisible() || override) {
-            super.renderBackground(drawContext);
-            children.forEach(child -> child.render(drawContext, editMode));
-            if (!editMode) super.renderHover(drawContext);
-        }
+        super.renderBackground(drawContext);
+        children.forEach(child -> child.render(drawContext, editMode));
+        if (!editMode) super.renderHover(drawContext);
     }
 
     @Override

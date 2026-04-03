@@ -59,7 +59,9 @@ public abstract class HudComponent {
     abstract void render(Vector2i pos, DrawContext drawContext, boolean override);
 
     void render(DrawContext drawContext, boolean override) {
-        render(ExtensionsKt.to2i(getScaledRenderPos()), drawContext, override);
+        if (isVisible() || override) {
+            render(ExtensionsKt.to2i(getScaledRenderPos()), drawContext, override);
+        }
     }
 
     abstract void updateDisplay();

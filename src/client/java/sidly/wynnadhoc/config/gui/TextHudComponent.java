@@ -39,37 +39,35 @@ public class TextHudComponent extends HudComponent {
     public void render(Vector2i pos, DrawContext drawContext, boolean override) {
         super.renderBackground(drawContext);
         if (text.isEmpty()) updateDisplay();
-        if (isVisible() || override) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            TextRenderer textRenderer = client.textRenderer;
-            Matrix3x2fStack matrixStack = drawContext.getMatrices();
-            matrixStack.pushMatrix();
+        MinecraftClient client = MinecraftClient.getInstance();
+        TextRenderer textRenderer = client.textRenderer;
+        Matrix3x2fStack matrixStack = drawContext.getMatrices();
+        matrixStack.pushMatrix();
 
-            // offset keeps the top left position the same when scaling
-            float offsetX = (scale() - 1) * pos.x();
-            float offsetY = (scale() - 1) * pos.y();
-            matrixStack.translate(-offsetX, -offsetY);
-            matrixStack.scale(scale(), scale());
+        // offset keeps the top left position the same when scaling
+        float offsetX = (scale() - 1) * pos.x();
+        float offsetY = (scale() - 1) * pos.y();
+        matrixStack.translate(-offsetX, -offsetY);
+        matrixStack.scale(scale(), scale());
 
-            String[] lines = text.split("\n");
-            if (override && text.isEmpty()) lines[0] = name();
+        String[] lines = text.split("\n");
+        if (override && text.isEmpty()) lines[0] = name();
 
-            int lineHeight = textRenderer.fontHeight;
-            float scaledLineHeight = lineHeight * scale();
+        int lineHeight = textRenderer.fontHeight;
+        float scaledLineHeight = lineHeight * scale();
 
-            float maxWidth = 0;
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                drawContext.drawText(textRenderer, line, pos.x(), pos.y() + i * lineHeight, Color.RED.getRGB(), true);
-                float width = textRenderer.getWidth(line) * scale();
-                if (width > maxWidth) maxWidth = width;
-            }
-
-            contentWidth = maxWidth;
-            contentHeight = scaledLineHeight * lines.length;
-
-            matrixStack.popMatrix();
+        float maxWidth = 0;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            drawContext.drawText(textRenderer, line, pos.x(), pos.y() + i * lineHeight, Color.RED.getRGB(), true);
+            float width = textRenderer.getWidth(line) * scale();
+            if (width > maxWidth) maxWidth = width;
         }
+
+        contentWidth = maxWidth;
+        contentHeight = scaledLineHeight * lines.length;
+
+        matrixStack.popMatrix();
         if (!override) super.renderHover(drawContext);
     }
 
