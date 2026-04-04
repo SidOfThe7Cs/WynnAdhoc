@@ -12,8 +12,7 @@ import sidly.wynnadhoc.config.catagories.DebugConfig;
 public class ChatHandlerMixin {
     @WrapOperation(
             method = "processChatMessage",
-            at = @At(value = "INVOKE", target = "Lcom/wynntils/core/WynntilsMod;info(Ljava/lang/String;)V"),
-            remap = false
+            at = @At(value = "INVOKE", target = "Lcom/wynntils/core/WynntilsMod;info(Ljava/lang/String;)V")
     )
     private void info(String msg, Operation<Void> original) {
         if (!ConfigManager.INSTANCE.config.debug.disabledLogging.contains(DebugConfig.ChatLoggingTypes.CHAT_TYPE_MESSAGES)) {
