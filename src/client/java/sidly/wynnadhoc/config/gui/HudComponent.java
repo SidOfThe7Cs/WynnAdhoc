@@ -74,14 +74,6 @@ public abstract class HudComponent {
             grabDifX = pos.x() - click.x();
             grabDifY = pos.y() - click.y();
 
-            if (data.width != 0 && data.height != 0) {
-                Side side = Side.from((int) pos.x, (int) (pos.x + getScaledWidth()), (int) pos.y, (int) (pos.y + getScaledHeight()), click, TOLERANCE);
-                if (side != Side.NONE) {
-                    HudElementManager.setExpanding(this, side);
-                    return true;
-                }
-            }
-
             HudElementManager.setDragging(this);
             return true;
         }

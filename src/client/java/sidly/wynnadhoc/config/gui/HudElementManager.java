@@ -35,7 +35,11 @@ public class HudElementManager {
 
     public static void setDragging(HudComponent dragging) {
         HudElementManager.dragging = dragging;
-        expandingSide = Side.NONE;
+        expandingSide = Side.ALL;
+    }
+
+    public static boolean isDragging() {
+        return dragging != null;
     }
 
     public static void setExpanding(HudComponent hudComponent, Side side) {
@@ -100,7 +104,7 @@ public class HudElementManager {
         resetCursor();
         INSTANCE.onMouseMoved(event);
         if (dragging != null) {
-            if (expandingSide != Side.NONE) {
+            if (expandingSide != Side.ALL) {
                 dragging.expandTo(expandingSide, event);
             } else dragging.moveTo(event);
         }

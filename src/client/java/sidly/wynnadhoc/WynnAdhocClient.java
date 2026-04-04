@@ -111,7 +111,6 @@ icon
 clear backups when the real config loads correctly
 
 HUD:
-    CURSOR - fix diagonal cursor add all cursor fix cursor appearing on texthud
     SUBELEMENTS - actually make way to enter edit mode recursivly
     ANCHOR - implement anchor points
         keybind when holding to change anchor point and swap to allow movement inside viewports

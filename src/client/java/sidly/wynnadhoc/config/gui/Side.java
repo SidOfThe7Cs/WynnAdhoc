@@ -25,6 +25,8 @@ public enum Side {
     ALL(GLFW.GLFW_RESIZE_ALL_CURSOR),
     NONE(GLFW.GLFW_ARROW_CURSOR);
 
+    private static boolean noCorner = false;
+
     private final int cursor;
 
     Side(int cursor) {
@@ -33,12 +35,24 @@ public enum Side {
 
     public void setCursor() {
         long window = MinecraftClient.getInstance().getWindow().getHandle();
-        long cursor = GLFW.glfwCreateStandardCursor(this.cursor);
+        long cursor;
+        // no error spam
+        if (isCorner()) {
+            if (!noCorner) {
+                cursor = GLFW.glfwCreateStandardCursor(this.cursor);
+                if (cursor == 0) noCorner = true;
+            } else cursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_HAND_CURSOR);
+        } else cursor = GLFW.glfwCreateStandardCursor(this.cursor);
         GLFW.glfwSetCursor(window, cursor);
         if (this != NONE) HudElementManager.cursorChanged = true;
     }
 
+    public boolean isCorner() {
+        return this == TOP_LEFT || this == TOP_RIGHT || this == BOTTOM_LEFT || this == BOTTOM_RIGHT;
+    }
+
     public static Side from(HudComponent hud, MouseMoveEvent event) {
+        if (hud.data().width == 0 || hud.data().height == 0) return ALL;
         Vector2f p = hud.getScaledRenderPos();
         return Side.from(
                 (int) p.x,
@@ -64,7 +78,7 @@ public enum Side {
                 .map(Map.Entry::getKey)
                 .toList();
 
-        if (list.isEmpty()) return NONE;
+        if (list.isEmpty()) return ALL;
         else if (list.size() == 1) return list.getFirst();
         else {
             if (list.contains(TOP)) {
