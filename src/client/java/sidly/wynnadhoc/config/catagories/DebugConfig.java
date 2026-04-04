@@ -21,11 +21,6 @@ public class DebugConfig {
     public List<Debug.Type> shownDebugging = Lists.newArrayList(Debug.Type.MANUAL);
 
     @Expose
-    @ConfigOption(name = "Show Debug Window", desc = "@Deprecated Uses a new window for logging")
-    @ConfigEditorBoolean
-    public boolean newWindow = false;
-
-    @Expose
     @ConfigOption(name = "Disable Console Messages", desc = "Disable specific logging types cuz there annoying")
     @ConfigEditorDraggableList
     public List<ChatLoggingTypes> disabledLogging = Lists.newArrayList(ChatLoggingTypes.values());
