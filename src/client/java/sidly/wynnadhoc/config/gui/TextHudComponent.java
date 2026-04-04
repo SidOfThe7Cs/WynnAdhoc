@@ -2,12 +2,12 @@ package sidly.wynnadhoc.config.gui;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector2i;
 import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.event.MouseButtonEvent;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 
 import java.awt.*;
@@ -82,9 +82,9 @@ public class TextHudComponent extends HudComponent {
     }
 
     @Override
-    public boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
-        boolean thisConsumed = super.onMouseClicked(click, doubled, editing);
-        if (!editing) {
+    public boolean onMouseClicked(MouseButtonEvent event, boolean editing) {
+        boolean thisConsumed = super.onMouseClicked(event, editing);
+        if (!editing && event.isLeftClick()) {
             try {
                 this.onClick.run();
             } catch (Exception e) {

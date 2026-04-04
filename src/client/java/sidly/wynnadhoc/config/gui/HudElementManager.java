@@ -2,11 +2,9 @@ package sidly.wynnadhoc.config.gui;
 
 import net.minecraft.client.MinecraftClient;
 import org.joml.Vector2d;
-import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.GuiConfig;
 import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.awt.*;
@@ -46,7 +44,6 @@ public class HudElementManager {
         dragging = hudComponent;
         expandingSide = side;
         if (side != Side.NONE) side.setCursor();
-        WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "setting cursor to: " + side.name());
     }
 
     public static void resetCursor() {
@@ -81,17 +78,11 @@ public class HudElementManager {
     }
 
     public static void onMouseButtonEvent(MouseButtonEvent event) {
-        if (INSTANCE.isEditMode()) event.consume();
-        if (!event.isLeftClick()) return;
+        if (INSTANCE.isEditMode()) event.consume(); // consume cancels other minecraft handling but not mine
         if (event.isRelease()) setDragging(null);
         if (!event.isPress()) return;
 
-        HudComponent hoveredChild = INSTANCE.getHoveredChild(event.pos.x, event.pos.y);
-        if (hoveredChild != null) {
-            if (hoveredChild.onMouseClicked(event.asClick(), false, INSTANCE.isEditMode())) {
-                event.consume();
-            }
-        }
+        INSTANCE.onMouseClicked(event, false);
     }
 
     public static void onMouseScrollEvent(MouseScrollEvent event) {
@@ -118,18 +109,18 @@ public class HudElementManager {
     }
 
     public static void openEditor() {
-        if (!INSTANCE.isEditMode()) INSTANCE.setEditMode(true);
+        if (!INSTANCE.isEditMode()) INSTANCE.enableEditMode();
         GuiUtils.setMouseGrabbed(false);
     }
 
     public static void closeEditor() {
-        if (INSTANCE.isEditMode()) INSTANCE.setEditMode(false);
+        if (INSTANCE.isEditMode()) INSTANCE.disableEditMode();
         GuiUtils.setMouseGrabbed(true);
     }
 
     public static void toggleEditor() {
         boolean wasInEdit = INSTANCE.isEditMode();
         GuiUtils.setMouseGrabbed(wasInEdit);
-        INSTANCE.setEditMode(!wasInEdit);
+        INSTANCE.toggleEditMode();
     }
 }

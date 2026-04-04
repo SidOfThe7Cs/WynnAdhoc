@@ -1,7 +1,7 @@
 package sidly.wynnadhoc.config.gui;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
+import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import sidly.wynnadhoc.event.MouseMoveEvent;
@@ -59,12 +59,12 @@ public enum Side {
                 (int) (p.x + hud.getScaledWidth()),
                 (int) p.y,
                 (int) (p.y + hud.getScaledHeight()),
-                new Click(event.newPosScaled.x, event.newPosScaled.y, event.activeButton),
+                event.newPosScaled,
                 TOLERANCE
         );
     }
 
-    public static Side from(int xSmall, int xLarge, int ySmall, int yLarge, Click click, int tolerance) {
+    public static Side from(int xSmall, int xLarge, int ySmall, int yLarge, Vector2d click, int tolerance) {
         Map<Side, Integer> map = new HashMap<>();
 
         map.put(TOP, Math.abs((int) click.y() - ySmall));

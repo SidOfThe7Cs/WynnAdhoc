@@ -2,13 +2,13 @@ package sidly.wynnadhoc.config.gui;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import sidly.wynnadhoc.event.MouseButtonEvent;
 import sidly.wynnadhoc.event.MouseMoveEvent;
 import sidly.wynnadhoc.utils.GuiUtils;
 import sidly.wynnadhoc.utils.datatypes.Box;
@@ -31,7 +31,7 @@ public abstract class HudComponent {
     protected double grabDifX;
     protected double grabDifY;
 
-    protected HudComponent parent;
+    protected GuiElement parent;
 
     // TODO config
     public final static int TOLERANCE = 5;
@@ -68,11 +68,11 @@ public abstract class HudComponent {
 
     abstract boolean isVisible();
 
-    boolean onMouseClicked(Click click, boolean doubled, boolean editing) {
-        if (editing) {
+    boolean onMouseClicked(MouseButtonEvent event, boolean editing) {
+        if (editing && event.isLeftClick()) {
             Vector2f pos = getScaledRenderPos();
-            grabDifX = pos.x() - click.x();
-            grabDifY = pos.y() - click.y();
+            grabDifX = pos.x() - event.pos.x();
+            grabDifY = pos.y() - event.pos.y();
 
             HudElementManager.setDragging(this);
             return true;
@@ -89,7 +89,7 @@ public abstract class HudComponent {
     }
 
     void moveTo(MouseMoveEvent event) {
-        move(new Vector2i((int) (event.newPosScaled.x + grabDifX), (int) (event.newPosScaled.y + grabDifY)));
+        move(new Vector2d((event.newPosScaled.x + grabDifX), (event.newPosScaled.y + grabDifY)));
     }
 
     void expandTo(Side expandingSide, MouseMoveEvent event) {
@@ -208,15 +208,18 @@ public abstract class HudComponent {
         return new Vector2f(xPos, yPos);
     }
 
-    void move(Vector2i to) {
+    void move(Vector2d to) {
         float width = parent.getWidth();
         float height = parent.getHeight();
 
-        data.x = (float) to.x / width;
-        data.y = (float) to.y / height;
+        Vector2f current = getRenderPos();
+        Vector2d change = to.sub(current);
+
+        data.x += (float) (change.x / width);
+        data.y += (float) (change.y / height);
     }
 
-    protected void setParent(HudComponent viewPort) {
+    protected void setParent(GuiElement viewPort) {
         this.parent = viewPort;
     }
 
