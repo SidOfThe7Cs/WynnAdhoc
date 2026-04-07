@@ -59,8 +59,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
 
-        Event.register(InitEvent.class, OuterVoidItemDatabase::init);
-
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
         Event.register(ChatMessageEvent.class, LootrunCore.INSTANCE::onChatMessage);
         Event.register(ChatMessageEvent.class, WarCore::onChatMessage);
@@ -84,6 +82,8 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
         Event.register(PreInitEvent.class, GuildLogs.INSTANCE::registerHudElements);
+
+        Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);

@@ -1,0 +1,5 @@
+accessWidener v2 named
+
+# Make BitmapFontGlyph accessible
+accessible class net/minecraft/client/font/BitmapFont$BitmapFontGlyph
+accessible class net/minecraft/client/font/FontStorage$GlyphPair

@@ -1,41 +1,42 @@
 {
-	"schemaVersion": 1,
-	"id": "wynnadhoc",
-	"version": "${version}",
-	"name": "WynnAdhoc",
-	"description": "",
-	"authors": [
-		"SidOfThe7Cs"
-	],
-	"contact": {
-		"homepage": "",
-		"sources": "https://github.com/SidOfThe7Cs/WynnAdhoc"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/wynnadhoc/icon.png",
-	"environment": "client",
-	"entrypoints": {
-      "client": [
-        "sidly.wynnadhoc.WynnAdhocClient"
-      ],
-      "modmenu": [
-        "sidly.wynnadhoc.config.ModMenuIntegration"
-      ]
-    },
-	"mixins": [
-		{
-			"config": "wynnadhoc.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.18.1",
-		"minecraft": ">=1.21.11",
-		"java": ">=21",
-		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+  "schemaVersion": 1,
+  "id": "wynnadhoc",
+  "version": "${version}",
+  "name": "WynnAdhoc",
+  "description": "",
+  "authors": [
+    "SidOfThe7Cs"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/SidOfThe7Cs/WynnAdhoc"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/wynnadhoc/icon.png",
+  "environment": "client",
+  "accessWidener": "assets/wynnadhoc/hoc.accesswidener",
+  "entrypoints": {
+    "client": [
+      "sidly.wynnadhoc.WynnAdhocClient"
+    ],
+    "modmenu": [
+      "sidly.wynnadhoc.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "wynnadhoc.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": ">=1.21.11",
+    "java": ">=21",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
 }
