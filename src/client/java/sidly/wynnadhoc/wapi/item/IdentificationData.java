@@ -1,10 +1,16 @@
 package sidly.wynnadhoc.wapi.item;
 
 import com.google.gson.*;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Type;
 
 public record IdentificationData(int min, int raw, int max) {
+    @Override
+    public @NonNull String toString() {
+        return "[" + min + ", " + raw + ", " + min + "]";
+    }
+
     public static JsonDeserializer<IdentificationData> getTypeAdaptor() {
         return (JsonElement json, Type typeOfT, JsonDeserializationContext ctx) -> {
             int min;

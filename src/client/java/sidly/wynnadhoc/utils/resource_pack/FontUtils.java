@@ -2,27 +2,34 @@ package sidly.wynnadhoc.utils.resource_pack;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.*;
+import net.minecraft.text.Style;
 import net.minecraft.text.StyleSpriteSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import org.joml.Vector2i;
 import sidly.wynnadhoc.mixin.client.accessors.FontManagerAccessor;
 import sidly.wynnadhoc.mixin.client.accessors.FontStorageAccessor;
 import sidly.wynnadhoc.mixin.client.accessors.MinecraftClientAccessor;
+import sidly.wynnadhoc.wapi.item.WynnItem;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class FontUtils {
     private static final Map<BitmapFont, Identifier> glyphLocations = new HashMap<>();
     private static FontManager fontManager = null;
     private static Map<Identifier, FontStorage> fontStorages = new HashMap<>();
-    private static final Set<String> ignoredPaths = Set.of(
-            "textures/font/ascii.png",
-            "textures/font/language/wynncraft.png"
-    );
+
+    private static final Map<Identifier, Map<Vector2i, Function<WynnItem.Builder, WynnItem.Builder>>> mappings = new HashMap<>();
+
+    static {
+        
+    }
 
     public static void updateFontStorages(boolean force) {
         if (fontManager == null)
@@ -35,41 +42,73 @@ public class FontUtils {
     }
 
     public static String translate(Text text) {
-        String original = text.getString();
         StringBuilder processed = new StringBuilder();
-        StyleSpriteSource source = text.getStyle().getFont();
-
-        if (source instanceof StyleSpriteSource.Font(Identifier id)) {
-            updateFontStorages(false);
-
-            FontStorage storage = fontStorages.get(id);
-            FontStorageAccessor storageAccessor = (FontStorageAccessor) storage;
-            GlyphProvider provider = storage.getGlyphs(false);
-
-            for (int i = 0; i < original.length(); ) {
-                int codePoint = original.codePointAt(i);
-                BakedGlyph baked = provider.get(codePoint);
-
-                processed.appendCodePoint(codePoint);
-
-
-                Font usedFont = findFontForCodePoint(storageAccessor, codePoint);
-
-                if (usedFont instanceof BitmapFont bitmapFont) {
-                    Identifier identifier = glyphLocations.get(bitmapFont);
-                    if (identifier != null && !ignoredPaths.contains(identifier.getPath())) {
-                        processed.append("(").append(identifier).append(")");
-                    }
-                }
-
-                i += Character.charCount(codePoint);
-            }
-        }
-
+        processText(text, processed);
         return processed.toString();
     }
 
-    private static Font findFontForCodePoint(FontStorageAccessor storage, int codePoint) {
+    private static void processText(Text text, StringBuilder builder) {
+        // Visit the text to extract characters with their correct styles
+        text.visit((style, string) -> {
+            processString(string, style, builder);
+            return Optional.empty();
+        }, Style.EMPTY);
+
+        // Process all siblings
+        for (Text sibling : text.getSiblings()) {
+            processText(sibling, builder);
+        }
+    }
+
+    private static void processString(String str, Style style, StringBuilder builder) {
+        StyleSpriteSource source = style.getFont();
+
+        // Skip if no font specified or it's not a Font type
+        if (!(source instanceof StyleSpriteSource.Font(Identifier fontId))) {
+            // Just append the raw string if no special font
+            builder.append(str);
+            return;
+        }
+
+        updateFontStorages(false);
+
+        FontStorage storage = fontStorages.get(fontId);
+        if (storage == null) {
+            builder.append(str);
+            return;
+        }
+
+        FontStorageAccessor storageAccessor = (FontStorageAccessor) storage;
+
+        for (int i = 0; i < str.length(); ) {
+            int codePoint = str.codePointAt(i);
+
+            Pair<Font, Vector2i> codePointInfo = findFontForCodePoint(storageAccessor, codePoint);
+
+            boolean found = false;
+            if (codePointInfo.getLeft() instanceof BitmapFont bitmapFont) {
+                Identifier identifier = glyphLocations.get(bitmapFont);
+                if (identifier != null && !isIgnoredPath(identifier)) {
+                    found = true;
+                    String pos = codePointInfo.getRight() == null ? "(?)" : codePointInfo.getRight().toString(NumberFormat.getCompactNumberInstance());
+                    builder.append("(").append(identifier).append("<at").append(pos).append(">)");
+                }
+            }
+            if (!found) builder.appendCodePoint(codePoint);
+
+            i += Character.charCount(codePoint);
+        }
+    }
+
+    private static boolean isIgnoredPath(Identifier id) {
+        String path = id.getPath();
+        return path.equals("ascii") ||
+                path.equals("language/wynncraft") ||
+                path.endsWith("/ascii") ||
+                path.endsWith("ascii.png");
+    }
+
+    private static Pair<Font, Vector2i> findFontForCodePoint(FontStorageAccessor storage, int codePoint) {
         // This replicates FontStorage.findGlyph() logic
         List<Font> fonts = storage.getAvailableFonts();
         Font fallbackFont = null;
@@ -81,12 +120,12 @@ public class FontUtils {
                     fallbackFont = font;
                 }
                 if (!isAdvanceInvalid(glyph.getMetrics())) {
-                    return font; // This is the one Minecraft uses
+                    return new Pair<>(font, getTexturePos(glyph)); // This is the one Minecraft uses
                 }
             }
         }
 
-        return fallbackFont; // No valid glyph found, use first available
+        return new Pair<>(fallbackFont, null); // No valid glyph found, use first available
     }
 
     private static boolean isAdvanceInvalid(GlyphMetrics glyph) {
@@ -99,9 +138,11 @@ public class FontUtils {
         }
     }
 
-    public static Vector2i getTexturePos(BitmapFont.BitmapFontGlyph bitmap) {
-        int xPos = bitmap.x() / bitmap.width();
-        int yPos = bitmap.y() / bitmap.height();
-        return new Vector2i(xPos, yPos);
+    public static Vector2i getTexturePos(Glyph glyph) {
+        if (glyph instanceof BitmapFont.BitmapFontGlyph bitmap) {
+            int xPos = bitmap.x() / bitmap.width();
+            int yPos = bitmap.y() / bitmap.height();
+            return new Vector2i(xPos, yPos);
+        } else return null;
     }
 }
