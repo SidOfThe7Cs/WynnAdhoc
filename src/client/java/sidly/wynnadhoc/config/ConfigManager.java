@@ -30,7 +30,8 @@ import java.util.Map;
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>() {
+                    }.getType(),
                     (JsonSerializer<Map<BlockPos, Long>>) (src, typeOfSrc, context) -> {
                         JsonArray array = new JsonArray(); // We'll use an array of entries
                         for (Map.Entry<BlockPos, Long> entry : src.entrySet()) {
@@ -46,7 +47,8 @@ public class ConfigManager {
                         return array;
                     }
             )
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>() {
+                    }.getType(),
                     (JsonDeserializer<Map<BlockPos, Long>>) (json, typeOfT, context) -> {
                         Map<BlockPos, Long> map = new HashMap<>();
                         JsonArray array = json.getAsJsonArray();
@@ -95,7 +97,7 @@ public class ConfigManager {
         lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData(), uuid)); // create new object but preserve camp data
     }
 
-    public Map<BlockPos, Long> getChests() {
+    public Map<BlockPos, ChestsSaveData.ChestData> getChests() {
         return chests.chests;
     }
 

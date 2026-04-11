@@ -1,21 +1,32 @@
 package sidly.wynnadhoc.config.catagories;
 
+import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDraggableList;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
+import sidly.wynnadhoc.features.chests.ChestColor;
+import sidly.wynnadhoc.features.chests.ChestTier;
+
+import java.util.List;
 
 public class ChestConfig {
     // TODO esp accordion
     @Expose
-    @ConfigOption(name = "Force Chest Esp", desc = "Turns on chest esp, green is > 3d, yellow is > 30m, red is < 30m, white is unknown ")
+    @ConfigOption(name = "Force Chest Esp", desc = "Draws outline of known nearby chests")
     @ConfigEditorBoolean
     public boolean forceEsp = false;
 
     @Expose
-    @ConfigOption(name = "Only openable", desc = "Whether esp should only show green and yellow chests")
-    @ConfigEditorBoolean
-    public boolean onlyOpenable = true;
+    @ConfigOption(name = "Only Color", desc = "The colors chest esp should show, green is > 3d, yellow is > 30m, red is < 30m")
+    @ConfigEditorDraggableList
+    public List<ChestColor> shownColors = Lists.newArrayList(ChestColor.GREEN, ChestColor.YELLOW);
+
+    @Expose
+    @ConfigOption(name = "Only Tier", desc = "the tiers chest esp should show")
+    @ConfigEditorDraggableList
+    public List<ChestTier> shownTiers = Lists.newArrayList(ChestTier.values());
 
     @Expose
     @ConfigOption(name = "Max Distance", desc = "Max distance to show chest esp")
