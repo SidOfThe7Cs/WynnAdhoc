@@ -29,26 +29,29 @@ import java.util.Map;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
+    private static final Gson DEFUALT_GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
-                    (JsonSerializer<Map<BlockPos, Long>>) (src, typeOfSrc, context) -> {
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestsSaveData.ChestData>>() {
+                    }.getType(),
+                    (JsonSerializer<Map<BlockPos, ChestsSaveData.ChestData>>) (src, typeOfSrc, context) -> {
                         JsonArray array = new JsonArray(); // We'll use an array of entries
-                        for (Map.Entry<BlockPos, Long> entry : src.entrySet()) {
+                        for (Map.Entry<BlockPos, ChestsSaveData.ChestData> entry : src.entrySet()) {
                             JsonObject obj = new JsonObject();
                             JsonObject posObj = new JsonObject();
                             posObj.addProperty("x", entry.getKey().getX());
                             posObj.addProperty("y", entry.getKey().getY());
                             posObj.addProperty("z", entry.getKey().getZ());
                             obj.add("pos", posObj);
-                            obj.addProperty("value", entry.getValue());
+                            obj.add("value", DEFUALT_GSON.toJsonTree(entry.getValue()));
                             array.add(obj);
                         }
                         return array;
                     }
             )
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, Long>>(){}.getType(),
-                    (JsonDeserializer<Map<BlockPos, Long>>) (json, typeOfT, context) -> {
-                        Map<BlockPos, Long> map = new HashMap<>();
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestsSaveData.ChestData>>() {
+                    }.getType(),
+                    (JsonDeserializer<Map<BlockPos, ChestsSaveData.ChestData>>) (json, typeOfT, context) -> {
+                        Map<BlockPos, ChestsSaveData.ChestData> map = new HashMap<>();
                         JsonArray array = json.getAsJsonArray();
                         for (JsonElement element : array) {
                             JsonObject obj = element.getAsJsonObject();
@@ -56,8 +59,8 @@ public class ConfigManager {
                             int x = posObj.get("x").getAsInt();
                             int y = posObj.get("y").getAsInt();
                             int z = posObj.get("z").getAsInt();
-                            long value = obj.get("value").getAsLong();
-                            map.put(new BlockPos(x, y, z), value);
+                            JsonObject value = obj.get("value").getAsJsonObject();
+                            map.put(new BlockPos(x, y, z), DEFUALT_GSON.fromJson(value, ChestsSaveData.ChestData.class));
                         }
                         return map;
                     }
@@ -95,7 +98,7 @@ public class ConfigManager {
         lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData(), uuid)); // create new object but preserve camp data
     }
 
-    public Map<BlockPos, Long> getChests() {
+    public Map<BlockPos, ChestsSaveData.ChestData> getChests() {
         return chests.chests;
     }
 

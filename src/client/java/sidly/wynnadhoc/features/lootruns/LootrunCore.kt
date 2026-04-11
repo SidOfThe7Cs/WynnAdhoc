@@ -15,7 +15,6 @@ import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.LootrunConfig
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
-import sidly.wynnadhoc.mixin.client.accessors.WynntillsEventBusAccessor
 import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
@@ -32,8 +31,8 @@ object LootrunCore {
 
     fun getCurrentLootrunData(): LootrunData? {
         try {
-            if (WynntillsEventBusAccessor.getEventBus() == null) return null
             val uuid = Character.uuid
+            if (uuid.isEmpty()) return null
             return ConfigManager.INSTANCE.getLootrun(uuid)
         } catch (_: Exception) {
             return null

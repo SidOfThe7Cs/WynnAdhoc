@@ -5,24 +5,22 @@ import com.wynntils.models.containers.containers.reward.LootChestContainer
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.entity.decoration.InteractionEntity
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
+import sidly.wynnadhoc.config.saves.ChestsSaveData
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.LootrunCore.getCurrentLootrunData
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions
+import sidly.wynnadhoc.utils.Debug
 import sidly.wynnadhoc.utils.LocationUtils
 import sidly.wynnadhoc.utils.datatypes.LevelRange
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.render.drawBox
-import java.awt.Color
 import kotlin.math.pow
-import kotlin.time.Duration.Companion.days
-import kotlin.time.DurationUnit
 
 object ChestTracker {
     private val config get() = ConfigManager.INSTANCE.config.chest
@@ -57,7 +55,7 @@ object ChestTracker {
                 return
             }
 
-            ConfigManager.INSTANCE.chests[lastClickedChest] = System.currentTimeMillis()
+            ConfigManager.INSTANCE.chests[lastClickedChest]?.onOpen()
 
             val items = event.getItems()
             val record = ChestRecord(lastClickedChest, items)
@@ -79,48 +77,42 @@ object ChestTracker {
         if (missionReq || crono || config.forceEsp) {
             val currentTime = System.currentTimeMillis()
 
-            val toDraw = mutableMapOf<BlockPos, Color>()
-
-            if (!config.onlyOpenable) {
-                for (trappedChest in trappedChests) {
-                    toDraw[trappedChest] = Color.WHITE
-                }
-            }
-
             for (knownChest in ConfigManager.INSTANCE.chests.entries) {
-                var color = Color.RED
-                // 30 minutes has passed
-                if (knownChest.value + 1800000 < currentTime) color = Color.yellow
-                // never been opened or 3 days have passed
-                if (knownChest.value == -1L || knownChest.value + 3.days.toLong(DurationUnit.MILLISECONDS) < currentTime) color =
-                    Color.green
-                toDraw[knownChest.key] = color
-            }
+                val color = knownChest.value.getColor(currentTime)
 
-            for (drawable in toDraw.entries) {
-                val distSqr = drawable.key.getSquaredDistance(player.entityPos)
+                val distSqr = knownChest.key.getSquaredDistance(player.entityPos)
 
                 val maxDist = config.maxEspDistance.pow(2)
                 if (distSqr > maxDist) continue
 
-                if (!config.onlyOpenable || drawable.value != Color.RED) {
-                    event.drawBox(drawable.key.toBox(), drawable.value)
+                if (config.shownColors.contains(ChestColor.from(color)) &&
+                    config.shownTiers.contains(ChestTier.from(knownChest.value.tier))
+                ) {
+                    event.drawBox(knownChest.key.toBox(), color)
                 }
             }
         }
     }
 
-    // TODO get tier
-    // TODO make draggable list with even more options like possible mythics
     fun onTextDisplaySync(event: TextDisplaySyncEvent) {
         if (event.string.contains("Loot Chest")) {
+            val tier = when {
+                event.string.contains("§7Loot Chest §7[§f✫§8✫✫✫§7]") -> 1
+                event.string.contains("§eLoot Chest §e[§6✫✫§8✫✫§e]") -> 2
+                event.string.contains("§5Loot Chest §5[§d✫✫✫§8✫§5]") -> 3
+                event.string.contains("§3Loot Chest §3[§b✫✫✫✫§3]") -> 4
+                else -> -1
+            }
+            val message = if (tier == -1) event.string else tier
+            WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "found unknown lootchest tier ar ${event.blockPos}: $message")
+
             val world = MinecraftClient.getInstance().world ?: return
             val blockPos: BlockPos = event.blockPos.down(1)
             val block = world.getBlockEntity(blockPos) ?: return
 
             if (block is ChestBlockEntity) {
                 if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
-                    ConfigManager.INSTANCE.chests[blockPos] = -1L
+                    ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier)
                 }
             }
 
@@ -128,6 +120,7 @@ object ChestTracker {
         }
     }
 
+    // TODO make draggable list with even more options like possible mythics
     fun addLevelRanges(event: TextDisplaySyncEvent) {
         val copy = event.text.copy()
         val chestPos = LocationUtils.getBlockUnderVec3d(event.pos)
