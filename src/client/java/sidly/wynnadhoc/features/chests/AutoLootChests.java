@@ -1,10 +1,6 @@
 package sidly.wynnadhoc.features.chests;
 
-import com.wynntils.core.components.Models;
 import com.wynntils.features.inventory.ItemFavoriteFeature;
-import com.wynntils.models.containers.containers.reward.ChallengeRewardContainer;
-import com.wynntils.models.containers.containers.reward.FlyingChestContainer;
-import com.wynntils.models.containers.containers.reward.LootChestContainer;
 import com.wynntils.models.gear.type.GearTier;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
@@ -30,7 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AutoLootChests {
-    private static ChestConfig config() { return ConfigManager.INSTANCE.config.chest; }
+    private static ChestConfig config() {
+        return ConfigManager.INSTANCE.config.chest;
+    }
 
     public static TickScheduler chestLooterScheduler = TickScheduler.getNewScheduler();
 
@@ -42,10 +40,7 @@ public class AutoLootChests {
             return;
         }
 
-        if (Models.Container.getCurrentContainer() instanceof ChallengeRewardContainer ||
-                Models.Container.getCurrentContainer() instanceof FlyingChestContainer ||
-                Models.Container.getCurrentContainer() instanceof LootChestContainer) {
-
+        if (event.isLootChest() || event.isChallengeReward() || event.isFlyingChest()) {
             chestLooterScheduler.schedule(2, 10, remaining -> {
                 boolean hasFavorites = lootChest(screen);
                 if (!hasFavorites) {
@@ -63,11 +58,12 @@ public class AutoLootChests {
         for (int i = 0; i < containerSlots; i++) {
             Slot slot = screen.getScreenHandler().getSlot(i);
             ItemStack itemStack = slot.getStack();
+            if (itemStack.isEmpty()) continue;
 
             GearTier itemRarity = ItemUtils.getItemRarity(itemStack);
             Integer pouchTier = ItemUtils.getEmeraldPouchTier(itemStack);
-            WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "itemRarity: " + itemRarity);
             if (itemRarity == GearTier.MYTHIC || (pouchTier != null && pouchTier >= 8)) {
+                WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "found mythic not looting chest");
                 result = true;
                 continue; // dont take the item out of the chest
             }
@@ -101,7 +97,6 @@ public class AutoLootChests {
             }
 
             boolean favorite = ((IsFavoritedInvoker) new ItemFavoriteFeature()).invokeIsFavorited(itemStack);
-            //DebugWindow.getInstance().log("slot " + i + ": " + slot.getStack().getName() + " favorite " + favorite);
             if (favorite || isNeededPotion) {
                 AutoUtils.shiftClickSlot(screen, slot.getIndex());
                 result = true;

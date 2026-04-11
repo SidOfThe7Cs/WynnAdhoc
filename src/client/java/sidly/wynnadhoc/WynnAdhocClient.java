@@ -1,7 +1,5 @@
 package sidly.wynnadhoc;
 
-import com.wynntils.mc.event.PlayerInteractEvent;
-import com.wynntils.mc.event.UseItemEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
@@ -31,6 +29,7 @@ import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.models.Character;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
+import sidly.wynnadhoc.utils.auto.MouseLerper;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 
 public class WynnAdhocClient implements ClientModInitializer {
@@ -60,6 +59,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
+        Event.register(ClientTickEvent.class, MouseLerper::tick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
