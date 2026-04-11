@@ -107,6 +107,12 @@ public class WynnAdhocClient implements ClientModInitializer {
 fruma:
 refactor chest saving to not just be there entir tooltip as json
 
+fix reroll and pull tracking
+dont rely on wynntills for chest type
+change chest item saving
+change item rarity checking
+
+
 auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon

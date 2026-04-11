@@ -103,8 +103,10 @@ object ChestTracker {
                 event.string.contains("§3Loot Chest §3[§b✫✫✫✫§3]") -> 4
                 else -> -1
             }
-            val message = if (tier == -1) event.string else tier
-            WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "found unknown lootchest tier ar ${event.blockPos}: $message")
+            if (tier == -1) WynnAdhocClient.LOGGER.info(
+                Debug.Type.LOOTRUN,
+                "found unknown lootchest tier at ${event.blockPos}:"
+            )
 
             val world = MinecraftClient.getInstance().world ?: return
             val blockPos: BlockPos = event.blockPos.down(1)
