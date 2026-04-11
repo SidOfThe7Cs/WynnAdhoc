@@ -1,6 +1,5 @@
 package sidly.wynnadhoc.features.lootruns
 
-import com.wynntils.core.components.Models
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
@@ -17,6 +16,7 @@ import sidly.wynnadhoc.config.catagories.LootrunConfig
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
 import sidly.wynnadhoc.mixin.client.accessors.WynntillsEventBusAccessor
+import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
 import java.time.Duration
@@ -33,7 +33,7 @@ object LootrunCore {
     fun getCurrentLootrunData(): LootrunData? {
         try {
             if (WynntillsEventBusAccessor.getEventBus() == null) return null
-            val uuid = Models.Character.id
+            val uuid = Character.uuid
             return ConfigManager.INSTANCE.getLootrun(uuid)
         } catch (_: Exception) {
             return null
@@ -113,6 +113,7 @@ object LootrunCore {
                             0xFF00FF -> baseColor = BeaconColor.Purple
                             0xFFFF33 -> baseColor = BeaconColor.Yellow
                             0x55FFFF -> baseColor = BeaconColor.Aqua
+                            0xfd72b1 -> baseColor = BeaconColor.Pink
                             0xff9500 -> baseColor = BeaconColor.Orange
                             0xff80 -> baseColor = BeaconColor.Green
                             0x808080 -> baseColor = BeaconColor.DarkGrey
@@ -145,15 +146,7 @@ object LootrunCore {
                         symbolText.codePoints().skip((symbolText.codePointCount(0, symbolText.length) - 1).toLong())
                             .findFirst().orElse(-1)
                     val unicodeString = "U+" + String.format("%04X", lastSymbol)
-                    var type = ""
-                    when (unicodeString) {
-                        "U+E00B" -> type = "Slay"
-                        "U+E00C" -> type = "Target"
-                        "U+E00D" -> type = "Defend"
-                        "U+E00E" -> type = "Loot"
-                        "U+E00F" -> type = "Destroy"
-                        else -> WynnAdhocClient.LOGGER.warn("Unknown beacon type, Last symbol: $unicodeString Distance: $distance\n")
-                    }
+                    // unicode string contains the beacon type (like slay / target or atleast it did)
                 }
             }
         }
@@ -445,7 +438,7 @@ object LootrunCore {
         ScoreboardInfo.clearLootrunData() // this is data that is cleared every frame anyway
         data.currentMissionsActive.clear()
         data.activeCamp.camp.justCompleted()
-        ConfigManager.INSTANCE.resetLootrun(Models.Character.id)
+        ConfigManager.INSTANCE.resetLootrun(Character.uuid)
 
         mobHealthIncrease = 0
         mobSpeedIncrease = 0

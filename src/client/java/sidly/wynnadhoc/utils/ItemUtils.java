@@ -6,6 +6,7 @@ import com.wynntils.models.items.properties.GearTierItemProperty;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
+import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -18,12 +19,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ItemUtils {
-    public static List<Text> getTooltip(ItemStack item){
+    public static List<Text> getTooltip(ItemStack item) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return new ArrayList<>();
 
         return item.getTooltip(Item.TooltipContext.DEFAULT, client.player, TooltipType.BASIC);
 
+    }
+
+    public static List<Text> getLore(ItemStack itemStack) {
+        return itemStack.getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines();
     }
 
     // TODO idk if this works now or if only on fruma and what wynntills version
@@ -48,7 +53,8 @@ public class ItemUtils {
             try {
                 int tier = Integer.parseInt(tierStr);
                 return (tier >= 1 && tier <= 10) ? tier : null;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
 
             // Convert Roman numeral to number
             int tier = FormatUtils.romanToInt(tierStr);

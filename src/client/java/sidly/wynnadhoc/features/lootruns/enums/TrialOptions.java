@@ -1,10 +1,22 @@
 package sidly.wynnadhoc.features.lootruns.enums;
 
-// TODO fruma
+// TODO descriptions i aint using them rn so
 public enum TrialOptions {
+    AdrenalineJunkie("Adrenaline Junkie",
+            "Until you gain 25 Pulls, lose 1 Boon every 30s during interludes.",
+            "Gain +2 End Reward Rerolls."),
+    DyingLight("Dying Light",
+            "Until you gain +1000% total Boon Potency, your boons will drain by -2% Potency per second, one by one",
+            "Rainbow beacons will now grant +1 End Reward Sacrifice. "),
+    Monochromokopia("Monochromokopia",
+            "Until you gain +1000% total Boon Potency, your boons will drain by -2% Potency per second, one by one",
+            "Rainbow beacons will now grant +1 End Reward Sacrifice. "),
+    Chronotrigger("Chronotrigger",
+            "Until you gain +1000% total Boon Potency, your boons will drain by -2% Potency per second, one by one",
+            "Rainbow beacons will now grant +1 End Reward Sacrifice. "),
     AllIn("All In",
             "For the next 10 challenges, Curse effects are doubled.",
-            "At the end of your run, convert each End Reward Sacrifice you have into +2 End Reward Rerolls."),
+            "At the end of your run, convert each End Reward Sacrifice you have into +3 End Reward Rerolls."),
     GamblingBeast("Gambling Beast",
             "After finishing a Challenge, consume 300s (+60s per Challenge) from your timer.",
             "At the end of your run, gain +1 End Reward Reroll for each activation."),

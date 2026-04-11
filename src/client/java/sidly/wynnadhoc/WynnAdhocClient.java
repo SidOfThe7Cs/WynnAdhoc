@@ -4,7 +4,10 @@ import com.wynntils.mc.event.PlayerInteractEvent;
 import com.wynntils.mc.event.UseItemEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -12,7 +15,6 @@ import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.event.Event;
 import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -20,15 +22,16 @@ import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
+import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
-import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
+import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
+import sidly.wynnadhoc.features.war.WarTimer;
+import sidly.wynnadhoc.models.Character;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.render.RenderUtils;
-import sidly.wynnadhoc.features.war.DB;
-import sidly.wynnadhoc.features.war.WarTimer;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -56,6 +59,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
+        Event.register(ClientTickEvent.class, Character.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
@@ -91,6 +95,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
+        Event.register(WorldChangeEvent.class, Character.INSTANCE::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
