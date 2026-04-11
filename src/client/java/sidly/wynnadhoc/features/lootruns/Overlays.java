@@ -10,8 +10,17 @@ import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
 import sidly.wynnadhoc.utils.FormatUtils;
 
 public class Overlays {
-    private static LootrunConfig config() { return ConfigManager.INSTANCE.config.lootrun; }
+    private static LootrunConfig config() {
+        return ConfigManager.INSTANCE.config.lootrun;
+    }
+
     private static LootrunData data = LootrunCore.INSTANCE.getCurrentLootrunData();
+
+    public static void updateAll() {
+        config().beaconCountsOverlay.updateDisplay();
+        config().endRewardsOverlay.updateDisplay();
+        config().missionOverlay.updateDisplay();
+    }
 
     public static void register() {
         HudElementManager.register(new TextHudElement(
@@ -48,6 +57,7 @@ public class Overlays {
         }
         return sb.toString();
     }
+
     private static void addBeaconCountLine(StringBuilder sb, BeaconColor color) {
         int num = data.getBeaconCounts().getCount(color);
         String left = data.getBeaconCounts().getChallengesRemaining(color);
@@ -107,9 +117,9 @@ public class Overlays {
         data = LootrunCore.INSTANCE.getCurrentLootrunData();
         if (data == null) return "lootrun data is null";
         StringBuilder sb = new StringBuilder();
-        for (MissionOptions mission : data.getCurrentMissionsActive()){
+        for (MissionOptions mission : data.getCurrentMissionsActive()) {
             sb.append("§7");
-            if (ScoreboardInfo.missionInProgress.equals(mission.getDisplayName())){
+            if (ScoreboardInfo.missionInProgress.equals(mission.getDisplayName())) {
                 // if theres a active mission
                 sb.append("§m");
             }
@@ -121,9 +131,9 @@ public class Overlays {
 
             sb.append('\n');
         }
-        for (TrialOptions trial : data.getCurrentTrialsActive()){
+        for (TrialOptions trial : data.getCurrentTrialsActive()) {
             sb.append("§4");
-            if (ScoreboardInfo.trialInProgress.equals(trial.getDisplayName())){
+            if (ScoreboardInfo.trialInProgress.equals(trial.getDisplayName())) {
                 sb.append("§m");
             }
             sb.append(trial.getDisplayName());

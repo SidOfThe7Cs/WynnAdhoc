@@ -48,13 +48,13 @@ public class WynnAdhocClient implements ClientModInitializer {
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
         ScreenEvents.AFTER_INIT.register(ScreenOpenedEvent::new);
 
+        Event.register(ClientTickEvent.class, Character.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
         Event.register(ClientTickEvent.class, LootrunCore.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
-        Event.register(ClientTickEvent.class, Character.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
@@ -82,6 +82,8 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
+
+        Event.register(CharacterUuidUpdateEvent.class, Overlays::updateAll);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
