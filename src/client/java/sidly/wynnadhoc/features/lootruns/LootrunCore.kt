@@ -9,7 +9,9 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.Slot
+import net.minecraft.text.StyleSpriteSource
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.LootrunConfig
@@ -87,65 +89,76 @@ object LootrunCore {
             val rootText: Text = event.entity.getText()
             val siblings = rootText.siblings
 
-            // check if the first sibling is a "marker"
-            if (!siblings.isEmpty() && siblings[0].style.getFont() != null && siblings[0].style
-                    .getFont().toString() == "Font[id=minecraft:marker]"
-            ) {
-                // extract the distance
-                var distance = -1
-                if (siblings.size >= 3) {
-                    val distanceText = siblings[2]
-                    val distanceStr =
-                        distanceText.string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                    distance = distanceStr.replace("[^0-9]".toRegex(), "").toInt()
-                }
+            if (!siblings.isEmpty()) {
+                val idFont = siblings[0].style.getFont()
+                if (idFont is StyleSpriteSource.Font) {
+                    if (Identifier.ofVanilla("marker").equals(idFont.id)) {
+                        // extract the distance
+                        var distance = -1
+                        if (siblings.size >= 3) {
+                            try {
+                                val distanceText = siblings[2]
+                                if (distanceText == null || distanceText.string.isEmpty()) return
+                                val distanceStr =
+                                    distanceText.string.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+                                        .toTypedArray()[0]
+                                distance = distanceStr.replace("[^0-9]".toRegex(), "").toInt()
+                            } catch (_: NumberFormatException) {
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        } else if (siblings.isEmpty()) return
 
-                // get the color
-                val markerSibling = siblings[0]
-                for (nested in markerSibling.siblings) {
-                    if (nested.style.getColor() != null) {
-                        val color = nested.style.getColor()!!.rgb
+                        // get the color
+                        val markerSibling = siblings[0]
+                        for (nested in markerSibling.siblings) {
+                            if (nested.style.getColor() != null) {
+                                val color = nested.style.getColor()!!.rgb
 
-                        val baseColor: BeaconColor
-                        when (color) {
-                            0x5C5CE6 -> baseColor = BeaconColor.Blue
-                            0xFF00FF -> baseColor = BeaconColor.Purple
-                            0xFFFF33 -> baseColor = BeaconColor.Yellow
-                            0x55FFFF -> baseColor = BeaconColor.Aqua
-                            0xfd72b1 -> baseColor = BeaconColor.Pink
-                            0xff9500 -> baseColor = BeaconColor.Orange
-                            0xff80 -> baseColor = BeaconColor.Green
-                            0x808080 -> baseColor = BeaconColor.DarkGrey
-                            0xffffff -> baseColor = BeaconColor.White
-                            0xbfbfbf -> baseColor = BeaconColor.Grey
-                            0xff0000 -> baseColor = BeaconColor.Red
-                            0xf000 -> baseColor = BeaconColor.Rainbow
-                            0xf010 -> baseColor = BeaconColor.Crimson
-                            else -> {
-                                WynnAdhocClient.LOGGER.warn("unrecognized beacon color: " + Integer.toHexString(color) + " distance: " + distance)
-                                return
+                                val baseColor: BeaconColor
+                                when (color) {
+                                    0x5C5CE6 -> baseColor = BeaconColor.Blue
+                                    0xFF00FF -> baseColor = BeaconColor.Purple
+                                    0xFFFF33 -> baseColor = BeaconColor.Yellow
+                                    0x55FFFF -> baseColor = BeaconColor.Aqua
+                                    0xfd72b1 -> baseColor = BeaconColor.Pink
+                                    0xff9500 -> baseColor = BeaconColor.Orange
+                                    0xff80 -> baseColor = BeaconColor.Green
+                                    0x808080 -> baseColor = BeaconColor.DarkGrey
+                                    0xffffff -> baseColor = BeaconColor.White
+                                    0xbfbfbf -> baseColor = BeaconColor.Grey
+                                    0xff0000 -> baseColor = BeaconColor.Red
+                                    0xf000 -> baseColor = BeaconColor.Rainbow
+                                    0xf010 -> baseColor = BeaconColor.Crimson
+                                    else -> {
+                                        val hex = Integer.toHexString(color)
+                                        if (!hex.equals("0")) WynnAdhocClient.LOGGER.warn("unrecognized beacon color: $hex distance: $distance")
+                                        return
+                                    }
+                                }
+                                //WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "$baseColor beacon found at $distance")
+                                if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
+                                    currentBeaconOptionsFromWaypoints[baseColor] = distance
+                                }
                             }
                         }
-                        //WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "$baseColor beacon found at $distance")
-                        if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
-                            currentBeaconOptionsFromWaypoints[baseColor] = distance
+
+                        // get beacon type
+                        // Get the nested components within the marker
+                        val markerComponents = markerSibling.siblings
+                        if (markerComponents.size > 1) {
+                            // The symbol is in the second nested component (index 1)
+                            val symbolComponent = markerComponents[1]
+                            val symbolText = symbolComponent.string
+
+                            val lastSymbol =
+                                symbolText.codePoints()
+                                    .skip((symbolText.codePointCount(0, symbolText.length) - 1).toLong())
+                                    .findFirst().orElse(-1)
+                            val unicodeString = "U+" + String.format("%04X", lastSymbol)
+                            // unicode string contains the beacon type (like slay / target or atleast it did)
                         }
                     }
-                }
-
-                // get beacon type
-                // Get the nested components within the marker
-                val markerComponents = markerSibling.siblings
-                if (markerComponents.size > 1) {
-                    // The symbol is in the second nested component (index 1)
-                    val symbolComponent = markerComponents[1]
-                    val symbolText = symbolComponent.string
-
-                    val lastSymbol =
-                        symbolText.codePoints().skip((symbolText.codePointCount(0, symbolText.length) - 1).toLong())
-                            .findFirst().orElse(-1)
-                    val unicodeString = "U+" + String.format("%04X", lastSymbol)
-                    // unicode string contains the beacon type (like slay / target or atleast it did)
                 }
             }
         }
