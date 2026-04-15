@@ -7,11 +7,13 @@ import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.SegmentedSaveManager;
+import sidly.wynnadhoc.utils.AsyncUtils;
 
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ChestSaving {
     public static File SAVE_FILE = ConfigManager.getConfigDir().resolve("chest_loot_data").toFile();
@@ -28,7 +30,9 @@ public class ChestSaving {
         if (rolledOver) currentLoaded.clear();
     }
 
-    /** Loads the latest chest record data from disk */
+    /**
+     * Loads the latest chest record data from disk
+     */
     public static List<ChestRecord> loadLatest() {
         JsonArray array = saveManager.loadLatest();
         List<ChestRecord> result = new ArrayList<>();
@@ -40,7 +44,11 @@ public class ChestSaving {
         return result;
     }
 
-    public static List<ChestRecord> getAllRecordsForChest(BlockPos pos) {
+    public static CompletableFuture<List<ChestRecord>> getAllRecordsForChestAsync(BlockPos pos) {
+        return AsyncUtils.runAsync(() -> getAllRecordsForChest(pos));
+    }
+
+    private static List<ChestRecord> getAllRecordsForChest(BlockPos pos) {
         List<ChestRecord> results = new ArrayList<>();
 
         if (!SAVE_FILE.exists() || !SAVE_FILE.isDirectory()) return results;
