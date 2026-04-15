@@ -29,7 +29,6 @@ public class ChestRecord {
         this.items = items.stream().map(ChestLootItem::new).toList();
     }
 
-    // TODO use wynntills after fruma ig
     public JsonObject toJson() {
         JsonObject obj = new JsonObject();
         obj.addProperty("x", pos.getX());

@@ -123,31 +123,35 @@ object ChestTracker {
     }
 
     // TODO make draggable list with even more options like possible mythics
+    // i could cache this, probably should, but it only runs once when you load the textdisplay so i dont wanna bother
     fun addLevelRanges(event: TextDisplaySyncEvent) {
         val copy = event.text.copy()
         val chestPos = LocationUtils.getBlockUnderVec3d(event.pos)
-        val allRecordsForChest = ChestSaving.getAllRecordsForChest(chestPos)
-        val lvlQuantities: MutableMap<LevelRange, Int> = HashMap()
-        for (record in allRecordsForChest) {
-            val recordLvlQuantities = record.getLvlQuantities()
-            recordLvlQuantities.forEach { (key: LevelRange, value: Int) ->
-                lvlQuantities.merge(
-                    key,
-                    value
-                ) { a: Int, b: Int -> Integer.sum(a, b) }
+        ChestSaving.getAllRecordsForChestAsync(chestPos).thenAccept { allRecordsForChest ->
+            val lvlQuantities: MutableMap<LevelRange, Int> = HashMap()
+            for (record in allRecordsForChest) {
+                val recordLvlQuantities = record.getLvlQuantities()
+                recordLvlQuantities.forEach { (key: LevelRange, value: Int) ->
+                    lvlQuantities.merge(
+                        key,
+                        value
+                    ) { a: Int, b: Int -> Integer.sum(a, b) }
+                }
+            }
+            val total = lvlQuantities.values.stream().mapToInt { obj: Int -> obj }.sum()
+            copy.siblings.add(Text.of("\nBoxes Found: $total"))
+            lvlQuantities.entries.stream()
+                .sorted { a: MutableMap.MutableEntry<LevelRange, Int>, b: MutableMap.MutableEntry<LevelRange, Int> ->
+                    b.value.compareTo(a.value)
+                }
+                .forEach { entry: MutableMap.MutableEntry<LevelRange, Int> ->
+                    val percent = ((entry.value / total.toDouble()) * 100).toInt()
+                    copy.siblings.add(Text.of("\n" + entry.key + " " + percent + "%"))
+                }
+
+            MinecraftClient.getInstance().execute {
+                event.textDisplay.text = copy
             }
         }
-        val total = lvlQuantities.values.stream().mapToInt { obj: Int -> obj }.sum()
-        copy.siblings.add(Text.of("\nBoxes Found: $total"))
-        lvlQuantities.entries.stream()
-            .sorted { a: MutableMap.MutableEntry<LevelRange, Int>, b: MutableMap.MutableEntry<LevelRange, Int> ->
-                b.value.compareTo(a.value)
-            }
-            .forEach { entry: MutableMap.MutableEntry<LevelRange, Int> ->
-                val percent = ((entry.value / total.toDouble()) * 100).toInt()
-                copy.siblings.add(Text.of("\n" + entry.key + " " + percent + "%"))
-            }
-
-        event.textDisplay.text = copy
     }
 }

@@ -104,9 +104,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
-fruma:
 refactor chest saving to not just be there entir tooltip as json
-
 fix reroll and pull tracking
 dont rely on wynntills for chest type
 change chest item saving
