@@ -23,6 +23,7 @@ import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
+import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
@@ -83,6 +84,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(WorldRenderEvent.class, OuterVoidItemPathfinder.INSTANCE::draw);
         Event.register(WorldRenderEvent.class, ChestTracker.INSTANCE::onWorldRender);
+        Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
@@ -99,6 +101,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
         Event.register(WorldChangeEvent.class, Character.INSTANCE::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
+        Event.register(TextDisplaySyncEvent.class, ProfNodeCore::onTextDisplaySync);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
 
@@ -117,6 +120,7 @@ fix reroll and pull tracking
 dont rely on wynntills for chest type
 change chest item saving
 change item rarity checking
+move renderutils into worldrenderevent where possible (it should also be kotlin with optional args)
 
 
 auto update checker

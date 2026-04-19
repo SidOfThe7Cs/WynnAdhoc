@@ -21,4 +21,9 @@ public class SimpleFeatureToggles {
     @ConfigOption(name = "Disable Darkness", desc = "Disables all darkness effects")
     @ConfigEditorBoolean
     public boolean disableDarkness = true;
+
+    @Expose
+    @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")
+    @ConfigEditorBoolean
+    public boolean customProfNodes = true;
 }
