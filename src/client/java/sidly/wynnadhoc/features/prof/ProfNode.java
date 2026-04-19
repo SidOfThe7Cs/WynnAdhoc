@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.prof;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -76,8 +77,11 @@ public class ProfNode {
         text.add(Text.literal(String.valueOf(timeLeft)).formatted(getTimeColor(timeLeft)));
         if (node.size() == 1) {
             Vec3d n = node.getFirst();
-            boolean exists = entities.stream().anyMatch(e -> e.getEntityPos().equals(n));
-            if (!exists) return;
+            double dist = MinecraftClient.getInstance().player.getEntityPos().squaredDistanceTo(n);
+            if (dist < 90) {
+                boolean exists = entities.stream().anyMatch(e -> e.getEntityPos().equals(n));
+                if (!exists) return;
+            }
         }
         event.drawText(getClosest(player.getEntityPos()), text, 0.6f, false);
     }
