@@ -36,6 +36,10 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public LootrunConfig lootrun = new LootrunConfig();
 
     @Expose
+    @Category(name = "Raid Settings", desc = "raid settings")
+    public RaidConfig raid = new RaidConfig();
+
+    @Expose
     @Category(name = "Guild Settings", desc = "guild settings")
     public GuildConfig guild = new GuildConfig();
 

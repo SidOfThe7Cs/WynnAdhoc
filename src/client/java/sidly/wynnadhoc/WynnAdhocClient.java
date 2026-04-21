@@ -24,6 +24,7 @@ import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
+import sidly.wynnadhoc.features.raids.NOL;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
@@ -84,6 +85,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(WorldRenderEvent.class, OuterVoidItemPathfinder.INSTANCE::draw);
         Event.register(WorldRenderEvent.class, ChestTracker.INSTANCE::onWorldRender);
+        Event.register(WorldRenderEvent.class, NOL.INSTANCE::onWorldRender);
         Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);

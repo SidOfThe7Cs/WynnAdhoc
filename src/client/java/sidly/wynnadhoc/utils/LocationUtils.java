@@ -49,4 +49,62 @@ public class LocationUtils {
         }
         return false;
     }
+
+    public enum RaidRoom {
+        NOL_FIRST_PARASITES(new Vec3d(11351, 132, 1987), new Vec3d(11262, 40, 2087)),
+        NOL_SECOND_CLOUDS(new Vec3d(11751, 33, 1512), new Vec3d(11607, 143, 1660)),
+        NOL_SECOND_GATHERING(new Vec3d(11116, 81, 1125), new Vec3d(10765, -9, 1360)),
+        NOL_THIRD_MAZE(new Vec3d(11758, 24, 2578), new Vec3d(11880, 105, 2481)),
+        NOL_THIRD_TOWER(new Vec3d(11345, 186, 1556), new Vec3d(11287, 23, 1609)),
+        NOL_BOSS(new Vec3d(11402, 162, 2377), new Vec3d(11594, 21, 2568));
+
+        private final Vec3d min;
+        private final Vec3d max;
+
+        RaidRoom(Vec3d corner1, Vec3d corner2) {
+            // Calculate min and max bounds for easier collision detection
+            this.min = new Vec3d(
+                    Math.min(corner1.x, corner2.x),
+                    Math.min(corner1.y, corner2.y),
+                    Math.min(corner1.z, corner2.z)
+            );
+            this.max = new Vec3d(
+                    Math.max(corner1.x, corner2.x),
+                    Math.max(corner1.y, corner2.y),
+                    Math.max(corner1.z, corner2.z)
+            );
+        }
+
+        /**
+         * Checks if a location is within this raid room's bounds
+         */
+        public boolean contains(Vec3d loc) {
+            return loc.x >= min.x && loc.x <= max.x &&
+                    loc.y >= min.y && loc.y <= max.y &&
+                    loc.z >= min.z && loc.z <= max.z;
+        }
+
+        /**
+         * Gets which raid room a location belongs to
+         *
+         * @param loc The location to check
+         * @return The RaidRoom containing the location, or null if not in any room
+         */
+        public static RaidRoom getRaidRoom(Vec3d loc) {
+            for (RaidRoom room : values()) {
+                if (room.contains(loc)) {
+                    return room;
+                }
+            }
+            return null;
+        }
+
+        public Vec3d getMin() {
+            return min;
+        }
+
+        public Vec3d getMax() {
+            return max;
+        }
+    }
 }
