@@ -30,6 +30,7 @@ import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
+import sidly.wynnadhoc.utils.build_making.Tester;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 import sidly.wynnadhoc.utils.resource_pack.FontData;
 import sidly.wynnadhoc.wapi.ApiUtils;
@@ -110,7 +111,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         new InitEvent();
         ApiUtils.getItemDatabase();
 
-        Test.main(null);
+        Tester.main();
     }
 }
 
