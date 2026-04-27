@@ -77,6 +77,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(WorldRenderEvent.class, ChestTracker.INSTANCE::onWorldRender);
         Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
+        Event.register(WorldRenderEvent.class, ForEachEntityRenderEvent::onRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
