@@ -20,5 +20,15 @@ public class SimpleFeatureToggles {
     @Expose
     @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")
     @ConfigEditorBoolean
-    public boolean customProfNodes = true;
+    public boolean customProfNodes = false;
+
+    @Expose
+    @ConfigOption(name = "Wind Prison Box", desc = "Draw a box around mobs with wind prison as well as the time remaining")
+    @ConfigEditorBoolean
+    public boolean showWindPrisonBox = false;
+
+    @Expose
+    @ConfigOption(name = "Marks Count", desc = "Draw marks count on mobs")
+    @ConfigEditorBoolean
+    public boolean showMarksCount = false;
 }
