@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.wapi;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
@@ -9,7 +8,6 @@ import sidly.wynnadhoc.wapi.item.*;
 import sidly.wynnadhoc.wapi.item.enums.*;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class ApiUtils {
     public static final UnknownFieldTracker fieldTracker = new UnknownFieldTracker();
-    private static Map<String, WynnItem> db = new HashMap<>();
+    private static final Map<String, WynnItem> db = new HashMap<>();
     public static Gson GSON = new GsonBuilder()
             .registerTypeAdapter(AttackSpeed.class, EnumUtils.enumDeserializer(AttackSpeed.class, fieldTracker))
             .registerTypeAdapter(Base.class, EnumUtils.enumDeserializer(Base.class, fieldTracker))
@@ -90,9 +88,19 @@ public class ApiUtils {
 
             // create a new gson with a custom deserializer and the custom type adapters
             Gson gson = new GsonBuilder().registerTypeAdapter(WynnItem.class, new ItemDeserializer(GSON)).create();
-            Type type = new TypeToken<Map<String, WynnItem>>() {
-            }.getType();
-            db = gson.fromJson(response.body(), type);
+
+            JsonElement jsonElement = JsonParser.parseString(body);
+            if (jsonElement.isJsonArray()) {
+                jsonElement.getAsJsonArray().forEach(element -> {
+                    if (element.isJsonObject()) {
+                        JsonObject obj = element.getAsJsonObject();
+                        if (obj.has("internalName")) {
+                            db.put(obj.get("internalName").getAsString(), gson.fromJson(obj, WynnItem.class));
+                        } else WynnAdhocClient.LOGGER.warn("found item without an internal name: " + obj);
+                    }
+                });
+            } else WynnAdhocClient.LOGGER.warn("item db returned not array: " + jsonElement);
+
             fieldTracker.printReport();
             return db;
 

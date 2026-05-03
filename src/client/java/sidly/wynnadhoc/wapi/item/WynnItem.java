@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO add name
 public record WynnItem(
+        String displayName,
         String internalName,
         ItemType type,
         SubType subType,
@@ -97,6 +97,7 @@ public record WynnItem(
     }
 
     public static class Builder {
+        private String displayName;
         private String internalName;
         private ItemType type;
         private SubType subType;
@@ -127,6 +128,11 @@ public record WynnItem(
         private List<String> sets;
 
         public Builder() {
+        }
+
+        public Builder displayName(String displayName) {
+            this.displayName = displayName;
+            return this;
         }
 
         public Builder internalName(String internalName) {
@@ -271,6 +277,7 @@ public record WynnItem(
 
         public WynnItem build() {
             return new WynnItem(
+                    displayName,
                     internalName,
                     type,
                     subType,
