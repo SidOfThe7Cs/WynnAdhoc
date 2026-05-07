@@ -42,4 +42,14 @@ public class ChestConfig {
     @ConfigOption(name = "Display Level", desc = "Display the % of the items you have gotten from a chest that are in each level range")
     @ConfigEditorBoolean
     public boolean displayLevel = false;
+
+    @Expose
+    @ConfigOption(name = "Use Unverified Chests", desc = "Gets all chests from the server no matter the quantity of submissions")
+    @ConfigEditorBoolean
+    public boolean unverifiedChests = false;
+
+    @Expose
+    @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations between all users with this setting on")
+    @ConfigEditorBoolean
+    public boolean syncChests = true;
 }

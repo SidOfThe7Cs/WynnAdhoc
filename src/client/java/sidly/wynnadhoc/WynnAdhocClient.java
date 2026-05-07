@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -27,6 +28,7 @@ import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.models.Character;
+import sidly.wynnadhoc.server.ChestCrowdsource;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.render.RenderUtils;
@@ -49,6 +51,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register(CommandRegistrationEvent::new);
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
         ScreenEvents.AFTER_INIT.register(ScreenOpenedEvent::new);
+        ClientPlayConnectionEvents.DISCONNECT.register(ChestCrowdsource::submitChests);
 
         Event.register(ClientTickEvent.class, Character.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
@@ -111,6 +114,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 /*TODO main list
 refactor chest saving to not just be there entir tooltip as json
+command to reload chests from server
 fix reroll and pull tracking
 dont rely on wynntills for chest type
 change chest item saving

@@ -15,6 +15,7 @@ import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.LootrunCore.getCurrentLootrunData
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions
+import sidly.wynnadhoc.server.ChestCrowdsource
 import sidly.wynnadhoc.utils.Debug
 import sidly.wynnadhoc.utils.LocationUtils
 import sidly.wynnadhoc.utils.datatypes.LevelRange
@@ -114,6 +115,7 @@ object ChestTracker {
 
             if (block is ChestBlockEntity) {
                 if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
+                    ChestCrowdsource.newChests.add(LootChest(blockPos.x, blockPos.y, blockPos.z, tier))
                     ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier)
                 }
             }

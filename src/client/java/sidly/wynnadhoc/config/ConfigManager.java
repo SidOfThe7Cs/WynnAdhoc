@@ -19,13 +19,17 @@ import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.config.saves.ChestsSaveData;
 import sidly.wynnadhoc.config.saves.Config;
 import sidly.wynnadhoc.config.saves.LootrunSaveData;
+import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
+import sidly.wynnadhoc.server.ChestCrowdsource;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
@@ -102,6 +106,12 @@ public class ConfigManager {
         return chests.chests;
     }
 
+    public static void loadChestsFromServer() {
+        if (!INSTANCE.config.chest.syncChests) return;
+        CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests(!INSTANCE.config.chest.unverifiedChests);
+        downloadedChests.whenComplete((l, ex) ->
+                l.forEach(e -> INSTANCE.chests.chests.put(new BlockPos(e.x(), e.y(), e.z()), new ChestsSaveData.ChestData(e.tier()))));
+    }
 
     public Screen getConfigScreen(Screen parent) {
 
@@ -154,6 +164,8 @@ public class ConfigManager {
             WynnAdhocClient.LOGGER.error("Config file could not be loaded");
             this.config = new Config();
         }
+
+        loadChestsFromServer();
     }
 
     public void save() {
