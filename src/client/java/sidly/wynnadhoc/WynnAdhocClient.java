@@ -14,6 +14,7 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.features.HealthRegenTick;
+import sidly.wynnadhoc.features.SpellMacros;
 import sidly.wynnadhoc.features.WindPrison;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
@@ -30,7 +31,6 @@ import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
-import sidly.wynnadhoc.utils.build_making.Tester;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 import sidly.wynnadhoc.utils.resource_pack.FontData;
 import sidly.wynnadhoc.wapi.ApiUtils;
@@ -60,6 +60,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
+        Event.register(ClientTickEvent.class, SpellMacros::onTick);
 
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
         Event.register(ChatMessageEvent.class, LootrunCore.INSTANCE::onChatMessage);
@@ -95,6 +96,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
+        Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
@@ -110,8 +112,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         new PreInitEvent();
         new InitEvent();
         ApiUtils.getItemDatabase();
-
-        Tester.main();
     }
 }
 

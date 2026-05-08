@@ -74,7 +74,32 @@ public class FontUtils {
                     Vector2i pos = codePointInfo.getRight();
                     String posStr = pos == null ? "(?)" : pos.toString(NumberFormat.getCompactNumberInstance());
                     FontData cached = FontData.get(identifier, pos);
-                    String s = cached == null ? "(" + identifier + "<at" + posStr + ">)" : cached.getDisplayName();
+                    String s = "";
+                    if (cached == null) {
+                        if (identifier.getPath().startsWith("textures/font/hud/gameplay/default")) {
+                            String[] parts = identifier.getPath().split("/");
+
+                            if (parts.length >= 2) {
+                                String fileName = parts[parts.length - 1];
+                                String dirName = parts[parts.length - 2];
+
+                                // Remove extension from filename
+                                int dotIndex = fileName.lastIndexOf('.');
+                                String nameWithoutExt = dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
+
+                                // Take first letter of each word in directory name (handling underscores)
+                                String[] dirWords = dirName.split("_");
+                                StringBuilder abbr = new StringBuilder();
+                                for (String word : dirWords) {
+                                    if (!word.isEmpty()) {
+                                        abbr.append(word.charAt(0));
+                                    }
+                                }
+
+                                s = abbr + "_" + nameWithoutExt;
+                            } else s = "(" + identifier + "<at" + posStr + ">)";
+                        } else s = "(" + identifier + "<at" + posStr + ">)";
+                    } else s = cached.getDisplayName();
                     builder.append(s);
                 }
             }
