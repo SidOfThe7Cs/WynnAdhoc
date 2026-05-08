@@ -14,6 +14,7 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.features.HealthRegenTick;
+import sidly.wynnadhoc.features.SpellMacros;
 import sidly.wynnadhoc.features.WindPrison;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
@@ -55,6 +56,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
+        Event.register(ClientTickEvent.class, SpellMacros::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
@@ -89,6 +91,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
+        Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
