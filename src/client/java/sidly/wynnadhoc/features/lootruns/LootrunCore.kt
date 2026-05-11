@@ -33,7 +33,7 @@ object LootrunCore {
 
     fun getCurrentLootrunData(): LootrunData? {
         try {
-            val uuid = Character.uuid
+            val uuid = Character.uuid()
             if (uuid.isEmpty()) return null
             return ConfigManager.INSTANCE.getLootrun(uuid)
         } catch (_: Exception) {
@@ -450,7 +450,7 @@ object LootrunCore {
         ScoreboardInfo.clearLootrunData() // this is data that is cleared every frame anyway
         data.currentMissionsActive.clear()
         data.activeCamp.camp.justCompleted()
-        ConfigManager.INSTANCE.resetLootrun(Character.uuid)
+        ConfigManager.INSTANCE.resetLootrun(Character.uuid())
 
         mobHealthIncrease = 0
         mobSpeedIncrease = 0

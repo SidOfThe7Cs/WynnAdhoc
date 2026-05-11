@@ -29,7 +29,7 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
         }
 
         public void onOpen() {
-            String uuid = Character.INSTANCE.getUuid();
+            String uuid = Character.INSTANCE.uuid();
             if (uuid.isEmpty()) {
                 WynnAdhocClient.LOGGER.warn("opened a chest while uuid is null last opened not saved");
                 return;
@@ -38,7 +38,7 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
         }
 
         public Color getColor(Long now) {
-            String uuid = Character.INSTANCE.getUuid();
+            String uuid = Character.INSTANCE.uuid();
             if (uuid.isEmpty()) {
                 WynnAdhocClient.LOGGER.warn("failed to get chest color, uuid is null");
                 return Color.RED;
