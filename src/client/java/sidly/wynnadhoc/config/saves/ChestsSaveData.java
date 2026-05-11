@@ -1,9 +1,9 @@
 package sidly.wynnadhoc.config.saves;
 
-import com.wynntils.core.components.Models;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.models.Character;
 
 import java.awt.*;
 import java.io.File;
@@ -29,7 +29,7 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
         }
 
         public void onOpen() {
-            String uuid = Models.Character.getId();
+            String uuid = Character.INSTANCE.uuid();
             if (uuid.isEmpty()) {
                 WynnAdhocClient.LOGGER.warn("opened a chest while uuid is null last opened not saved");
                 return;
@@ -38,7 +38,7 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
         }
 
         public Color getColor(Long now) {
-            String uuid = Models.Character.getId();
+            String uuid = Character.INSTANCE.uuid();
             if (uuid.isEmpty()) {
                 WynnAdhocClient.LOGGER.warn("failed to get chest color, uuid is null");
                 return Color.RED;
