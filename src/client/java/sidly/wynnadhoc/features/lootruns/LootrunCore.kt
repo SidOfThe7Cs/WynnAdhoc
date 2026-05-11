@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns
 
+import com.wynntils.core.components.Models
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
@@ -17,7 +18,6 @@ import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.LootrunConfig
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
-import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
 import java.time.Duration
@@ -33,7 +33,7 @@ object LootrunCore {
 
     fun getCurrentLootrunData(): LootrunData? {
         try {
-            val uuid = Character.uuid
+            val uuid = Models.Character.id
             if (uuid.isEmpty()) return null
             return ConfigManager.INSTANCE.getLootrun(uuid)
         } catch (_: Exception) {
@@ -450,7 +450,7 @@ object LootrunCore {
         ScoreboardInfo.clearLootrunData() // this is data that is cleared every frame anyway
         data.currentMissionsActive.clear()
         data.activeCamp.camp.justCompleted()
-        ConfigManager.INSTANCE.resetLootrun(Character.uuid)
+        ConfigManager.INSTANCE.resetLootrun(Models.Character.id)
 
         mobHealthIncrease = 0
         mobSpeedIncrease = 0
