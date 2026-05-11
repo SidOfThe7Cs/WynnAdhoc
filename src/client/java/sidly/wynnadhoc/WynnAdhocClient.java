@@ -29,7 +29,6 @@ import sidly.wynnadhoc.features.raids.NOL;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
-import sidly.wynnadhoc.models.Character;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.auto.MouseLerper;
@@ -54,7 +53,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
         ScreenEvents.AFTER_INIT.register(ScreenOpenedEvent::new);
 
-        Event.register(ClientTickEvent.class, Character.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
         Event.register(ClientTickEvent.class, LootrunCore.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
@@ -103,7 +101,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
-        Event.register(WorldChangeEvent.class, Character.INSTANCE::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(TextDisplaySyncEvent.class, ProfNodeCore::onTextDisplaySync);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
