@@ -1,5 +1,6 @@
 package sidly.wynnadhoc;
 
+import com.wynntils.models.spells.event.SpellEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
@@ -85,6 +86,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
         Event.register(PreInitEvent.class, GuildLogs.INSTANCE::registerHudElements);
+        Event.register(PreInitEvent.class, SpellMacros::register);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
         Event.register(InitEvent.class, FontData::init);
@@ -105,6 +107,10 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
+
+        NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
+        NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onComplete);
+        NeoEvent.register(SpellEvent.Failed.class, SpellMacros::onFail);
 
         LootrunLogger.load();
         ConfigManager.INSTANCE.load();
