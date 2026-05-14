@@ -1,5 +1,7 @@
 package sidly.wynnadhoc;
 
+import com.wynntils.mc.event.ChangeCarriedItemEvent;
+import com.wynntils.mc.event.SetSlotEvent;
 import com.wynntils.models.spells.event.SpellEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -98,9 +100,11 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
+        Event.register(MouseButtonEvent.class, SpellMacros::onMouseButton);
         Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
+        Event.register(WorldChangeEvent.class, SpellMacros::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(TextDisplaySyncEvent.class, ProfNodeCore::onTextDisplaySync);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
@@ -109,8 +113,10 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
-        NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onComplete);
+        NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);
         NeoEvent.register(SpellEvent.Failed.class, SpellMacros::onFail);
+        NeoEvent.register(ChangeCarriedItemEvent.class, SpellMacros::onItemSwap);
+        NeoEvent.register(SetSlotEvent.Post.class, SpellMacros::onSetSlotEvent);
 
         LootrunLogger.load();
         ConfigManager.INSTANCE.load();

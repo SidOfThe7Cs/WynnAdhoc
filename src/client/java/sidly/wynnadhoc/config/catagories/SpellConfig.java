@@ -6,12 +6,18 @@ import com.wynntils.models.spells.type.SpellType;
 import io.github.notenoughupdates.moulconfig.annotations.*;
 import org.lwjgl.glfw.GLFW;
 import sidly.wynnadhoc.config.gui.HudElementData;
+import sidly.wynnadhoc.features.SpellMacros;
 
 import java.util.List;
 
 import static com.wynntils.models.spells.type.SpellType.*;
 
 public class SpellConfig {
+
+    @Expose
+    @ConfigOption(name = "Reroute Main Attacks", desc = "treats main attacks as a spell also diables wynntils auto attack\nthis should be on if using the spellcaster at all")
+    @ConfigEditorBoolean
+    public boolean reRouteMainAttacks = false;
 
     @Expose
     @ConfigOption(name = "Cast First Spell", desc = "Arrow Storm, Totem, Bash, Spin Attack, Heal")
@@ -67,4 +73,10 @@ public class SpellConfig {
             SPIN_ATTACK,
             HEAL
     );
+
+    @Expose
+    @ConfigOption(name = "Clear Queue", desc = "clears the current spell queue (in case something goes wrong)")
+    @ConfigEditorButton(buttonText = "Clear Queue")
+    public Runnable clearQueueButton = SpellMacros::clearQueue;
+
 }

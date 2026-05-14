@@ -3,6 +3,7 @@
   "package": "sidly.wynnadhoc.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AutoAttackMixin",
     "BitmapFontMixin",
     "ChatMixin",
     "ClientPlayNetworkHandlerMixin",

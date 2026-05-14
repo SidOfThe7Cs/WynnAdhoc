@@ -74,6 +74,7 @@ public class Debug {
         MANUAL,
         WAR,
         TEMP,
+        SPELL,
         HUD;
 
         public String get(String message) {
