@@ -15,9 +15,9 @@ import static com.wynntils.models.spells.type.SpellType.*;
 public class SpellConfig {
 
     @Expose
-    @ConfigOption(name = "Reroute Main Attacks", desc = "treats main attacks as a spell also diables wynntils auto attack\nthis should be on if using the spellcaster at all")
+    @ConfigOption(name = "Toggle Spell Caster", desc = "main toggle for spellcaster\n(mainly for main attack shenanigans)")
     @ConfigEditorBoolean
-    public boolean reRouteMainAttacks = false;
+    public boolean toggleSpellcaster = false;
 
     @Expose
     @ConfigOption(name = "Cast First Spell", desc = "Arrow Storm, Totem, Bash, Spin Attack, Heal")
@@ -47,7 +47,7 @@ public class SpellConfig {
     @Expose
     @ConfigOption(name = "Queue Display", desc = "Display the spell queue as an overlay")
     @ConfigEditorBoolean
-    public boolean showQueueDisplay = true;
+    public boolean showQueueDisplay = false;
 
     @Expose
     public HudElementData spellQueueOverlay = new HudElementData(
@@ -58,9 +58,9 @@ public class SpellConfig {
     );
 
     @Expose
-    @ConfigOption(name = "Hold Cast Delay", desc = "amount of ticks to wait before spamming spell when holding a key")
-    @ConfigEditorSlider(minValue = 0.0F, maxValue = 20.0F, minStep = 1.0F)
-    public int holdToCastDelay = 10;
+    @ConfigOption(name = "Min Timeout", desc = "time in milliseconds to retry if nothing was detected\nNote: setting this to low will break everything while setting it to high will only cause delays when holding main attack")
+    @ConfigEditorSlider(minValue = 0.0F, maxValue = 1500.0F, minStep = 5.0F)
+    public int minTimeout = 500;
 
     @Expose
     @ConfigOption(name = "Miss-cast Priority", desc = "what spell should be cast if a spell cast is impossible")

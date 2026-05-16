@@ -11,6 +11,6 @@ import sidly.wynnadhoc.config.ConfigManager;
 public class AutoAttackMixin {
     @Inject(method = "isMeleeReady", at = @At("HEAD"), cancellable = true)
     private static void isMeleeReady(CallbackInfoReturnable<Boolean> cir) {
-        if (ConfigManager.INSTANCE.config.spell.reRouteMainAttacks) cir.setReturnValue(false);
+        if (ConfigManager.INSTANCE.config.spell.toggleSpellcaster) cir.setReturnValue(false);
     }
 }

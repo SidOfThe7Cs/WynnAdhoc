@@ -23,16 +23,12 @@ import sidly.wynnadhoc.event.MouseButtonEvent;
 import sidly.wynnadhoc.event.WorldChangeEvent;
 import sidly.wynnadhoc.utils.Debug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO
-//  it miscasts alot when holding down
-//  fix double left click and add hold left click
-//  fix archer misscast i think?
+//  dont use vanilla keybinds for main attack (ahhhhhhh)
+//  fix archer
 public class SpellMacros {
     private static SpellConfig config() {
         return ConfigManager.INSTANCE.config.spell;
@@ -42,6 +38,7 @@ public class SpellMacros {
     private static Long lastUpdate = 0L;
     private static boolean isUpdating = false;
     private static SpellDirection[] lastPartial = null;
+    private static final Queue<Runnable> clickQueue = new LinkedList<>();
 
     private static final boolean DEBUG = true;
 
@@ -54,6 +51,7 @@ public class SpellMacros {
     }
 
     private static String updateSpellQueueOverlay() {
+        if (!config().toggleSpellcaster) return "";
         return queue.stream().map(e -> {
             SpellType type = e.getSpellType();
             return type == null ? "Main Attack" : type.getName();
@@ -65,13 +63,13 @@ public class SpellMacros {
     }
 
     private static void checkHeldKeys() {
+        if (!config().toggleSpellcaster) return;
         Window window = MinecraftClient.getInstance().getWindow();
 
         if (InputUtil.isKeyPressed(window, config().firstSpellCast)) {
             if (queue.size() < config().maxQueueSize) {
                 if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding first spell from held");
                 queue.add(SpellCast.FIRST);
-                start();
             }
         }
 
@@ -79,7 +77,6 @@ public class SpellMacros {
             if (queue.size() < config().maxQueueSize) {
                 if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding second spell from held");
                 queue.add(SpellCast.SECOND);
-                start();
             }
         }
 
@@ -87,7 +84,6 @@ public class SpellMacros {
             if (queue.size() < config().maxQueueSize) {
                 if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding third spell from held");
                 queue.add(SpellCast.THIRD);
-                start();
             }
         }
 
@@ -95,36 +91,60 @@ public class SpellMacros {
             if (queue.size() < config().maxQueueSize) {
                 if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding fourth spell from held");
                 queue.add(SpellCast.FOURTH);
-                start();
             }
         }
 
-        if (MinecraftClient.getInstance().options.attackKey.isPressed() && config().reRouteMainAttacks) {
+        checkMainAttack();
+    }
+
+    public static void checkMainAttack() {
+        if (!config().toggleSpellcaster) return;
+        if (MinecraftClient.getInstance().options.attackKey.isPressed() && config().toggleSpellcaster) {
             if (queue.size() < config().maxQueueSize) {
                 if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding main attack from held");
                 queue.add(SpellCast.MAIN);
-                start();
             }
         }
     }
 
     public static void onTick() {
-        // check for wynntils failing to recognize spell (like arcane transfer)
+        if (!config().toggleSpellcaster) {
+            if (!queue.isEmpty()) clearQueue();
+            return;
+        }
+
+        if (!clickQueue.isEmpty()) {
+            clickQueue.poll().run();
+            if (clickQueue.size() > 5)
+                WynnAdhocClient.LOGGER.warn("click queue has " + clickQueue.size() + " entries stack overflow possible");
+        }
+
+        // check for spells that dont show there name when cast (like arcane transfer)
         SpellDirection[] lastSpell = Models.Spell.getLastSpell();
         if (!Arrays.equals(lastSpell, lastPartial)) {
             onUpdate(lastSpell);
         }
         lastPartial = lastSpell;
 
+        if (queue.isEmpty()) {
+            checkMainAttack();
+            start();
+        }
+
         // backup
         Long now = System.currentTimeMillis();
-        if (now - lastUpdate > 1500) {
+        if (now - lastUpdate > config().minTimeout) {
+            if (DEBUG && !queue.isEmpty())
+                WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "timeout, restarting queue");
             isUpdating = false;
             start();
         }
+
+        config().spellQueueOverlay.updateDisplay();
     }
 
     public static void onUpdate(SpellDirection[] partial) {
+        if (!config().toggleSpellcaster) return;
         if (partial.length == 3) {
             if (DEBUG)
                 WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "calling complete from update as new partial is of len 3");
@@ -133,6 +153,7 @@ public class SpellMacros {
     }
 
     public static void onPartial(SpellEvent.Partial event) {
+        if (!config().toggleSpellcaster) return;
         if (queue.isEmpty()) return;
         isUpdating = true;
         SpellDirection[] current = event.getSpellDirectionArray();
@@ -141,22 +162,26 @@ public class SpellMacros {
     }
 
     public static void onCastEvent(SpellEvent.Cast event) {
+        if (!config().toggleSpellcaster) return;
         onComplete(event.getSpellType());
     }
 
     public static void onComplete(SpellType type) {
+        if (!config().toggleSpellcaster) return;
         if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "onComplete: " + type);
+        isUpdating = false;
+        lastPartial = new SpellDirection[0];
         if (queue.isEmpty()) return;
         SpellType target = queue.getFirst().getSpellType();
         if (type != null && target != null && type.getSpellNumber() == target.getSpellNumber()) {
             queue.removeFirst();
         }
-        isUpdating = false;
         if (queue.isEmpty()) checkHeldKeys();
         start();
     }
 
     public static void onFail(SpellEvent.Failed event) {
+        if (!config().toggleSpellcaster) return;
         if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "onFail");
         if (queue.isEmpty()) return;
         if (event.getFailureReason() == SpellFailureReason.NOT_UNLOCKED) {
@@ -182,6 +207,7 @@ public class SpellMacros {
     }
 
     public static void onKeyPressed(KeyboardEvent event) {
+        if (!config().toggleSpellcaster) return;
         if (event.action != 1 || queue.size() >= config().maxQueueSize) return;
         if (event.key == config().firstSpellCast) {
             if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding first spell from click");
@@ -203,12 +229,13 @@ public class SpellMacros {
     }
 
     public static void onMouseButton(MouseButtonEvent event) {
-        if (!config().reRouteMainAttacks) return;
+        if (!config().toggleSpellcaster) return;
         if (isUpdating) event.canceled = true;
         if (event.isLeftClick() && event.isPress() &&
                 MinecraftClient.getInstance().currentScreen == null &&
                 MinecraftClient.getInstance().player.getInventory().getSelectedStack() != null &&
-                queue.size() < config().maxQueueSize
+                queue.size() < config().maxQueueSize &&
+                lastPartial.length == 0
         ) {
             if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "adding main attack from click");
             queue.add(SpellCast.MAIN);
@@ -217,27 +244,40 @@ public class SpellMacros {
     }
 
     public static void click(SpellDirection dir) {
+        if (!config().toggleSpellcaster) return;
         MinecraftClient client = MinecraftClient.getInstance();
-        if (dir == null || client == null || client.world == null || client.currentScreen != null) return;
+        if (dir == null || client == null || client.world == null || client.currentScreen != null)
+            return;
         if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "clicking: " + dir);
+
         lastUpdate = System.currentTimeMillis();
-        if (dir == SpellDirection.RIGHT) MouseUtils.sendRightClickInput();
-        else MouseUtils.sendLeftClickInput();
+
+        if (dir == SpellDirection.RIGHT)
+            clickQueue.add(MouseUtils::sendRightClickInput);
+        else clickQueue.add(MouseUtils::sendLeftClickInput);
     }
 
     public static void start() {
-        config().spellQueueOverlay.updateDisplay();
+        if (!config().toggleSpellcaster) return;
         if (isUpdating || queue.isEmpty()) return;
-        click(queue.getFirst().getNext(new SpellDirection[0]));
         if (queue.getFirst() == SpellCast.MAIN) {
-            // handle main attack removal and just assume it worked since main attacks dont have spell cast overlay
-            queue.removeFirst();
+            if (DEBUG)
+                WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "onStart next = main last partial: " + Arrays.toString(lastPartial));
+            if (lastPartial.length == 0 || lastPartial.length == 3) {
+                // handle main attack removal and just assume it worked since main attacks dont have spell cast overlay
+                if (DEBUG) WynnAdhocClient.LOGGER.info(Debug.Type.SPELL, "onStart removing main attack from queue");
+                click(queue.getFirst().getNext(new SpellDirection[0]));
+                queue.removeFirst();
+            }
+        } else {
+            click(queue.getFirst().getNext(new SpellDirection[0]));
+            isUpdating = true;
         }
     }
 
     public static void clearQueue() {
         queue.clear();
-        config().spellQueueOverlay.updateDisplay();
+        clickQueue.clear();
         isUpdating = false;
     }
 
