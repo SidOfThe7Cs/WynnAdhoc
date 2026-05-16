@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 // TODO
 //  dont use vanilla keybinds for main attack (ahhhhhhh)
+//  add weapon cooldown
 //  fix archer
 public class SpellMacros {
     private static SpellConfig config() {

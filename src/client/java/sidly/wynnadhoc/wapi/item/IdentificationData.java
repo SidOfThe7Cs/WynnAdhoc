@@ -41,8 +41,4 @@ public record IdentificationData(int min, int raw, int max) {
     public float getPercent(int p) {
         return min + ((max - min) * (p / 100f));
     }
-
-    public int getAverage() {
-        return ((max - min) / 2) + min;
-    }
 }
