@@ -1,5 +1,8 @@
 package sidly.wynnadhoc;
 
+import com.wynntils.mc.event.ChangeCarriedItemEvent;
+import com.wynntils.mc.event.SetSlotEvent;
+import com.wynntils.models.spells.event.SpellEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
@@ -14,16 +17,19 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.features.HealthRegenTick;
+import sidly.wynnadhoc.features.SpellMacros;
 import sidly.wynnadhoc.features.WindPrison;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
+import sidly.wynnadhoc.features.item_tooltip.ItemTooltip;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
+import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.raids.NOL;
 import sidly.wynnadhoc.features.war.DB;
@@ -33,6 +39,7 @@ import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.auto.MouseLerper;
 import sidly.wynnadhoc.utils.render.RenderUtils;
+import sidly.wynnadhoc.wapi.ApiUtils;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -61,6 +68,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
         Event.register(ClientTickEvent.class, MouseLerper::tick);
+        Event.register(ClientTickEvent.class, SpellMacros::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
@@ -91,6 +99,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
         Event.register(PreInitEvent.class, GuildLogs.INSTANCE::registerHudElements);
+        Event.register(PreInitEvent.class, SpellMacros::register);
 
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
@@ -99,19 +108,30 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
+        Event.register(MouseButtonEvent.class, SpellMacros::onMouseButton);
+        Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
+        Event.register(WorldChangeEvent.class, SpellMacros::onWorldChange);
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(TextDisplaySyncEvent.class, ProfNodeCore::onTextDisplaySync);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
+        Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
+
+        NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
+        NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);
+        NeoEvent.register(SpellEvent.Failed.class, SpellMacros::onFail);
+        NeoEvent.register(ChangeCarriedItemEvent.class, SpellMacros::onItemSwap);
+        NeoEvent.register(SetSlotEvent.Post.class, SpellMacros::onSetSlotEvent);
 
         LootrunLogger.load();
         ConfigManager.INSTANCE.load();
 
         new PreInitEvent();
         new InitEvent();
+        ApiUtils.getItemDatabase();
     }
 }
 

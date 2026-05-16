@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFW;
 public class MouseButtonEvent extends Event<MouseButtonEvent> {
     public MouseInput input;
     public int action;
+    public boolean canceled = false;
 
     public MouseButtonEvent(MouseInput input, int action) {
         this.input = input;
