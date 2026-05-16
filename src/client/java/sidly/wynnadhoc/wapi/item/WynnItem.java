@@ -3,8 +3,6 @@ package sidly.wynnadhoc.wapi.item;
 import org.jspecify.annotations.NonNull;
 import sidly.wynnadhoc.wapi.item.enums.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +37,6 @@ public record WynnItem(
         int powderSlots,
         List<String> sets
 ) {
-    public WynnItem { // used by gson
-        if (elements == null) elements = new ArrayList<>();
-        if (identifications == null) identifications = new HashMap<>();
-        if (base == null) base = new HashMap<>();
-        if (droppedBy == null) droppedBy = new ArrayList<>();
-        if (majorIds == null) majorIds = new HashMap<>();
-        if (sets == null) sets = new ArrayList<>();
-    }
-
     @Override
     public @NonNull String toString() {
         return "WynnItem {\n" +
