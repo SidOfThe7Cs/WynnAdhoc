@@ -5,7 +5,6 @@
   "client": [
     "ChatMixin",
     "ClientPlayNetworkHandlerMixin",
-    "DrawContextMixin",
     "FunctionManagerMixin",
     "HudMixin",
     "KeyboardMixin",

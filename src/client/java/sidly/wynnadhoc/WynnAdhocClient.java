@@ -21,13 +21,11 @@ import sidly.wynnadhoc.features.SpellMacros;
 import sidly.wynnadhoc.features.WindPrison;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
-import sidly.wynnadhoc.features.item_tooltip.ItemTooltip;
 import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
-import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
@@ -35,7 +33,6 @@ import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.render.RenderUtils;
-import sidly.wynnadhoc.wapi.ApiUtils;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -108,7 +105,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
-        Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);
@@ -121,7 +117,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         new PreInitEvent();
         new InitEvent();
-        ApiUtils.getItemDatabase();
     }
 }
 
