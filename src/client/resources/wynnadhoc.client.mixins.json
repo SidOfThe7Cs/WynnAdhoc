@@ -13,7 +13,6 @@
     "ScreenMixin",
     "SlotClickedMixin",
     "StatusEffectMixin",
-    "VanillaChatMixin",
     "WynntillsModMixin",
     "WynntilsScreenMixin",
     "accessors.GuildLogScreenAccessor",
