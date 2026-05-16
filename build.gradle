@@ -27,7 +27,6 @@ repositories {
 
 loom {
     splitEnvironmentSourceSets()
-    accessWidenerPath = file("src/main/resources/assets/wynnadhoc/hoc.accesswidener")
 
     mods {
         "wynnadhoc" {
