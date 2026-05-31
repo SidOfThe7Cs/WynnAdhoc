@@ -32,14 +32,12 @@ import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.raids.NOL;
-import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.auto.MouseLerper;
 import sidly.wynnadhoc.utils.render.RenderUtils;
-import sidly.wynnadhoc.wapi.ApiUtils;
 
 public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
@@ -131,7 +129,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         new PreInitEvent();
         new InitEvent();
-        ApiUtils.getItemDatabase();
+        //ApiUtils.getItemDatabase();
     }
 }
 
