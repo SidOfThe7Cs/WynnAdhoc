@@ -77,6 +77,6 @@ public class SpellConfig {
     @Expose
     @ConfigOption(name = "Clear Queue", desc = "clears the current spell queue (in case something goes wrong)")
     @ConfigEditorButton(buttonText = "Clear Queue")
-    public Runnable clearQueueButton = SpellMacros::clearQueue;
+    public transient Runnable clearQueueButton = SpellMacros::clearQueue;
 
 }
