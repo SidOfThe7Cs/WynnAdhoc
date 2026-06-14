@@ -21,6 +21,7 @@ public class LootrunData {
     private final Map<Camps, Camp> campData;
     private final long lastCompleted; // actually time since object creation, but we create a new object as soon as we finish a lr (only used for fixing a delay in scoreboard changes)
     private int pullsSinceLastYellow = 0;
+    private int cursesSinceLastBoon;
     private final String uuid;
 
     public String getUuid() {
@@ -33,6 +34,19 @@ public class LootrunData {
 
     public void addPullsSinceLastYellow(int value) {
         pullsSinceLastYellow += value;
+    }
+
+    // TODO actually track correctly
+    public int getCursesSinceLastBoon() {
+        return cursesSinceLastBoon;
+    }
+
+    public void addCursesSinceLastBoon(int curses) {
+        cursesSinceLastBoon += curses;
+    }
+
+    public void resetCursesSinceLastBoon() {
+        cursesSinceLastBoon = 0;
     }
 
     public void resetPullsSinceLastYellow() {

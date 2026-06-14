@@ -214,7 +214,10 @@ object LootrunCore {
 
     fun onChallengeCompleted(color: BeaconColor?) {
         val data = getCurrentLootrunData() ?: return
-        if (color == null) WynnAdhocClient.LOGGER.warn("completed null beacon color: $color")
+        if (color == null) {
+            WynnAdhocClient.LOGGER.warn("completed null beacon color: $color")
+            return
+        }
 
         // check the available beacon options to see if its vibrant or not
         var vibrant = false
@@ -233,38 +236,9 @@ object LootrunCore {
 
         data.beaconCounts.decreaseRemaining()
         data.beaconCounts.incrementCount(color)
-        when (color) {
-            BeaconColor.Yellow -> data.resetPullsSinceLastYellow()
-            BeaconColor.Purple -> {
-                val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
-                        && ScoreboardInfo.missionInProgress != "Porphyrophobia")
-                val pulls = getBeaconMultiplier(1, vibrant)
-                data.endStats.addEndPulls(if (phobia) pulls * 2 else pulls)
-            }
 
-            BeaconColor.Aqua -> if (vibrant) {
-                data.aquaStatus = AquaStatus.Vibrant
-            } else data.aquaStatus = AquaStatus.Active
-
-            BeaconColor.Orange -> data.beaconCounts
-                .addRemaining(BeaconColor.Orange, getBeaconMultiplier(5, vibrant))
-
-            BeaconColor.DarkGrey -> data.endStats.addEndPulls(getBeaconMultiplier(3, vibrant))
-            BeaconColor.Red -> {
-                var redToAdd = 3
-                if (vibrant) redToAdd = 5
-                if (data.aquaStatus == AquaStatus.Vibrant) redToAdd *= 3
-                else if (data.aquaStatus == AquaStatus.Active) redToAdd *= 2
-                data.beaconCounts.addRemaining(BeaconColor.Red, redToAdd)
-            }
-
-            BeaconColor.Rainbow -> {
-                val rainbowToAdd = getBeaconMultiplier(10, vibrant)
-                data.beaconCounts.addRemaining(BeaconColor.Rainbow, rainbowToAdd)
-            }
-
-            else -> {}
-        }
+        if (color == BeaconColor.Yellow) data.resetPullsSinceLastYellow()
+        applyBeaconEffect(color, data.aquaStatus, vibrant)
 
         if (color != BeaconColor.Aqua) data.aquaStatus = AquaStatus.Inactive
 
@@ -277,46 +251,48 @@ object LootrunCore {
         val message = "complete chaos gave " + beacon.displayName
         WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
         LootrunLogger.appendLine(message)
-        val data = getCurrentLootrunData() ?: return
 
         val vibrant = beacon.displayName.startsWith("Vibrant")
-        var multiplier = 1
-        if (vibrant) multiplier = 2
+        applyBeaconEffect(beacon.baseColor, AquaStatus.Inactive, vibrant)
+    }
 
-        val color = beacon.baseColor
+    private fun applyBeaconEffect(color: BeaconColor, aquaStatus: AquaStatus, vibrant: Boolean) {
+        val data = getCurrentLootrunData() ?: return
 
         when (color) {
+            BeaconColor.Blue -> {
+                data.resetCursesSinceLastBoon()
+            }
+
             BeaconColor.Purple -> {
                 val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
                         && ScoreboardInfo.missionInProgress != "Porphyrophobia")
-                data.endStats.addEndPulls(if (phobia) multiplier * 2 else multiplier)
+                val pulls = BeaconColor.Purple.getBeaconEffect(vibrant, aquaStatus)
+                data.addCursesSinceLastBoon(if (phobia) pulls * 2 else pulls)
+                data.endStats.addEndPulls(if (phobia) pulls * 2 else pulls)
             }
 
             BeaconColor.Aqua -> if (vibrant) {
                 data.aquaStatus = AquaStatus.Vibrant
             } else data.aquaStatus = AquaStatus.Active
 
-            BeaconColor.Orange -> data.beaconCounts.addRemaining(BeaconColor.Orange, 5 * multiplier)
-            BeaconColor.DarkGrey -> data.endStats.addEndPulls(3 * multiplier)
+            BeaconColor.Orange -> data.beaconCounts
+                .addRemaining(BeaconColor.Orange, BeaconColor.Orange.getBeaconEffect(vibrant, aquaStatus))
+
+            BeaconColor.DarkGrey -> data.endStats.addEndPulls(BeaconColor.DarkGrey.getBeaconEffect(vibrant, aquaStatus))
             BeaconColor.Red -> {
-                var redToAdd = 3
-                if (vibrant) redToAdd = 5
-                data.beaconCounts.addRemaining(BeaconColor.Red, redToAdd)
+                data.beaconCounts.addRemaining(BeaconColor.Red, BeaconColor.Red.getBeaconEffect(vibrant, aquaStatus))
             }
 
-            BeaconColor.Rainbow -> data.beaconCounts.addRemaining(BeaconColor.Rainbow, 10 * multiplier)
+            BeaconColor.Rainbow -> {
+                data.beaconCounts.addRemaining(
+                    BeaconColor.Rainbow,
+                    BeaconColor.Rainbow.getBeaconEffect(vibrant, aquaStatus)
+                )
+            }
+
             else -> {}
         }
-    }
-
-    private fun getBeaconMultiplier(baseValue: Int, vibrant: Boolean): Int {
-        var multiplier = 1
-        if (vibrant) multiplier *= 2
-        getCurrentLootrunData()?.let {
-            if (it.aquaStatus == AquaStatus.Vibrant) multiplier *= 3
-            else if (it.aquaStatus == AquaStatus.Active) multiplier *= 2
-        }
-        return baseValue * multiplier
     }
 
     fun onMissionCompleted(mission: String) {
@@ -327,6 +303,7 @@ object LootrunCore {
         when (mission) {
             "High Roller" -> {
                 data.endStats.addEndRerolls(1)
+                data.endStats.addEndPulls(10)
                 return
             }
 
