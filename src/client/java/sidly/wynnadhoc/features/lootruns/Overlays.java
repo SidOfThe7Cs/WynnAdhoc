@@ -129,6 +129,10 @@ public class Overlays {
                 sb.append(" ").append(data.getPullsSinceLastYellow()).append("/24");
             }
 
+            if (mission == MissionOptions.Equilibrium) {
+                sb.append(" ").append(data.getCursesSinceLastBoon() * 100).append("/600");
+            }
+
             sb.append('\n');
         }
         for (TrialOptions trial : data.getCurrentTrialsActive()) {
