@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns
 
+import com.wynntils.core.components.Models
 import com.wynntils.models.lootrun.type.TaskLocation
 import com.wynntils.models.marker.type.MarkerInfo
 import com.wynntils.models.marker.type.StaticLocationSupplier
@@ -160,7 +161,8 @@ object LootrunCore {
                                             var closestTask: TaskLocation? = null
                                             var closestDist = Double.MAX_VALUE
 
-                                            val taskLocations = WynntillsLootrunModelAccessor.getPossibleTaskLocations()
+                                            val lootrunModelAcc = Models.Lootrun as WynntillsLootrunModelAccessor
+                                            val taskLocations = lootrunModelAcc.getPossibleTaskLocations()
                                             taskLocations.forEach { taskLocation ->
                                                 val squaredDistanceTo =
                                                     taskLocation.location.toVec3().squaredDistanceTo(targetPos)
@@ -171,7 +173,9 @@ object LootrunCore {
                                             }
 
                                             closestTask?.let { loc ->
-                                                val taskMarkers = LootrunBeaconMarkerAccessor.getTaskMarkers()
+                                                val beaconMarkerAcc =
+                                                    lootrunModelAcc.lootruN_BEACON_COMPASS_PROVIDER as LootrunBeaconMarkerAccessor
+                                                val taskMarkers = beaconMarkerAcc.getTaskMarkers()
                                                 val newMarker = MarkerInfo(
                                                     "Obscured Beacon",
                                                     StaticLocationSupplier(loc.location),

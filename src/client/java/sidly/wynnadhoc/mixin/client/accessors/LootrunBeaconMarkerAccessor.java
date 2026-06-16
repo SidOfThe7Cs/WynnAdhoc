@@ -10,7 +10,5 @@ import java.util.List;
 @Mixin(value = LootrunBeaconMarkerProvider.class, remap = false)
 public interface LootrunBeaconMarkerAccessor {
     @Accessor(value = "taskMarkers", remap = false)
-    static List<MarkerInfo> getTaskMarkers() {
-        return null;
-    }
+    List<MarkerInfo> getTaskMarkers();
 }
