@@ -30,7 +30,11 @@ public abstract class HudElement {
         Pair<Double, Double> mousePos = GuiUtils.getScaledMousePos();
         if (mousePos == null) return;
         if (isVisible() && isHovering(mousePos.getLeft(), mousePos.getRight())) {
-            List<Text> tooltip = getHoverTooltip();
+            Vector2i elementPos = renderPos();
+            double relativeX = mousePos.getLeft() - elementPos.x();
+            double relativeY = mousePos.getRight() - elementPos.y();
+            List<Text> tooltip = getHoverTooltip(relativeX, relativeY);
+
             TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
             Vector2i pos = renderPos();
             for (int i = 0; i < tooltip.size(); i++) {
@@ -62,7 +66,7 @@ public abstract class HudElement {
     void onMouseReleased() {
     }
 
-    List<Text> getHoverTooltip() {
+    List<Text> getHoverTooltip(double relativeMouseX, double relativeMouseY) {
         return List.of();
     }
 
