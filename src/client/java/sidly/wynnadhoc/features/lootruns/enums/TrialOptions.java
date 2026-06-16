@@ -1,51 +1,68 @@
 package sidly.wynnadhoc.features.lootruns.enums;
 
-// TODO descriptions i aint using them rn so
 public enum TrialOptions {
+    Imperitia("Imperitia",
+            "Gain 35 pulls",
+            "Spell costs increase by +5 mana every challenge completed",
+            "+2 sacrifices"),
     AdrenalineJunkie("Adrenaline Junkie",
-            "Until you gain 25 Pulls, lose 1 Boon every 30s during interludes.",
-            "Gain +2 End Reward Rerolls."),
+            "Gain 25 pulls",
+            "Lose 1 Boon every 25s during interludes",
+            "+2 rerolls"),
     DyingLight("Dying Light",
-            "Until you gain +1000% total Boon Potency, your boons will drain by -2% Potency per second, one by one",
-            "Rainbow beacons will now grant +1 End Reward Sacrifice. "),
+            "Gain 800% boon potency",
+            "Your boons lose 5% Potency every 2.5s, one by one",
+            "Rainbow beacons now grant +1 sacrifice"),
     Monochromokopia("Monochromokopia",
-            "Until you gain +1000% total Boon Potency, your boons will drain by -2% Potency per second, one by one",
-            "Rainbow beacons will now grant +1 End Reward Sacrifice. "),
+            "Gain 30 pulls",
+            "Beacons completed will become obscured for 7 challenges",
+            "Add an additional White, Gray and Dark Gray beacon to your pool"),
     Chronotrigger("Chronotrigger",
-            "Until you gain +1000% total Boon Potency, your boons will drain by -2% Potency per second, one by one",
-            "Rainbow beacons will now grant +1 End Reward Sacrifice. "),
+            "Complete 12 challenges",
+            "You cannot gain time in any way",
+            "Green beacons cleanse 7.5% of your curses to boost your pulls by 1%, max 5% (rounds up)"),
     AllIn("All In",
-            "For the next 10 challenges, Curse effects are doubled.",
-            "At the end of your run, convert each End Reward Sacrifice you have into +3 End Reward Rerolls."),
+            "Complete 10 challenges",
+            "Curse effects are doubled",
+            "Convert each sacrifice into 3 rerolls"),
     GamblingBeast("Gambling Beast",
-            "After finishing a Challenge, consume 300s (+60s per Challenge) from your timer.",
-            "At the end of your run, gain +1 End Reward Reroll for each activation."),
+            "Dont run out of time",
+            "Lose 300 + 90(n-1) seconds every n challenge completed",
+            "+1 reroll every challenge completed"),
     Hubris("Hubris",
-            "For the next 10 challenges, dying will end your Lootrun.",
-            "Gain +1 End Reward Reroll and +1 End Reward Sacrifice."),
+            "Complete 10 challenges",
+            "Dying ends your lootrun",
+            "+1 reroll, +1 sacrifice"),
     LightsOut("Lights Out",
-            "Rainbow and Vibrant beacons will no longer be offered.",
-            "Each challenge will reward +2 End Reward Pulls."),
+            "Defeat 25 radiant challenge mobs",
+            "Receive 2 Radiant chance curses every challenge",
+            "Cleanse all Radiant curses to gain +4 Pulls per"),
     SideHustle("Side Hustle",
-            "Until you open 25 chests, your Timer is limited to 1 minute, but dying will not consume any time.",
-            "Gain +2 End Reward Rerolls."),
+            "Open 30 chests",
+            "Your timer is set to 75 seconds upon starting, completing, or failing a challenge",
+            "+2 rerolls"),
     TreasuryBill("Treasury Bill",
-            "Until you gain 20 Pulls, lose a Pull every 45s.",
-            "Boost your current End Reward Pulls by +70%."),
+            "Gain 20 end reward pulls",
+            "Lose a pull every 45s",
+            "Boosts current end reward pulls by 75%"),
     UltimateSacrifice("Ultimate Sacrifice",
-            "For the next 10 challenges, your Boons are disabled.",
-            "Gain +2 End Reward Sacrifices."),
+            "Complete 10 challenges",
+            "Your Boons are disabled",
+            "+2 sacrifices"),
     WarmthDevourer("Warmth Devourer",
-            "Until you gain 20 End Reward Pulls, consume 2 boons and 1 challenge after finishing a challenge.",
-            "Gain +1 End Reward Reroll and +1 End Reward Sacrifice.");
+            "Gain 20 end reward pulls",
+            "Lose 1 boon and one challenge every challenge completed",
+            "+1 reroll, +1 sacrifice");
 
     private final String displayName;
-    private final String trial;
+    private final String objective;
+    private final String penalty;
     private final String reward;
 
-    TrialOptions(String displayName, String trial, String reward) {
+    TrialOptions(String displayName, String objective, String penalty, String reward) {
         this.displayName = displayName;
-        this.trial = trial;
+        this.objective = objective;
+        this.penalty = penalty;
         this.reward = reward;
     }
 
@@ -53,11 +70,21 @@ public enum TrialOptions {
         return displayName;
     }
 
-    public String getTrial() {
-        return trial;
+    public String getObjective() {
+        return objective;
+    }
+
+    public String getPenalty() {
+        return penalty;
     }
 
     public String getReward() {
         return reward;
+    }
+
+    public String getDescription() {
+        return "Objective: " + getObjective() + "\n" +
+                "Penalty: " + getPenalty() + "\n" +
+                "Reward: " + getReward();
     }
 }

@@ -15,7 +15,8 @@ public enum BeaconColor {
     Grey("§7", 3, new BeaconEffect(3, 4, 5, 5)),
     Red("§c", new BeaconEffect(6, 9, 12, 15)),
     Rainbow("§d", new BeaconEffect(10, 20, 30, 40)),
-    Crimson("§4", 2, new BeaconEffect(2, 3, 4, 4));
+    Crimson("§4", 2, new BeaconEffect(2, 3, 4, 4)),
+    Obscured("§0", new BeaconEffect(-1, -1, -1, -1));
 
     private final int max;
     private final String colorCode;

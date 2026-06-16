@@ -24,8 +24,9 @@ public class WarCore {
                 ConfigManager.INSTANCE.config.war.resourceOverlay,
                 WarCore::shouldShowResourceOverlay,
                 WarCore::updateResourceDisplay,
-                WarCore::onWarResourceDisplayClick,
-                DB::getSuggestedChanges
+                DB::getSuggestedChanges,
+                false,
+                WarCore::onWarResourceDisplayClick
         ));
 
         HudElementManager.register(new TextHudElement(

@@ -1,5 +1,9 @@
 package sidly.wynnadhoc.features.lootruns
 
+import com.wynntils.models.lootrun.type.TaskLocation
+import com.wynntils.models.marker.type.MarkerInfo
+import com.wynntils.models.marker.type.StaticLocationSupplier
+import com.wynntils.utils.colors.CommonColors
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
@@ -17,6 +21,8 @@ import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.LootrunConfig
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
+import sidly.wynnadhoc.mixin.client.accessors.LootrunBeaconMarkerAccessor
+import sidly.wynnadhoc.mixin.client.accessors.WynntillsLootrunModelAccessor
 import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
@@ -130,6 +136,7 @@ object LootrunCore {
                                     0xff0000 -> baseColor = BeaconColor.Red
                                     0xf000 -> baseColor = BeaconColor.Rainbow
                                     0xf010 -> baseColor = BeaconColor.Crimson
+                                    0xf018 -> baseColor = BeaconColor.Obscured
                                     else -> {
                                         val hex = Integer.toHexString(color)
                                         if (!hex.equals("0")) WynnAdhocClient.LOGGER.warn("unrecognized beacon color: $hex distance: $distance")
@@ -139,6 +146,45 @@ object LootrunCore {
                                 //WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "$baseColor beacon found at $distance")
                                 if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
                                     currentBeaconOptionsFromWaypoints[baseColor] = distance
+                                }
+
+                                if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured) {
+                                    MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
+                                        val entityPos = event.entity.entityPos
+                                        val direction = entityPos.subtract(playerPos)
+                                        val len = direction.length()
+                                        if (len != 0.0) {
+                                            val normalised = direction.multiply(1.0 / len)
+                                            val targetPos = entityPos.add(normalised.multiply(distance.toDouble()))
+
+                                            var closestTask: TaskLocation? = null
+                                            var closestDist = Double.MAX_VALUE
+
+                                            val taskLocations = WynntillsLootrunModelAccessor.getPossibleTaskLocations()
+                                            taskLocations.forEach { taskLocation ->
+                                                val squaredDistanceTo =
+                                                    taskLocation.location.toVec3().squaredDistanceTo(targetPos)
+                                                if (squaredDistanceTo < closestDist) {
+                                                    closestDist = squaredDistanceTo
+                                                    closestTask = taskLocation
+                                                }
+                                            }
+
+                                            closestTask?.let { loc ->
+                                                val taskMarkers = LootrunBeaconMarkerAccessor.getTaskMarkers()
+                                                val newMarker = MarkerInfo(
+                                                    "Obscured Beacon",
+                                                    StaticLocationSupplier(loc.location),
+                                                    loc.taskType.texture,
+                                                    CommonColors.BLACK,
+                                                    CommonColors.WHITE,
+                                                    CommonColors.BLACK,
+                                                    ""
+                                                )
+                                                taskMarkers.add(newMarker)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -322,6 +368,7 @@ object LootrunCore {
         }
     }
 
+    // TODO why isnt this using the enum??
     fun onTrialCompleted(trial: String) {
         val message = "Trial completed: $trial"
         WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
@@ -343,18 +390,18 @@ object LootrunCore {
                 return
             }
 
-            "Side Hustle" -> {
+            "Side Hustle", "Adrenaline Junkie" -> {
                 data.endStats.addEndRerolls(2)
                 return
             }
 
             "Treasury Bill" -> {
                 data.endStats
-                    .addEndPulls((data.endStats.endPulls * 0.7).toInt())
+                    .addEndPulls((data.endStats.endPulls * 0.75).toInt())
                 return
             }
 
-            "Ultimate Sacrifice" -> {
+            "Ultimate Sacrifice", "Imperitia" -> {
                 data.endStats.addEndSacs(2)
                 return
             }

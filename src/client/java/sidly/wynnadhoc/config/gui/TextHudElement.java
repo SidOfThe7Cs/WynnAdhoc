@@ -20,16 +20,25 @@ public class TextHudElement extends HudElement {
     private transient final Supplier<String> updater;
     private transient final Runnable onClick;
     private transient final Supplier<List<Text>> tooltipSupplier;
+    private transient final boolean hoverPerLine;
 
     public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater) {
-        this(data, visibleCondition, updater, () -> {}, null);
+        this(data, visibleCondition, updater, null, false, () -> {
+        });
     }
-    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Runnable onClick,  Supplier<List<Text>> tooltipSupplier) {
+
+    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Supplier<List<Text>> tooltipSupplier, boolean perLine) {
+        this(data, visibleCondition, updater, tooltipSupplier, perLine, () -> {
+        });
+    }
+
+    public TextHudElement(HudElementData data, Supplier<Boolean> visibleCondition, Supplier<String> updater, Supplier<List<Text>> tooltipSupplier, boolean perLine, Runnable onClick) {
         super(data);
         this.visibleCondition = visibleCondition;
         this.updater = updater;
         this.onClick = onClick;
         this.tooltipSupplier = tooltipSupplier;
+        this.hoverPerLine = perLine;
     }
 
     // TODO have an anchor point in hudelement and use it for aligning left/right/center
@@ -71,11 +80,22 @@ public class TextHudElement extends HudElement {
         super.render(drawContext, override);
     }
 
+    private int getHoveredLineIndex(double relativeMouseY) {
+        String[] lines = text.split("\n");
+        float lineHeight = stringHeight / lines.length;
+        return (int) (relativeMouseY / lineHeight);
+    }
+
     @Override
-    public List<Text> getHoverTooltip() {
+    public List<Text> getHoverTooltip(double relativeMouseX, double relativeMouseY) {
         try {
-            if (tooltipSupplier == null) return super.getHoverTooltip();
-            return tooltipSupplier.get();
+            if (tooltipSupplier == null) return super.getHoverTooltip(relativeMouseX, relativeMouseY);
+            else if (!hoverPerLine) return tooltipSupplier.get();
+            else {
+                List<Text> fullTooltip = tooltipSupplier.get();
+                int index = getHoveredLineIndex(relativeMouseY);
+                return List.of(fullTooltip.get(index));
+            }
         } catch (Exception e) {
             return List.of(Text.literal("Failed to get tooltip"), Text.literal(e.getMessage()));
         }

@@ -13,10 +13,10 @@ public class LootrunConfig {
 
     @Expose
     public HudElementData beaconCountsOverlay = new HudElementData(
-        "Beacon Overlay",
-                0f,
-                0.5f,
-                1.0f
+            "Beacon Overlay",
+            0f,
+            0.5f,
+            1.0f
     );
 
     @Expose
@@ -44,4 +44,9 @@ public class LootrunConfig {
             0.2f,
             1.0f
     );
+
+    @Expose
+    @ConfigOption(name = "Force Obscured Beacon Location", desc = "adds obscured beacons to the wynntills task locations")
+    @ConfigEditorBoolean
+    public boolean obscuredBeaconLocations = false;
 }
