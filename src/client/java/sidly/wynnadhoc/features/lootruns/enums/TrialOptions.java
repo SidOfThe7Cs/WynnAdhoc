@@ -1,9 +1,5 @@
 package sidly.wynnadhoc.features.lootruns.enums;
 
-import net.minecraft.text.Text;
-
-import java.util.List;
-
 public enum TrialOptions {
     Imperitia("Imperitia",
             "Gain 35 pulls",
@@ -86,11 +82,9 @@ public enum TrialOptions {
         return reward;
     }
 
-    public List<Text> getDescription() {
-        return List.of(
-                Text.literal("Objective: " + getObjective()),
-                Text.literal("Penalty: " + getPenalty()),
-                Text.literal("Reward: " + getReward())
-        );
+    public String getDescription() {
+        return "Objective: " + getObjective() + "\n" +
+                "Penalty: " + getPenalty() + "\n" +
+                "Reward: " + getReward();
     }
 }

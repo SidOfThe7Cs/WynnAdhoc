@@ -10,6 +10,7 @@ import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
 import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
 import sidly.wynnadhoc.utils.FormatUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Overlays {
@@ -153,6 +154,13 @@ public class Overlays {
     }
 
     private static List<Text> missionOnHover() {
-
+        List<Text> result = new ArrayList<>();
+        for (MissionOptions mission : data.getCurrentMissionsActive()) {
+            result.add(Text.literal(mission.getDescription()));
+        }
+        for (TrialOptions trial : data.getCurrentTrialsActive()) {
+            result.add(Text.literal(trial.getDescription()));
+        }
+        return result;
     }
 }
