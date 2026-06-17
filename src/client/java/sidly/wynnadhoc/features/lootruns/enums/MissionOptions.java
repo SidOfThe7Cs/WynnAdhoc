@@ -27,7 +27,7 @@ public enum MissionOptions {
     BelezaPura("Beleza Pura", "If an Aqua Beacon is offered, all beacons offered alongside it will be boosted by that same Aqua."),
     HighSpirits("High Spirits ", "Gain +50% Vibrancy chance."),
     KnifeEdge("Knife Edge", "Add +1 Crimson Beacon to your beacon pool."),
-    KingsCourt("King’s Court", "Gain +50% Vibrancy chance."),
+    KingsCourt("King's Court", "Gain +50% Vibrancy chance."),
     CompleteChaos("Complete Chaos", "After finishing a Challenge, get an additional random Beacon reward. ");
 
     private final String displayName;
