@@ -19,9 +19,12 @@ public class LootrunConfig {
             1.0f
     );
 
+    /*
+    TODO broken
     @Expose
     @ConfigOption(name = "Show End Rewards Overlay", desc = "shows an overlay with your end rolls, sacs, pull, and effective pulls")
     @ConfigEditorBoolean
+     */
     public boolean showEndRewardsOverlay = false;
 
     @Expose
@@ -46,7 +49,7 @@ public class LootrunConfig {
     );
 
     @Expose
-    @ConfigOption(name = "Force Obscured Beacon Location", desc = "adds obscured beacons to the wynntills task locations")
+    @ConfigOption(name = "Obscured Beacon Location", desc = "adds obscured beacons to the wynntills task locations (really bad i would assume wynntills adds support soon itself)")
     @ConfigEditorBoolean
     public boolean obscuredBeaconLocations = false;
 }

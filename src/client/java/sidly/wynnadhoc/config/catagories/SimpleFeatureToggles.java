@@ -17,9 +17,12 @@ public class SimpleFeatureToggles {
         ALWAYS
     }
 
-    @Expose
-    @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")
-    @ConfigEditorBoolean
+    /*
+        @Expose
+        @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")
+        @ConfigEditorBoolean
+
+     */
     public boolean customProfNodes = false;
 
     @Expose

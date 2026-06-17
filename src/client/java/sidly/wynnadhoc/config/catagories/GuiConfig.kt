@@ -16,13 +16,16 @@ class GuiConfig {
 
     @Expose
     @JvmField
-    @ConfigOption(name = "Only Open When No Screen", desc = "Only open the gui editor when pressing the keybind if there is not another open screen")
+    @ConfigOption(
+        name = "Only Open When No Screen",
+        desc = "Only open the gui editor when pressing the keybind if there is not another open screen"
+    )
     @ConfigEditorBoolean
     var reqNoScreen = true
 
     @Expose
     @JvmField
-    @ConfigOption(name = "Default Line Width", desc = "<-")
+    @ConfigOption(name = "Default Line Width", desc = "Default width for lines rendered in the 3d world")
     @ConfigEditorSlider(minValue = 0.1F, maxValue = 4.0F, minStep = 0.1F)
     var defaultLineWidth: Double = 2.0
 

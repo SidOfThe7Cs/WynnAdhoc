@@ -126,17 +126,14 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 /*TODO main list
 refactor chest saving to not just be there entir tooltip as json
-fix reroll and pull tracking
 dont rely on wynntills for chest type
-change chest item saving
-change item rarity checking
 move renderutils into worldrenderevent where possible (it should also be kotlin with optional args)
 
 
 auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon
-spellcaster with queue and display and safe cast
+fix spellcaster
 implement anchor points + layering
 annotation for hudelement and event
 WAR:
