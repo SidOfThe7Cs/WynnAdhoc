@@ -8,9 +8,11 @@ import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import org.joml.Vector2i;
+import sidly.wynnadhoc.utils.FormatUtils;
 import sidly.wynnadhoc.utils.GuiUtils;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class HudElement {
@@ -37,11 +39,19 @@ public abstract class HudElement {
 
             TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
             Vector2i pos = renderPos();
-            for (int i = 0; i < tooltip.size(); i++) {
+            double startX = pos.x + 2 + stringWidth;
+            int windowWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
+
+            List<Text> wrapped = new ArrayList<>();
+            for (Text text : tooltip) {
+                wrapped.addAll(FormatUtils.wrapText(text.getString(), (int) (windowWidth - startX), textRenderer));
+            }
+
+            for (int i = 0; i < wrapped.size(); i++) {
                 drawContext.drawText(
                         textRenderer,
-                        tooltip.get(i),
-                        (int) (pos.x + 2 + (stringWidth)),
+                        wrapped.get(i),
+                        (int) (startX),
                         pos.y + i * textRenderer.fontHeight,
                         Color.white.getRGB(),
                         true);
@@ -71,6 +81,7 @@ public abstract class HudElement {
     }
 
     boolean isHovering(double mouseX, double mouseY) {
+        if (MinecraftClient.getInstance().currentScreen == null) return false;
         Vector2i pos = renderPos();
         return mouseX >= pos.x() && mouseX < pos.x() + stringWidth && mouseY >= pos.y() && mouseY < pos.y() + stringHeight;
     }

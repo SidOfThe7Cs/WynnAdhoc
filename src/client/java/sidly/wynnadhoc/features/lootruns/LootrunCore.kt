@@ -89,7 +89,7 @@ object LootrunCore {
     var sacrificePattern: Pattern = Pattern.compile("\\[\\+(\\d+) Reward Sacrifice]")
     var endRerollPattern: Pattern = Pattern.compile("\\[\\+(\\d+) End Reward Reroll]")
 
-
+    var lastObscuredBeaconInjection: Long = 0
     fun checkIfBeacon(event: ForEachEntityEvent) {
         // we can also add type detection by checking the last character in the display name
         if (event.entity is TextDisplayEntity) {
@@ -149,7 +149,8 @@ object LootrunCore {
                                     currentBeaconOptionsFromWaypoints[baseColor] = distance
                                 }
 
-                                if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured) {
+                                val now = System.currentTimeMillis()
+                                if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured && now - lastObscuredBeaconInjection > 1000) {
                                     MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
                                         val entityPos = event.entity.entityPos
                                         val direction = entityPos.subtract(playerPos)
@@ -186,6 +187,7 @@ object LootrunCore {
                                                     ""
                                                 )
                                                 taskMarkers.add(newMarker)
+                                                lastObscuredBeaconInjection = now
                                             }
                                         }
                                     }

@@ -9,6 +9,7 @@ import org.joml.Matrix3x2fStack;
 import org.joml.Vector2i;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
+import sidly.wynnadhoc.utils.FormatUtils;
 
 import java.awt.*;
 import java.util.List;
@@ -90,11 +91,11 @@ public class TextHudElement extends HudElement {
     public List<Text> getHoverTooltip(double relativeMouseX, double relativeMouseY) {
         try {
             if (tooltipSupplier == null) return super.getHoverTooltip(relativeMouseX, relativeMouseY);
-            else if (!hoverPerLine) return tooltipSupplier.get();
+            else if (!hoverPerLine) return FormatUtils.splitTextLines(tooltipSupplier.get());
             else {
                 List<Text> fullTooltip = tooltipSupplier.get();
                 int index = getHoveredLineIndex(relativeMouseY);
-                return List.of(fullTooltip.get(index));
+                return FormatUtils.splitTextLines(List.of(fullTooltip.get(index)));
             }
         } catch (Exception e) {
             return List.of(Text.literal("Failed to get tooltip"), Text.literal(e.getMessage()));
