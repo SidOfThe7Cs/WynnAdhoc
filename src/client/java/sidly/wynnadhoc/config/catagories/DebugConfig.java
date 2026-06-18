@@ -13,7 +13,7 @@ public class DebugConfig {
     @Expose
     @ConfigOption(name = "Show Cmd On Chat Hover", desc = "shows what a clickable chat message will do if you click it when you hover it")
     @ConfigEditorBoolean
-    public boolean showCmdOnChatHover = false;
+    public boolean showCmdOnChatHover = true;
 
     @Expose
     @ConfigOption(name = "Shown Debug Info", desc = "what types of debug info should be shown")

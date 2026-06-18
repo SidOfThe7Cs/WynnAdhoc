@@ -35,6 +35,13 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     @Category(name = "Guild Settings", desc = "guild settings")
     public GuildConfig guild = new GuildConfig();
 
+    /*
+    @Expose
+    @Category(name = "Spell Settings", desc = "spell settings")
+
+     */
+    public SpellConfig spell = new SpellConfig();
+
     @Expose
     @Category(name = "Debug Settings", desc = "debug settings")
     public DebugConfig debug = new DebugConfig();

@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns;
 
+import net.minecraft.text.Text;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.LootrunConfig;
 import sidly.wynnadhoc.config.gui.HudElementManager;
@@ -8,6 +9,9 @@ import sidly.wynnadhoc.features.lootruns.enums.BeaconColor;
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions;
 import sidly.wynnadhoc.features.lootruns.enums.TrialOptions;
 import sidly.wynnadhoc.utils.FormatUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Overlays {
     private static LootrunConfig config() {
@@ -36,9 +40,12 @@ public class Overlays {
         );
 
         HudElementManager.register(new TextHudElement(
-                config().missionOverlay,
-                Overlays::shouldShowMissionOverlay,
-                Overlays::updateMissionOverlay)
+                        config().missionOverlay,
+                        Overlays::shouldShowMissionOverlay,
+                        Overlays::updateMissionOverlay,
+                        Overlays::missionOnHover,
+                        true
+                )
         );
     }
 
@@ -129,6 +136,10 @@ public class Overlays {
                 sb.append(" ").append(data.getPullsSinceLastYellow()).append("/24");
             }
 
+            if (mission == MissionOptions.Equilibrium) {
+                sb.append(" ").append(data.getCursesSinceLastBoon() * 100).append("/600");
+            }
+
             sb.append('\n');
         }
         for (TrialOptions trial : data.getCurrentTrialsActive()) {
@@ -140,5 +151,16 @@ public class Overlays {
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    private static List<Text> missionOnHover() {
+        List<Text> result = new ArrayList<>();
+        for (MissionOptions mission : data.getCurrentMissionsActive()) {
+            result.add(Text.literal(mission.getDescription()));
+        }
+        for (TrialOptions trial : data.getCurrentTrialsActive()) {
+            result.add(Text.literal(trial.getDescription()));
+        }
+        return result;
     }
 }

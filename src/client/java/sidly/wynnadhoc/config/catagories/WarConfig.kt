@@ -8,9 +8,12 @@ import sidly.wynnadhoc.config.gui.HudElementData
 class WarConfig {
     @Expose
     @JvmField
-    @ConfigOption(name = "Show War Resource Overlay", desc = "<-")
+    @ConfigOption(
+        name = "Show War Resource Overlay",
+        desc = "This doesnt work since the map menu was added to wynntills"
+    )
     @ConfigEditorBoolean
-    var showResourceOverlay: Boolean = true
+    var showResourceOverlay: Boolean = false
 
     @Expose
     @JvmField
@@ -23,9 +26,12 @@ class WarConfig {
 
     @Expose
     @JvmField
-    @ConfigOption(name = "Show War Timer", desc = "<-")
+    @ConfigOption(
+        name = "Show War Timer",
+        desc = "Shows the time until a war starts based off chat messages (so not accurate)"
+    )
     @ConfigEditorBoolean
-    var showWarTimer: Boolean = true
+    var showWarTimer: Boolean = false
 
     @Expose
     @JvmField

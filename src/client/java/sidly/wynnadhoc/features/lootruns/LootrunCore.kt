@@ -1,5 +1,10 @@
 package sidly.wynnadhoc.features.lootruns
 
+import com.wynntils.core.components.Models
+import com.wynntils.models.lootrun.type.TaskLocation
+import com.wynntils.models.marker.type.MarkerInfo
+import com.wynntils.models.marker.type.StaticLocationSupplier
+import com.wynntils.utils.colors.CommonColors
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.component.DataComponentTypes
@@ -17,6 +22,8 @@ import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.LootrunConfig
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.enums.*
+import sidly.wynnadhoc.mixin.client.accessors.LootrunBeaconMarkerAccessor
+import sidly.wynnadhoc.mixin.client.accessors.WynntillsLootrunModelAccessor
 import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
@@ -33,7 +40,7 @@ object LootrunCore {
 
     fun getCurrentLootrunData(): LootrunData? {
         try {
-            val uuid = Character.uuid
+            val uuid = Character.uuid()
             if (uuid.isEmpty()) return null
             return ConfigManager.INSTANCE.getLootrun(uuid)
         } catch (_: Exception) {
@@ -82,7 +89,7 @@ object LootrunCore {
     var sacrificePattern: Pattern = Pattern.compile("\\[\\+(\\d+) Reward Sacrifice]")
     var endRerollPattern: Pattern = Pattern.compile("\\[\\+(\\d+) End Reward Reroll]")
 
-
+    var lastObscuredBeaconInjection: Long = 0
     fun checkIfBeacon(event: ForEachEntityEvent) {
         // we can also add type detection by checking the last character in the display name
         if (event.entity is TextDisplayEntity) {
@@ -130,6 +137,7 @@ object LootrunCore {
                                     0xff0000 -> baseColor = BeaconColor.Red
                                     0xf000 -> baseColor = BeaconColor.Rainbow
                                     0xf010 -> baseColor = BeaconColor.Crimson
+                                    0xf018 -> baseColor = BeaconColor.Obscured
                                     else -> {
                                         val hex = Integer.toHexString(color)
                                         if (!hex.equals("0")) WynnAdhocClient.LOGGER.warn("unrecognized beacon color: $hex distance: $distance")
@@ -139,6 +147,50 @@ object LootrunCore {
                                 //WynnAdhocClient.LOGGER.info(Debug.Type.TEMP, "$baseColor beacon found at $distance")
                                 if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
                                     currentBeaconOptionsFromWaypoints[baseColor] = distance
+                                }
+
+                                val now = System.currentTimeMillis()
+                                if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured && now - lastObscuredBeaconInjection > 1000) {
+                                    MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
+                                        val entityPos = event.entity.entityPos
+                                        val direction = entityPos.subtract(playerPos)
+                                        val len = direction.length()
+                                        if (len != 0.0) {
+                                            val normalised = direction.multiply(1.0 / len)
+                                            val targetPos = entityPos.add(normalised.multiply(distance.toDouble()))
+
+                                            var closestTask: TaskLocation? = null
+                                            var closestDist = Double.MAX_VALUE
+
+                                            val lootrunModelAcc = Models.Lootrun as WynntillsLootrunModelAccessor
+                                            val taskLocations = lootrunModelAcc.getPossibleTaskLocations()
+                                            taskLocations.forEach { taskLocation ->
+                                                val squaredDistanceTo =
+                                                    taskLocation.location.toVec3().squaredDistanceTo(targetPos)
+                                                if (squaredDistanceTo < closestDist) {
+                                                    closestDist = squaredDistanceTo
+                                                    closestTask = taskLocation
+                                                }
+                                            }
+
+                                            closestTask?.let { loc ->
+                                                val beaconMarkerAcc =
+                                                    lootrunModelAcc.lootruN_BEACON_COMPASS_PROVIDER as LootrunBeaconMarkerAccessor
+                                                val taskMarkers = beaconMarkerAcc.getTaskMarkers()
+                                                val newMarker = MarkerInfo(
+                                                    "Obscured Beacon",
+                                                    StaticLocationSupplier(loc.location),
+                                                    loc.taskType.texture,
+                                                    CommonColors.BLACK,
+                                                    CommonColors.WHITE,
+                                                    CommonColors.BLACK,
+                                                    ""
+                                                )
+                                                taskMarkers.add(newMarker)
+                                                lastObscuredBeaconInjection = now
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -214,7 +266,10 @@ object LootrunCore {
 
     fun onChallengeCompleted(color: BeaconColor?) {
         val data = getCurrentLootrunData() ?: return
-        if (color == null) WynnAdhocClient.LOGGER.warn("completed null beacon color: $color")
+        if (color == null) {
+            WynnAdhocClient.LOGGER.warn("completed null beacon color: $color")
+            return
+        }
 
         // check the available beacon options to see if its vibrant or not
         var vibrant = false
@@ -233,38 +288,9 @@ object LootrunCore {
 
         data.beaconCounts.decreaseRemaining()
         data.beaconCounts.incrementCount(color)
-        when (color) {
-            BeaconColor.Yellow -> data.resetPullsSinceLastYellow()
-            BeaconColor.Purple -> {
-                val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
-                        && ScoreboardInfo.missionInProgress != "Porphyrophobia")
-                val pulls = getBeaconMultiplier(1, vibrant)
-                data.endStats.addEndPulls(if (phobia) pulls * 2 else pulls)
-            }
 
-            BeaconColor.Aqua -> if (vibrant) {
-                data.aquaStatus = AquaStatus.Vibrant
-            } else data.aquaStatus = AquaStatus.Active
-
-            BeaconColor.Orange -> data.beaconCounts
-                .addRemaining(BeaconColor.Orange, getBeaconMultiplier(5, vibrant))
-
-            BeaconColor.DarkGrey -> data.endStats.addEndPulls(getBeaconMultiplier(3, vibrant))
-            BeaconColor.Red -> {
-                var redToAdd = 3
-                if (vibrant) redToAdd = 5
-                if (data.aquaStatus == AquaStatus.Vibrant) redToAdd *= 3
-                else if (data.aquaStatus == AquaStatus.Active) redToAdd *= 2
-                data.beaconCounts.addRemaining(BeaconColor.Red, redToAdd)
-            }
-
-            BeaconColor.Rainbow -> {
-                val rainbowToAdd = getBeaconMultiplier(10, vibrant)
-                data.beaconCounts.addRemaining(BeaconColor.Rainbow, rainbowToAdd)
-            }
-
-            else -> {}
-        }
+        if (color == BeaconColor.Yellow) data.resetPullsSinceLastYellow()
+        applyBeaconEffect(color, data.aquaStatus, vibrant)
 
         if (color != BeaconColor.Aqua) data.aquaStatus = AquaStatus.Inactive
 
@@ -277,46 +303,48 @@ object LootrunCore {
         val message = "complete chaos gave " + beacon.displayName
         WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
         LootrunLogger.appendLine(message)
-        val data = getCurrentLootrunData() ?: return
 
         val vibrant = beacon.displayName.startsWith("Vibrant")
-        var multiplier = 1
-        if (vibrant) multiplier = 2
+        applyBeaconEffect(beacon.baseColor, AquaStatus.Inactive, vibrant)
+    }
 
-        val color = beacon.baseColor
+    private fun applyBeaconEffect(color: BeaconColor, aquaStatus: AquaStatus, vibrant: Boolean) {
+        val data = getCurrentLootrunData() ?: return
 
         when (color) {
+            BeaconColor.Blue -> {
+                data.resetCursesSinceLastBoon()
+            }
+
             BeaconColor.Purple -> {
                 val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
                         && ScoreboardInfo.missionInProgress != "Porphyrophobia")
-                data.endStats.addEndPulls(if (phobia) multiplier * 2 else multiplier)
+                val pulls = BeaconColor.Purple.getBeaconEffect(vibrant, aquaStatus)
+                data.addCursesSinceLastBoon(if (phobia) pulls * 2 else pulls)
+                data.endStats.addEndPulls(if (phobia) pulls * 2 else pulls)
             }
 
             BeaconColor.Aqua -> if (vibrant) {
                 data.aquaStatus = AquaStatus.Vibrant
             } else data.aquaStatus = AquaStatus.Active
 
-            BeaconColor.Orange -> data.beaconCounts.addRemaining(BeaconColor.Orange, 5 * multiplier)
-            BeaconColor.DarkGrey -> data.endStats.addEndPulls(3 * multiplier)
+            BeaconColor.Orange -> data.beaconCounts
+                .addRemaining(BeaconColor.Orange, BeaconColor.Orange.getBeaconEffect(vibrant, aquaStatus))
+
+            BeaconColor.DarkGrey -> data.endStats.addEndPulls(BeaconColor.DarkGrey.getBeaconEffect(vibrant, aquaStatus))
             BeaconColor.Red -> {
-                var redToAdd = 3
-                if (vibrant) redToAdd = 5
-                data.beaconCounts.addRemaining(BeaconColor.Red, redToAdd)
+                data.beaconCounts.addRemaining(BeaconColor.Red, BeaconColor.Red.getBeaconEffect(vibrant, aquaStatus))
             }
 
-            BeaconColor.Rainbow -> data.beaconCounts.addRemaining(BeaconColor.Rainbow, 10 * multiplier)
+            BeaconColor.Rainbow -> {
+                data.beaconCounts.addRemaining(
+                    BeaconColor.Rainbow,
+                    BeaconColor.Rainbow.getBeaconEffect(vibrant, aquaStatus)
+                )
+            }
+
             else -> {}
         }
-    }
-
-    private fun getBeaconMultiplier(baseValue: Int, vibrant: Boolean): Int {
-        var multiplier = 1
-        if (vibrant) multiplier *= 2
-        getCurrentLootrunData()?.let {
-            if (it.aquaStatus == AquaStatus.Vibrant) multiplier *= 3
-            else if (it.aquaStatus == AquaStatus.Active) multiplier *= 2
-        }
-        return baseValue * multiplier
     }
 
     fun onMissionCompleted(mission: String) {
@@ -327,6 +355,7 @@ object LootrunCore {
         when (mission) {
             "High Roller" -> {
                 data.endStats.addEndRerolls(1)
+                data.endStats.addEndPulls(10)
                 return
             }
 
@@ -345,6 +374,7 @@ object LootrunCore {
         }
     }
 
+    // TODO why isnt this using the enum??
     fun onTrialCompleted(trial: String) {
         val message = "Trial completed: $trial"
         WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, message)
@@ -366,18 +396,18 @@ object LootrunCore {
                 return
             }
 
-            "Side Hustle" -> {
+            "Side Hustle", "Adrenaline Junkie" -> {
                 data.endStats.addEndRerolls(2)
                 return
             }
 
             "Treasury Bill" -> {
                 data.endStats
-                    .addEndPulls((data.endStats.endPulls * 0.7).toInt())
+                    .addEndPulls((data.endStats.endPulls * 0.75).toInt())
                 return
             }
 
-            "Ultimate Sacrifice" -> {
+            "Ultimate Sacrifice", "Imperitia" -> {
                 data.endStats.addEndSacs(2)
                 return
             }
@@ -450,7 +480,7 @@ object LootrunCore {
         ScoreboardInfo.clearLootrunData() // this is data that is cleared every frame anyway
         data.currentMissionsActive.clear()
         data.activeCamp.camp.justCompleted()
-        ConfigManager.INSTANCE.resetLootrun(Character.uuid)
+        ConfigManager.INSTANCE.resetLootrun(Character.uuid())
 
         mobHealthIncrease = 0
         mobSpeedIncrease = 0

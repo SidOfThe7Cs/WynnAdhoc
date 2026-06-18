@@ -1,14 +1,12 @@
 package sidly.wynnadhoc.utils;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -125,6 +123,66 @@ public class FormatUtils {
             prev = val;
         }
         return result;
+    }
+
+    public static List<Text> splitTextLines(List<Text> input) {
+        return input.stream().flatMap(l -> {
+            String[] split = l.getString().split("\n");
+            return Arrays.stream(split).map(Text::of);
+        }).toList();
+    }
+
+    public static List<Text> wrapText(String text, int maxWidth, TextRenderer textRenderer) {
+        List<Text> wrapped = new ArrayList<>();
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            String testLine = currentLine.isEmpty() ? word : currentLine + " " + word;
+            if (textRenderer.getWidth(testLine) > maxWidth) {
+                if (!currentLine.isEmpty()) {
+                    wrapped.add(Text.literal(currentLine.toString()));
+                    currentLine = new StringBuilder(word);
+                } else {
+                    // Word itself is too long, split it
+                    wrapped.addAll(splitLongWord(word, maxWidth, textRenderer));
+                    currentLine = new StringBuilder();
+                }
+            } else {
+                if (!currentLine.isEmpty()) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
+            }
+        }
+
+        if (!currentLine.isEmpty()) {
+            wrapped.add(Text.literal(currentLine.toString()));
+        }
+
+        return wrapped;
+    }
+
+    private static List<Text> splitLongWord(String word, int maxWidth, TextRenderer textRenderer) {
+        List<Text> parts = new ArrayList<>();
+        StringBuilder currentPart = new StringBuilder();
+
+        for (char c : word.toCharArray()) {
+            String testPart = currentPart.toString() + c;
+            if (textRenderer.getWidth(testPart) > maxWidth) {
+                if (!currentPart.isEmpty()) {
+                    parts.add(Text.literal(currentPart.toString()));
+                    currentPart = new StringBuilder();
+                }
+            }
+            currentPart.append(c);
+        }
+
+        if (!currentPart.isEmpty()) {
+            parts.add(Text.literal(currentPart.toString()));
+        }
+
+        return parts;
     }
 
 }

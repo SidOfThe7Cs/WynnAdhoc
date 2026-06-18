@@ -25,6 +25,7 @@ import sidly.wynnadhoc.server.ChestCrowdsource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,22 @@ public class ConfigManager {
                     .resolve("sidly");
         }
         return CONFIG_DIR;
+    }
+
+    private final Path TOKEN_PATH = getConfigDir().resolve("token.txt");
+    private String token = "";
+
+    public String getToken() {
+        if (token.isEmpty()) {
+            if (TOKEN_PATH.toFile().exists()) {
+                try {
+                    token = Files.readString(TOKEN_PATH);
+                } catch (IOException e) {
+                    WynnAdhocClient.LOGGER.warn("failed to read token");
+                }
+            }
+        }
+        return token;
     }
 
     public Config config = new Config();

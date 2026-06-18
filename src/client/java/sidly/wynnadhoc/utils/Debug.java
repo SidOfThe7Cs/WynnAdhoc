@@ -35,6 +35,10 @@ public class Debug {
         } else LOGGER.info(type.get(message));
     }
 
+    public void temp(String message) {
+        info(Type.TEMP, message);
+    }
+
     /**
      * Logs a message to the popup window.
      * doesn't use the info system or have colors
@@ -70,6 +74,7 @@ public class Debug {
         MANUAL,
         WAR,
         TEMP,
+        SPELL,
         HUD,
         SERVER;
 
