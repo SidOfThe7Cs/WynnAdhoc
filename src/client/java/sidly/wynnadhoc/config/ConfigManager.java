@@ -2,6 +2,9 @@ package sidly.wynnadhoc.config;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import io.github.notenoughupdates.moulconfig.gui.GuiContext;
 import io.github.notenoughupdates.moulconfig.gui.GuiElementComponent;
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor;
@@ -12,6 +15,7 @@ import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
@@ -70,6 +74,16 @@ public class ConfigManager {
                         return map;
                     }
             )
+            .registerTypeAdapter(ItemStack.class, (JsonSerializer<ItemStack>) (src, typeOfSrc, context) -> {
+                DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, src);
+                return result.result().orElse(null);
+            })
+            .registerTypeAdapter(ItemStack.class, (JsonDeserializer<ItemStack>) (json, typeOfT, context) -> {
+                DataResult<Pair<ItemStack, JsonElement>> result = ItemStack.CODEC.decode(JsonOps.INSTANCE, json);
+                Pair<ItemStack, JsonElement> pair = result.result().orElse(null);
+                if (pair == null) return null;
+                return pair.getFirst();
+            })
             .setPrettyPrinting().create();
     private static Path CONFIG_DIR = FabricLoader.getInstance()
             .getConfigDir()

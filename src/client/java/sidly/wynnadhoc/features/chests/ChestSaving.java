@@ -68,7 +68,7 @@ public class ChestSaving {
                     if (!e.isJsonObject()) continue;
 
                     ChestRecord record = ChestRecord.fromJson(e.getAsJsonObject());
-                    if (record.pos.equals(pos)) {
+                    if (record.pos().equals(pos)) {
                         results.add(record);
                     }
                 }

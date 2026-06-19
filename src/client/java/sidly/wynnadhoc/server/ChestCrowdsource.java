@@ -32,15 +32,15 @@ public class ChestCrowdsource {
     public static final List<LootChest> newChests = new ArrayList<>();
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(CrowdsourceMain.timeout))
+            .connectTimeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
             .build();
 
     public static CompletableFuture<List<LootChest>> getChests(boolean onlyVerified) {
-        String url = CrowdsourceMain.serverUrl + "/api/chests/" + (onlyVerified ? "known" : "all");
+        String url = CrowdsourceMain.SERVER_URL + "/api/chests/" + (onlyVerified ? "known" : "all");
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .timeout(Duration.ofSeconds(CrowdsourceMain.timeout))
+                .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -65,12 +65,12 @@ public class ChestCrowdsource {
 
     public static int submitChests() {
         if (!config().syncChests) return 0;
-        String url = CrowdsourceMain.serverUrl + "/api/chests/submit";
+        String url = CrowdsourceMain.SERVER_URL + "/api/chests/submit";
         int count = newChests.size();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .timeout(Duration.ofSeconds(CrowdsourceMain.timeout))
+                .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(newChests)))
                 .build();

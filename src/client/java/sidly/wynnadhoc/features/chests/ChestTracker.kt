@@ -24,6 +24,8 @@ import sidly.wynnadhoc.utils.render.drawBox
 import kotlin.math.pow
 
 object ChestTracker {
+    val TIMER_REGEX = Regex("§7(?<timeLeft>\\d+)(?<unit>[dhms])")
+
     private val config get() = ConfigManager.INSTANCE.config.chest
     private var lastClickedChest: BlockPos? = null
     private val trappedChests = mutableSetOf<BlockPos>()
@@ -122,6 +124,7 @@ object ChestTracker {
 
             if (config.displayLevel) addLevelRanges(event)
         }
+        if (config.displayLevel && event.string.matches(TIMER_REGEX)) addLevelRanges(event)
     }
 
     // TODO make draggable list with even more options like possible mythics

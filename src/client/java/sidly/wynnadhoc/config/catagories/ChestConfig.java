@@ -39,7 +39,7 @@ public class ChestConfig {
     public boolean trackChests = true;
 
     @Expose
-    @ConfigOption(name = "Display Level", desc = "Display the % of the items you have gotten from a chest that are in each level range")
+    @ConfigOption(name = "Display Level", desc = "(Does not work with items v2 saving still works just getting the info from the saves is currently broken) Display the % of the items you have gotten from a chest that are in each level range")
     @ConfigEditorBoolean
     public boolean displayLevel = false;
 

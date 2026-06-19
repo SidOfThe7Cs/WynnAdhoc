@@ -4,8 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.utils.FormatUtils;
+import sidly.wynnadhoc.utils.ItemUtils;
 import sidly.wynnadhoc.utils.datatypes.LevelRange;
 
 import java.util.ArrayList;
@@ -15,20 +18,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChestRecord {
-    public final BlockPos pos;
-    public final List<ChestLootItem> items;
-
-    public ChestRecord(BlockPos pos, List<ChestLootItem> items, boolean bruh) {
-        this.pos = pos;
-        this.items = items;
-    }
-
-    public ChestRecord(BlockPos pos, List<ItemStack> items) {
-        this.pos = pos;
-        this.items = items.stream().map(ChestLootItem::new).toList();
-    }
-
+public record ChestRecord(BlockPos pos, List<ItemStack> items) {
     public JsonObject toJson() {
         JsonObject obj = new JsonObject();
         obj.addProperty("x", pos.getX());
@@ -36,10 +26,9 @@ public class ChestRecord {
         obj.addProperty("z", pos.getZ());
 
         JsonArray arr = new JsonArray();
-        for (ChestLootItem item : items) {
-            if (!item.tooltip.equals("Air\n")) { // TODO change
-                arr.add(item.toJson());
-            }
+        for (ItemStack item : items) {
+            JsonElement itemJson = ConfigManager.GSON.toJsonTree(item);
+            arr.add(itemJson);
         }
         obj.add("items", arr);
         return obj;
@@ -49,24 +38,29 @@ public class ChestRecord {
         int x = obj.get("x").getAsInt();
         int y = obj.get("y").getAsInt();
         int z = obj.get("z").getAsInt();
-        List<ChestLootItem> items = new ArrayList<>();
+        List<ItemStack> items = new ArrayList<>();
 
         if (obj.has("items")) {
             for (JsonElement e : obj.getAsJsonArray("items")) {
                 if (e.isJsonObject()) {
-                    items.add(ChestLootItem.fromJson(e.getAsJsonObject()));
+                    items.add(ConfigManager.GSON.fromJson(e, ItemStack.class));
                 }
             }
         }
 
-        return new ChestRecord(new BlockPos(x, y, z), items, true);
+        return new ChestRecord(new BlockPos(x, y, z), items);
     }
 
     public Map<LevelRange, Integer> getLvlQuantities() {
         Map<LevelRange, Integer> results = new HashMap<>();
         Pattern lvlRangePattern = Pattern.compile("Lv\\. Range: (\\d+)-(\\d+)");
-        for (ChestLootItem item : items) {
-            String tooltip = FormatUtils.removeColorCodes(item.tooltip);
+        for (ItemStack item : items) {
+            List<Text> fullTooltip = ItemUtils.getTooltip(item);
+            StringBuilder sb = new StringBuilder();
+            for (Text t : fullTooltip) {
+                sb.append(t);
+            }
+            String tooltip = FormatUtils.removeColorCodes(sb.toString());
             Matcher matcher = lvlRangePattern.matcher(tooltip);
             if (matcher.find()) {
                 int min = Integer.parseInt(matcher.group(1));

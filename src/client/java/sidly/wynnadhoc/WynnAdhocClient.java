@@ -130,10 +130,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
 
 /*TODO main list
-refactor chest saving to not just be there entir tooltip as json
-dont rely on wynntills for chest type
 move renderutils into worldrenderevent where possible (it should also be kotlin with optional args)
-
 
 auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft
