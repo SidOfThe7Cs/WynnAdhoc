@@ -37,7 +37,7 @@ public class ChestRecord {
 
         JsonArray arr = new JsonArray();
         for (ChestLootItem item : items) {
-            if (!item.tooltip.equals("Air\n")) {
+            if (!item.tooltip.equals("Air\n")) { // TODO change
                 arr.add(item.toJson());
             }
         }

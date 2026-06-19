@@ -32,7 +32,6 @@ import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
-import sidly.wynnadhoc.models.Character;
 import sidly.wynnadhoc.server.ChestCrowdsource;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
@@ -111,6 +110,8 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
+
+        Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

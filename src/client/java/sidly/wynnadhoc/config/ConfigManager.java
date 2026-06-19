@@ -123,11 +123,17 @@ public class ConfigManager {
         return chests.chests;
     }
 
-    public static void loadChestsFromServer() {
-        if (!INSTANCE.config.chest.syncChests) return;
+    public static CompletableFuture<Integer> loadChestsFromServer() {
+        if (!INSTANCE.config.chest.syncChests) return CompletableFuture.completedFuture(0);
         CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests(!INSTANCE.config.chest.unverifiedChests);
-        downloadedChests.whenComplete((l, ex) ->
-                l.forEach(e -> INSTANCE.chests.chests.put(new BlockPos(e.x(), e.y(), e.z()), new ChestsSaveData.ChestData(e.tier()))));
+        return downloadedChests.thenApply((l) -> {
+            int count = 0;
+            for (LootChest e : l) {
+                INSTANCE.chests.chests.put(new BlockPos(e.x(), e.y(), e.z()), new ChestsSaveData.ChestData(e.tier()));
+                count++;
+            }
+            return count;
+        });
     }
 
     public Screen getConfigScreen(Screen parent) {

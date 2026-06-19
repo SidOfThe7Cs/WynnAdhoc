@@ -1,12 +1,15 @@
 package sidly.wynnadhoc.server;
 
 import com.google.gson.reflect.TypeToken;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.ChestConfig;
+import sidly.wynnadhoc.event.CommandRegistrationEvent;
 import sidly.wynnadhoc.features.chests.LootChest;
+import sidly.wynnadhoc.utils.ChatMessageUtils;
 import sidly.wynnadhoc.utils.Debug;
 
 import java.lang.reflect.Type;
@@ -49,18 +52,19 @@ public class ChestCrowdsource {
                         }.getType();
                         return GSON.fromJson(response.body(), listType);
                     } else {
-                        System.err.println("Failed to get chests: " + response.statusCode());
+                        WynnAdhocClient.LOGGER.warn("Failed to get chests: " + response.statusCode());
                         return new ArrayList<>();
                     }
                 })
                 .exceptionally(ex -> {
-                    System.err.println("Error getting chests: " + ex.getMessage());
+                    WynnAdhocClient.LOGGER.warn("Error getting chests: ");
+                    ex.printStackTrace();
                     return new ArrayList<>();
                 });
     }
 
-    public static void submitChests() {
-        if (!config().syncChests) return;
+    public static int submitChests() {
+        if (!config().syncChests) return 0;
         String url = CrowdsourceMain.serverUrl + "/api/chests/submit";
         int count = newChests.size();
 
@@ -85,9 +89,37 @@ public class ChestCrowdsource {
                         WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Failed to submit chests: " + response.statusCode());
                     }
                 });
+        return count;
     }
 
     public static void submitChests(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient minecraftClient) {
         submitChests();
+    }
+
+    public static void register(CommandRegistrationEvent event) {
+        event.register(ClientCommandManager.literal("Download")
+                .then(ClientCommandManager.literal("chests")
+                        .executes(ctx -> {
+                            CompletableFuture<Integer> amount = ConfigManager.loadChestsFromServer();
+                            amount.whenComplete((c, ex) -> {
+                                if (ex == null) {
+                                    ChatMessageUtils.sendChatMessage("loaded " + c + " new chests from server");
+                                } else {
+                                    ChatMessageUtils.sendChatMessage("failed to load chests from server " + ex.getMessage());
+                                }
+                            });
+                            return 1;
+                        })
+                )
+        );
+        event.register(ClientCommandManager.literal("Upload")
+                .then(ClientCommandManager.literal("chests")
+                        .executes(ctx -> {
+                            int amount = ChestCrowdsource.submitChests();
+                            ChatMessageUtils.sendChatMessage("send " + amount + " chests locations to server");
+                            return 1;
+                        })
+                )
+        );
     }
 }
