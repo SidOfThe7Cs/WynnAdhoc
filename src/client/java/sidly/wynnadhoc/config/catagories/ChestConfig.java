@@ -14,7 +14,7 @@ import java.util.List;
 public class ChestConfig {
     // TODO esp accordion
     @Expose
-    @ConfigOption(name = "Force Chest Esp", desc = "Draws outline of known nearby chests")
+    @ConfigOption(name = "Highlight Chests", desc = "Draws outline of known nearby chests")
     @ConfigEditorBoolean
     public boolean forceEsp = false;
 

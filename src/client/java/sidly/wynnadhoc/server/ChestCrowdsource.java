@@ -75,7 +75,44 @@ public class ChestCrowdsource {
                 .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(newChests)))
                 .build();
 
-        newChests.clear();
+        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .whenComplete((response, ex) -> {
+                    if (ex != null) {
+                        WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Failed to submit chests: " + ex.getMessage());
+                    }
+
+                    if (response.statusCode() == 200) {
+                        WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "submit" + count + "chests");
+                        newChests.clear();
+                    } else {
+                        WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Failed to submit chests: " + response.statusCode());
+                    }
+                });
+        return count;
+    }
+
+    public static void submitChests(ClientPlayNetworkHandler netHand, MinecraftClient client) {
+        submitChests();
+    }
+
+    public static int submitAllChests() {
+        if (!config().syncChests) return 0;
+        String url = CrowdsourceMain.SERVER_URL + "/api/chests/submit";
+
+        List<LootChest> allChests = ConfigManager.INSTANCE.getChests().entrySet().stream()
+                .map((e) ->
+                        new LootChest(e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), e.getValue().tier)
+                )
+                .toList();
+
+        int count = allChests.size();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(allChests)))
+                .build();
 
         httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .whenComplete((response, ex) -> {
@@ -90,10 +127,6 @@ public class ChestCrowdsource {
                     }
                 });
         return count;
-    }
-
-    public static void submitChests(ClientPlayNetworkHandler clientPlayNetworkHandler, MinecraftClient minecraftClient) {
-        submitChests();
     }
 
     public static void register(CommandRegistrationEvent event) {
@@ -113,9 +146,18 @@ public class ChestCrowdsource {
                 )
         );
         event.register(ClientCommandManager.literal("Upload")
-                .then(ClientCommandManager.literal("chests")
+                .then(ClientCommandManager.literal("chestsNew")
                         .executes(ctx -> {
                             int amount = ChestCrowdsource.submitChests();
+                            ChatMessageUtils.sendChatMessage("send " + amount + " chests locations to server");
+                            return 1;
+                        })
+                )
+        );
+        event.register(ClientCommandManager.literal("Upload")
+                .then(ClientCommandManager.literal("chestsAll")
+                        .executes(ctx -> {
+                            int amount = ChestCrowdsource.submitAllChests();
                             ChatMessageUtils.sendChatMessage("send " + amount + " chests locations to server");
                             return 1;
                         })

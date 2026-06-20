@@ -124,7 +124,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         new PreInitEvent();
         new InitEvent();
-        //ApiUtils.getItemDatabase();
     }
 }
 
