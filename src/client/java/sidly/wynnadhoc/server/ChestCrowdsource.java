@@ -42,6 +42,7 @@ public class ChestCrowdsource {
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
                 .header("Content-Type", "application/json")
+                .header("X-Session-Token", ConfigManager.INSTANCE.getToken())
                 .GET()
                 .build();
 
@@ -72,6 +73,7 @@ public class ChestCrowdsource {
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
                 .header("Content-Type", "application/json")
+                .header("X-Session-Token", ConfigManager.INSTANCE.getToken())
                 .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(newChests)))
                 .build();
 
@@ -111,6 +113,7 @@ public class ChestCrowdsource {
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
                 .header("Content-Type", "application/json")
+                .header("X-Session-Token", ConfigManager.INSTANCE.getToken())
                 .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(allChests)))
                 .build();
 

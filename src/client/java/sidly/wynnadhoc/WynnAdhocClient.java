@@ -33,6 +33,7 @@ import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.server.ChestCrowdsource;
+import sidly.wynnadhoc.server.CrowdsourceMain;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.render.RenderUtils;
@@ -64,6 +65,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
         Event.register(ClientTickEvent.class, SpellMacros::onTick);
+        Event.register(ClientTickEvent.class, PlayerLoadedEvent::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
@@ -110,8 +112,10 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
+        Event.register(PlayerLoadedEvent.class, CrowdsourceMain::startAuth);
 
         Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);
+        Event.register(CommandRegistrationEvent.class, CrowdsourceMain::registerCommands);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

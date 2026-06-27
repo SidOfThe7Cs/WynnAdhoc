@@ -19,17 +19,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.config.saves.BasicSavable;
-import sidly.wynnadhoc.config.saves.ChestsSaveData;
-import sidly.wynnadhoc.config.saves.Config;
-import sidly.wynnadhoc.config.saves.LootrunSaveData;
+import sidly.wynnadhoc.config.saves.*;
 import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
 import sidly.wynnadhoc.server.ChestCrowdsource;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -100,26 +96,11 @@ public class ConfigManager {
         return CONFIG_DIR;
     }
 
-    private final Path TOKEN_PATH = getConfigDir().resolve("token.txt");
-    private String token = "";
-
-    public String getToken() {
-        if (token.isEmpty()) {
-            if (TOKEN_PATH.toFile().exists()) {
-                try {
-                    token = Files.readString(TOKEN_PATH);
-                } catch (IOException e) {
-                    WynnAdhocClient.LOGGER.warn("failed to read token");
-                }
-            }
-        }
-        return token;
-    }
-
     public Config config = new Config();
 
     private LootrunSaveData lootrunSaveData;
     private ChestsSaveData chests;
+    private SessionToken sessionToken;
 
     public LootrunData getLootrun(String uuid) {
         if (uuid.isEmpty()) {
@@ -137,6 +118,10 @@ public class ConfigManager {
         return chests.chests;
     }
 
+    public String getToken() {
+        return sessionToken.token == null ? "" : sessionToken.token;
+    }
+
     public static CompletableFuture<Integer> loadChestsFromServer() {
         if (!INSTANCE.config.chest.syncChests) return CompletableFuture.completedFuture(0);
         CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests(!INSTANCE.config.chest.unverifiedChests);
@@ -148,6 +133,10 @@ public class ConfigManager {
             }
             return count;
         });
+    }
+
+    public void storeToken(String sessionToken) {
+        this.sessionToken.token = sessionToken;
     }
 
     public Screen getConfigScreen(Screen parent) {
@@ -183,6 +172,7 @@ public class ConfigManager {
     public void load() {
         ConfigManager.INSTANCE.lootrunSaveData = new LootrunSaveData();
         ConfigManager.INSTANCE.chests = new ChestsSaveData();
+        ConfigManager.INSTANCE.sessionToken = new SessionToken();
 
         BasicSavable.loadAll();
 
@@ -209,6 +199,4 @@ public class ConfigManager {
         BasicSavable.saveAll();
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
     }
-
-
 }
