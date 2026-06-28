@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
@@ -55,6 +56,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register(BlockEntityLoadedEvent::new);
         WorldRenderEvents.END_MAIN.register(RenderUtils.INSTANCE::onFabricWorldRender);
         UseEntityCallback.EVENT.register(EntityClickedEvent::onEntityClicked);
+        AttackEntityCallback.EVENT.register(EntityClickedEvent::onEntityClicked);
         ClientCommandRegistrationCallback.EVENT.register(CommandRegistrationEvent::new);
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
         ScreenEvents.AFTER_INIT.register(ScreenOpenedEvent::new);

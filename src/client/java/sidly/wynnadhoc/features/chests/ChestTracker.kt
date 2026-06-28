@@ -42,8 +42,9 @@ object ChestTracker {
     }
 
     fun onEntityClicked(event: EntityClickedEvent) {
-        if (event.hitResult.entity is InteractionEntity) {
-            val pos = BlockPos.ofFloored(event.hitResult.entity.entityPos)
+        if (event.entity is InteractionEntity) {
+            lastClickedChest = null
+            val pos = BlockPos.ofFloored(event.entity.entityPos)
             val block = event.world.getBlockState(pos).block
             if (block === Blocks.CHEST || block === Blocks.TRAPPED_CHEST) {
                 lastClickedChest = pos
@@ -54,7 +55,7 @@ object ChestTracker {
     fun onChestItemsLoaded(event: ChestItemsLoadedEvent) {
         if (Models.Container.currentContainer is LootChestContainer && config.trackChests) {
             if (lastClickedChest == null) {
-                WynnAdhocClient.LOGGER.error("last clicked chest was null on chest items loaded")
+                WynnAdhocClient.LOGGER.warn("last clicked chest was null on chest items loaded")
                 return
             }
 
@@ -108,7 +109,7 @@ object ChestTracker {
             }
             if (tier == -1) WynnAdhocClient.LOGGER.info(
                 Debug.Type.LOOTRUN,
-                "found unknown lootchest tier at ${event.blockPos}:"
+                "found unknown lootchest tier at ${event.blockPos}: ${event.string}"
             )
 
             val world = MinecraftClient.getInstance().world ?: return

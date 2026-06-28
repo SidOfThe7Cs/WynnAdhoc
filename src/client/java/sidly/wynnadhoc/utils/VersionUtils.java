@@ -24,6 +24,7 @@ public class VersionUtils {
                         Added in-Game Changelogs
                         Implemented Wynn Oauth2
                         Added /wynnadhoc reParty save/invite
+                        Fixed not detecting left clicks on chests
                         """
         );
         changelog("0.0.2",
