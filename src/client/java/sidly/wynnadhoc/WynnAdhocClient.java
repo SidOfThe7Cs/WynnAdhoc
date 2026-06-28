@@ -18,6 +18,7 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.features.HealthRegenTick;
+import sidly.wynnadhoc.features.ReParty;
 import sidly.wynnadhoc.features.SpellMacros;
 import sidly.wynnadhoc.features.WindPrison;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -74,6 +75,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ChatMessageEvent.class, LootrunCore.INSTANCE::onChatMessage);
         Event.register(ChatMessageEvent.class, WarCore::onChatMessage);
         Event.register(ChatMessageEvent.class, GuildLogs.INSTANCE::onChatMessage);
+        Event.register(ChatMessageEvent.class, ReParty::onChat);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
 
@@ -118,6 +120,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);
         Event.register(CommandRegistrationEvent.class, CrowdsourceMain::registerCommands);
+        Event.register(CommandRegistrationEvent.class, ReParty::registerCommands);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

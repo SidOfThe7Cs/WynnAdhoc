@@ -20,8 +20,11 @@ public class VersionUtils {
     static {
         changelog("0.0.0", "V0 shouldn't ever print changelog");
         changelog("0.0.1",
-                "Added in-Game Changelogs" +
-                        "\nImplemented Wynn Oauth2"
+                """
+                        Added in-Game Changelogs
+                        Implemented Wynn Oauth2
+                        Added /wynnadhoc reParty save/invite
+                        """
         );
         changelog("0.0.2",
                 "This is a future version"
