@@ -83,15 +83,14 @@ object ChestTracker {
 
             for (knownChest in ConfigManager.INSTANCE.chests.entries) {
                 val color = knownChest.value.getColor(currentTime)
+                if (!knownChest.value.isOpenable(currentTime) && config.onlyOpenable) continue
 
                 val distSqr = knownChest.key.getSquaredDistance(player.entityPos)
 
                 val maxDist = config.maxEspDistance.pow(2)
                 if (distSqr > maxDist) continue
 
-                if (config.shownColors.contains(ChestColor.from(color)) &&
-                    config.shownTiers.contains(ChestTier.from(knownChest.value.tier))
-                ) {
+                if (config.shownTiers.contains(ChestTier.from(knownChest.value.tier))) {
                     event.drawBox(knownChest.key.toBox(), color)
                 }
             }

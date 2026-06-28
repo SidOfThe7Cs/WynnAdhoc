@@ -26,6 +26,7 @@ public class VersionUtils {
                         Added /wynnadhoc reParty save/invite
                         Fixed not detecting left clicks on chests
                         Fixed multiple chat hover events (kinda)
+                        Allowed changing chest highlight color
                         """
         );
         changelog("0.0.2",
