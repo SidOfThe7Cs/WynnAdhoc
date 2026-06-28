@@ -11,7 +11,7 @@ public class GuildConfig {
     @ConfigEditorBoolean
 
      */
-    public boolean showAspectsOverlay = true;
+    public boolean showAspectsOverlay = false;
 
     @Expose
     public HudElementData aspectOverlayData = new HudElementData(

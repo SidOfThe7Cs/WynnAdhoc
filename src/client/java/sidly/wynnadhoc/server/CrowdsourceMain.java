@@ -83,6 +83,7 @@ public class CrowdsourceMain {
                                 } catch (Exception e) {
                                     WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Failed to open browser: " + e.getMessage());
                                     ChatMessageUtils.sendChatMessage("§cFailed to open browser. Please use: " + authUrl);
+                                    startPollingForSession();
                                 }
                             });
 
@@ -176,7 +177,6 @@ public class CrowdsourceMain {
         }, 2, TimeUnit.MINUTES);
     }
 
-    // TODO event for auth success load stuff from server
     private static void onAuthSuccess() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;

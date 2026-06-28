@@ -36,6 +36,7 @@ import sidly.wynnadhoc.server.ChestCrowdsource;
 import sidly.wynnadhoc.server.CrowdsourceMain;
 import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.TickScheduler;
+import sidly.wynnadhoc.utils.VersionUtils;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 
 public class WynnAdhocClient implements ClientModInitializer {
@@ -113,6 +114,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
         Event.register(PlayerLoadedEvent.class, CrowdsourceMain::startAuth);
+        Event.register(PlayerLoadedEvent.class, VersionUtils::onPLayerLoad);
 
         Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);
         Event.register(CommandRegistrationEvent.class, CrowdsourceMain::registerCommands);

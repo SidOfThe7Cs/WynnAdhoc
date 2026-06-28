@@ -101,6 +101,7 @@ public class ConfigManager {
     private LootrunSaveData lootrunSaveData;
     private ChestsSaveData chests;
     private SessionToken sessionToken;
+    private LastVersion lastVersion;
 
     public LootrunData getLootrun(String uuid) {
         if (uuid.isEmpty()) {
@@ -120,6 +121,14 @@ public class ConfigManager {
 
     public String getToken() {
         return sessionToken.token == null ? "" : sessionToken.token;
+    }
+
+    public String getLastVersion() {
+        return lastVersion.lastVersion == null ? "0.0.0" : lastVersion.lastVersion;
+    }
+
+    public void setLastVersion(String newVersion) {
+        this.lastVersion.lastVersion = newVersion;
     }
 
     public static CompletableFuture<Integer> loadChestsFromServer() {
@@ -173,6 +182,7 @@ public class ConfigManager {
         ConfigManager.INSTANCE.lootrunSaveData = new LootrunSaveData();
         ConfigManager.INSTANCE.chests = new ChestsSaveData();
         ConfigManager.INSTANCE.sessionToken = new SessionToken();
+        ConfigManager.INSTANCE.lastVersion = new LastVersion();
 
         BasicSavable.loadAll();
 
