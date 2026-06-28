@@ -3,7 +3,7 @@ package sidly.wynnadhoc.features.lootruns.enums;
 import sidly.wynnadhoc.features.lootruns.BeaconEffect;
 
 public enum BeaconColor {
-    Blue("§9", new BeaconEffect(100, 200, 300, 400)),
+    Blue("§9", 30, new BeaconEffect(100, 200, 300, 400)),
     Purple("§5", new BeaconEffect(2, 4, 6, 8)),
     Yellow("§e", new BeaconEffect(2, 3, 4, 5)),
     Aqua("§b", new BeaconEffect(0, 0, 0, 0)),
