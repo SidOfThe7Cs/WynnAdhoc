@@ -25,6 +25,7 @@ public class VersionUtils {
                         Implemented Wynn Oauth2
                         Added /wynnadhoc reParty save/invite
                         Fixed not detecting left clicks on chests
+                        Fixed multiple chat hover events (kinda)
                         """
         );
         changelog("0.0.2",

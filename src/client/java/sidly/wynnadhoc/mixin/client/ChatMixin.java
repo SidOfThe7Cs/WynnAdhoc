@@ -27,14 +27,17 @@ public class ChatMixin {
         StyledTextAccessor accessor = ((StyledTextAccessor) (Object) event.getStyledText());
         if (accessor == null) return;
         List<ClickEvent> clickEvents = accessor.getClickEvents();
-        HoverEvent hoverEvent = null;
         boolean noHoverEvents = accessor.getHoverEvents().isEmpty();
+
+        StringBuilder sb = new StringBuilder();
         for (ClickEvent clickEvent : clickEvents) {
             String clickEventString = clickEventToString(clickEvent);
             if (ConfigManager.INSTANCE.config.debug.showCmdOnChatHover && noHoverEvents) {
-                hoverEvent = new HoverEvent.ShowText(Text.literal(clickEventString));
+                if (!sb.isEmpty()) sb.append("\n");
+                sb.append(clickEventString);
             }
         }
+        HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal(sb.toString()));
 
         // copy to avoid infinite recursion
         if (noHoverEvents && hoverEvent != null) {
