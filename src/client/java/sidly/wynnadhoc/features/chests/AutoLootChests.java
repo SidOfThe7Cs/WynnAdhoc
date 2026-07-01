@@ -40,6 +40,7 @@ public class AutoLootChests {
             return;
         }
 
+        // challenge rewards are in a lootrun and are not the same as world event rewards
         if (event.isLootChest() || event.isChallengeReward() || event.isFlyingChest()) {
             chestLooterScheduler.schedule(2, 10, remaining -> {
                 boolean hasFavorites = lootChest(screen);
@@ -60,12 +61,23 @@ public class AutoLootChests {
             ItemStack itemStack = slot.getStack();
             if (itemStack.isEmpty()) continue;
 
+            // check itemRarity from wynntills
             GearTier itemRarity = ItemUtils.getItemRarity(itemStack);
             Integer pouchTier = ItemUtils.getEmeraldPouchTier(itemStack);
             if (itemRarity == GearTier.MYTHIC || (pouchTier != null && pouchTier >= 8)) {
                 WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "found mythic not looting chest");
                 result = true;
                 continue; // dont take the item out of the chest
+            }
+
+            // also check box rarity from own code
+            EncodableItem encodableItem = EncodableItem.fromItem(itemStack);
+            if (encodableItem instanceof BoxItem box) {
+                if (box.rarity() == GearTier.MYTHIC) {
+                    WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "found mythic not looting chest");
+                    result = true;
+                    continue; // dont take the item out of the chest
+                }
             }
 
             boolean isNeededPotion = false;
