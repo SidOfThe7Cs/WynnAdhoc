@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 
 public class CrowdsourceMain {
-    public static final String SERVER_URL = "http://localhost:8080";
-    //public static final String SERVER_URL = "https://sidly.withsidequest.com"; TODO
+    //public static final String SERVER_URL = "http://localhost:8080";
+    public static final String SERVER_URL = "https://sidly.withsidequest.com";
     public static final int TIMEOUT = 30;
     private static String state = "";
 
@@ -49,7 +49,7 @@ public class CrowdsourceMain {
                     if (ex != null) {
                         WynnAdhocClient.LOGGER.info(Debug.Type.SERVER,
                                 "Failed to authenticate user: " + ex.getMessage());
-                        client.execute(() -> ChatMessageUtils.sendChatMessage("§cLogin failed: Server connection error"));
+                        client.execute(() -> ChatMessageUtils.sendChatMessage("§cWynnAdhoc Login failed: Server connection error"));
                         return;
                     }
 
@@ -90,7 +90,7 @@ public class CrowdsourceMain {
                         } catch (Exception e) {
                             WynnAdhocClient.LOGGER.info(Debug.Type.SERVER,
                                     "Failed to parse auth response: " + e.getMessage());
-                            client.execute(() -> ChatMessageUtils.sendChatMessage("§cLogin failed: Invalid server response"));
+                            client.execute(() -> ChatMessageUtils.sendChatMessage("§cWynnAdhoc Login failed: Invalid server response"));
                         }
 
                     } else {
@@ -101,10 +101,10 @@ public class CrowdsourceMain {
                                     error.get("message").getAsString() :
                                     "Unknown error";
                             WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Auth failed (" + statusCode + "): " + errorMsg);
-                            client.execute(() -> ChatMessageUtils.sendChatMessage("§cLogin failed: " + errorMsg));
+                            client.execute(() -> ChatMessageUtils.sendChatMessage("§cWynnAdhoc Login failed: " + errorMsg));
                         } catch (Exception e) {
                             WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Auth failed with status: " + statusCode);
-                            client.execute(() -> ChatMessageUtils.sendChatMessage("§cLogin failed (Status: " + statusCode + ")"));
+                            client.execute(() -> ChatMessageUtils.sendChatMessage("§cWynnAdhoc Login failed (Status: " + statusCode + ")"));
                         }
                     }
                 });
@@ -183,7 +183,7 @@ public class CrowdsourceMain {
 
         WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "WynnAdhoc auth successful");
 
-        client.execute(() -> ChatMessageUtils.sendChatMessage("Successfully authenticated with WynnAdhoc"));
+        client.execute(() -> ChatMessageUtils.sendChatMessage("WynnAdhoc authentication successful"));
     }
 
     private static void storeSessionToken(String sessionToken) {

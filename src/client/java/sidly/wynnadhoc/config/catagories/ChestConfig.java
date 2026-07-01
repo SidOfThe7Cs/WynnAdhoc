@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.ChromaColour;
 import io.github.notenoughupdates.moulconfig.annotations.*;
+import sidly.wynnadhoc.features.chests.ChestDataDisplayOption;
 import sidly.wynnadhoc.features.chests.ChestTier;
 
 import java.util.List;
@@ -50,17 +51,22 @@ public class ChestConfig {
     public boolean trackChests = true;
 
     @Expose
-    @ConfigOption(name = "Display Level", desc = "(Does not work with items v2 saving still works just getting the info from the saves is currently broken) Display the % of the items you have gotten from a chest that are in each level range")
+    @ConfigOption(name = "Display Data", desc = "quick toggle for the below selector")
     @ConfigEditorBoolean
     public boolean displayLevel = false;
 
     @Expose
-    @ConfigOption(name = "Use Unverified Chests", desc = "Gets all chests from the server no matter the quantity of submissions")
-    @ConfigEditorBoolean
-    public boolean unverifiedChests = false;
+    @ConfigOption(name = "Display Data", desc = "what data should be displayed on the chest (do note order matters)")
+    @ConfigEditorDraggableList
+    public List<ChestDataDisplayOption> chestDisplayOptions = Lists.newArrayList(
+            ChestDataDisplayOption.LOCAL_ING_COUNT,
+            ChestDataDisplayOption.LOCAL_ITEM_COUNT,
+            ChestDataDisplayOption.GLOBAL_ITEM_PERCENTS
+    );
 
     @Expose
-    @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations between all users with this setting on")
+    @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations and chestData between all users with this setting on")
     @ConfigEditorBoolean
     public boolean syncChests = true;
+
 }

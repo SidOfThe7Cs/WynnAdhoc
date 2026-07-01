@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.ChestConfig;
@@ -19,24 +20,26 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import static sidly.wynnadhoc.config.ConfigManager.GSON;
+import static sidly.wynnadhoc.features.chests.LootChest.GSON;
 
 public class ChestCrowdsource {
     private static ChestConfig config() {
         return ConfigManager.INSTANCE.config.chest;
     }
 
-    public static final List<LootChest> newChests = new ArrayList<>();
+    public static final Set<BlockPos> changedKeys = new HashSet<>();
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
             .build();
 
-    public static CompletableFuture<List<LootChest>> getChests(boolean onlyVerified) {
-        String url = CrowdsourceMain.SERVER_URL + "/api/chests/" + (onlyVerified ? "known" : "all");
+    public static CompletableFuture<List<LootChest>> getChests() {
+        String url = CrowdsourceMain.SERVER_URL + "/api/chests";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -67,14 +70,21 @@ public class ChestCrowdsource {
     public static int submitChests() {
         if (!config().syncChests) return 0;
         String url = CrowdsourceMain.SERVER_URL + "/api/chests/submit";
-        int count = newChests.size();
+        int count = changedKeys.size();
+
+        List<LootChest> chests = ConfigManager.INSTANCE.getChests().entrySet().stream()
+                .filter(e -> changedKeys.contains(e.getKey()))
+                .map(e ->
+                        new LootChest(e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), e.getValue().tier, e.getValue().items))
+                .toList();
+
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
                 .header("Content-Type", "application/json")
                 .header("X-Session-Token", ConfigManager.INSTANCE.getToken())
-                .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(newChests)))
+                .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(chests)))
                 .build();
 
         httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -85,7 +95,7 @@ public class ChestCrowdsource {
 
                     if (response.statusCode() == 200) {
                         WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "submit" + count + "chests");
-                        newChests.clear();
+                        changedKeys.clear();
                     } else {
                         WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "Failed to submit chests: " + response.statusCode());
                     }
@@ -103,7 +113,7 @@ public class ChestCrowdsource {
 
         List<LootChest> allChests = ConfigManager.INSTANCE.getChests().entrySet().stream()
                 .map((e) ->
-                        new LootChest(e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), e.getValue().tier)
+                        new LootChest(e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), e.getValue().tier, e.getValue().items)
                 )
                 .toList();
 

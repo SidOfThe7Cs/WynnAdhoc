@@ -26,12 +26,25 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
     }
 
     public static class ChestData {
-        public int tier;
-        public Map<String, Long> lastOpened;
+        public final int tier;
+        public final Map<String, Long> lastOpened;
+        public byte[] items;
 
-        public ChestData(int tier) {
+        public ChestData(int tier, byte[] items) {
             this.tier = tier;
+            this.items = items;
             this.lastOpened = new HashMap<>();
+        }
+
+        public void addItems(byte[] items) {
+            if (this.items == null || this.items.length == 0) {
+                this.items = items;
+                return;
+            }
+            byte[] newTotal = new byte[this.items.length + items.length];
+            System.arraycopy(this.items, 0, newTotal, 0, this.items.length);
+            System.arraycopy(items, 0, newTotal, this.items.length, items.length);
+            this.items = newTotal;
         }
 
         public void onOpen() {

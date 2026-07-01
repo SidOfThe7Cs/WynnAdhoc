@@ -20,6 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.saves.*;
+import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
 import sidly.wynnadhoc.server.ChestCrowdsource;
@@ -132,15 +133,14 @@ public class ConfigManager {
     }
 
     public static CompletableFuture<Integer> loadChestsFromServer() {
-        if (!INSTANCE.config.chest.syncChests) return CompletableFuture.completedFuture(0);
-        CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests(!INSTANCE.config.chest.unverifiedChests);
+        if (!INSTANCE.config.chest.syncChests) {
+            ChestTracker.INSTANCE.cacheChestData(List.of());
+            return CompletableFuture.completedFuture(0);
+        }
+        CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests();
         return downloadedChests.thenApply((l) -> {
-            int count = 0;
-            for (LootChest e : l) {
-                INSTANCE.chests.chests.put(new BlockPos(e.x(), e.y(), e.z()), new ChestsSaveData.ChestData(e.tier()));
-                count++;
-            }
-            return count;
+            ChestTracker.INSTANCE.cacheChestData(l);
+            return l.size();
         });
     }
 
