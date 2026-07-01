@@ -65,7 +65,7 @@ public class ChestConfig {
     );
 
     @Expose
-    @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations and chestData between all users with this setting on")
+    @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations and items between all users with this setting on")
     @ConfigEditorBoolean
     public boolean syncChests = true;
 

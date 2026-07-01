@@ -209,4 +209,8 @@ public class ConfigManager {
         BasicSavable.saveAll();
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
     }
+
+    public void saveToken() {
+        sessionToken.save();
+    }
 }

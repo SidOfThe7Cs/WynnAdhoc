@@ -13,7 +13,7 @@ import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.saves.ChestsSaveData
 import sidly.wynnadhoc.event.*
-import sidly.wynnadhoc.features.lootruns.LootrunCore.getCurrentLootrunData
+import sidly.wynnadhoc.features.lootruns.LootrunCore
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions
 import sidly.wynnadhoc.server.ChestCrowdsource
@@ -62,7 +62,7 @@ object ChestTracker {
         if (event.entity is InteractionEntity) {
             lastClickedChest = null
             val pos = event.entity.entityPos.add(0.0, 1.27, 0.0)
-            val searchBox = Box(pos.x - 0.1, pos.y - 0.1, pos.z - 0.1, pos.x + 0.1, pos.y + 0.1, pos.z + 0.1)
+            val searchBox = Box(pos.x - 0.7, pos.y - 0.7, pos.z - 0.7, pos.x + 0.7, pos.y + 0.7, pos.z + 0.7)
             val textDisplays = event.world.getEntitiesByClass(
                 DisplayEntity.TextDisplayEntity::class.java,
                 searchBox
@@ -92,19 +92,21 @@ object ChestTracker {
         }
     }
 
-    // TODO check tier and add selector to set tier to show only non caves during lootrun / forced
     fun onWorldRender(event: WorldRenderEvent) {
-        val data = getCurrentLootrunData() ?: return
         val client = MinecraftClient.getInstance()
         val player = client.player
         if (client == null || player == null) return
 
-        val crono = data.currentMissionsActive.contains(MissionOptions.Chronokinesis)
+        val crono = LootrunCore.isMissionActive(MissionOptions.Chronokinesis)
         val missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent
-        if (missionReq || crono || config.forceEsp) {
+        val splunk = ScoreboardInfo.splunkChestReq > ScoreboardInfo.splunkChestCurrent
+        val highlightRelevantChests = ConfigManager.INSTANCE.config.lootrun.highlightRelevantChests
+        val shouldHighLight = highlightRelevantChests && (missionReq || crono || splunk)
+        if (shouldHighLight || config.forceEsp) {
             val currentTime = System.currentTimeMillis()
 
             for (knownChest in ConfigManager.INSTANCE.chests.entries) {
+                if (splunk && !missionReq && !crono && !config.forceEsp && knownChest.value.tier < 3) continue
                 val color = knownChest.value.getColor(currentTime)
                 if (!knownChest.value.isOpenable(currentTime) && config.onlyOpenable) continue
 

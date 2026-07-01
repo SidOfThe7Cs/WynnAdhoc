@@ -6,6 +6,12 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 import sidly.wynnadhoc.config.gui.HudElementData;
 
 public class LootrunConfig {
+
+    @Expose
+    @ConfigOption(name = "Auto Highlight Chests", desc = "Highlights chests when relevant in a lootrun")
+    @ConfigEditorBoolean
+    public boolean highlightRelevantChests = true;
+
     @Expose
     @ConfigOption(name = "Show Beacon Overlay", desc = "Count of every beacon you have taken in your run")
     @ConfigEditorBoolean

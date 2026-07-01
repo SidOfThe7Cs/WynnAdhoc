@@ -46,7 +46,7 @@ public class VersionUtils {
         if (lastKnownV == null || currentV == null) return;
 
         if (Objects.equals(lastKnownV.toString(), "0.0.0")) {
-            // TODO return
+            return;
         }
 
         StringBuilder sb = new StringBuilder();

@@ -112,21 +112,17 @@ public record ChestDataCache(
         final int finalIngCount = totalIngCount;
 
         if (finalItemCount != 0) {
-            itemLvlCounts.entrySet().stream()
-                    .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                    .forEach((e) -> {
-                        int percent = (int) ((e.getValue() / (double) finalItemCount) * 100);
-                        itemPercents.put(e.getKey(), percent);
-                    });
+            itemLvlCounts.forEach((key, value) -> {
+                int percent = (int) ((value / (double) finalItemCount) * 100);
+                itemPercents.put(key, percent);
+            });
         }
 
         if (finalIngCount != 0) {
-            ingLvlCounts.entrySet().stream()
-                    .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
-                    .forEach((e) -> {
-                        int percent = (int) ((e.getValue() / (double) finalIngCount) * 100);
-                        ingPercents.put(e.getKey(), percent);
-                    });
+            ingLvlCounts.forEach((key, value) -> {
+                int percent = (int) ((value / (double) finalIngCount) * 100);
+                ingPercents.put(key, percent);
+            });
         }
     }
 }

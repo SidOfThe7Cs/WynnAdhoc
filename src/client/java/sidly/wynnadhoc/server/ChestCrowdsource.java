@@ -71,6 +71,7 @@ public class ChestCrowdsource {
         if (!config().syncChests) return 0;
         String url = CrowdsourceMain.SERVER_URL + "/api/chests/submit";
         int count = changedKeys.size();
+        if (count == 0) return 0;
 
         List<LootChest> chests = ConfigManager.INSTANCE.getChests().entrySet().stream()
                 .filter(e -> changedKeys.contains(e.getKey()))
