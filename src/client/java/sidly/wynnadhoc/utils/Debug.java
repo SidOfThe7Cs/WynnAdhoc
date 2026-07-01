@@ -75,7 +75,8 @@ public class Debug {
         WAR,
         TEMP,
         SPELL,
-        HUD;
+        HUD,
+        SERVER;
 
         public String get(String message) {
             return "[" + this.name() + "] " + message;

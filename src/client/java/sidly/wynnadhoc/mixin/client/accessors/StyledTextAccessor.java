@@ -10,6 +10,9 @@ import java.util.List;
 
 @Mixin(StyledText.class)
 public interface StyledTextAccessor {
-    @Accessor("clickEvents") List<ClickEvent> getClickEvents();
-    @Accessor("hoverEvents") List<HoverEvent> getHoverEvents();
+    @Accessor("clickEvents")
+    List<ClickEvent> getClickEvents();
+
+    @Accessor("hoverEvents")
+    List<HoverEvent> getHoverEvents();
 }

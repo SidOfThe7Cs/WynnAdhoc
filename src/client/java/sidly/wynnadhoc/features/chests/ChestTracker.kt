@@ -5,27 +5,47 @@ import com.wynntils.models.containers.containers.reward.LootChestContainer
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
+import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.decoration.InteractionEntity
-import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Box
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.saves.ChestsSaveData
 import sidly.wynnadhoc.event.*
-import sidly.wynnadhoc.features.lootruns.LootrunCore.getCurrentLootrunData
+import sidly.wynnadhoc.features.lootruns.LootrunCore
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions
+import sidly.wynnadhoc.server.ChestCrowdsource
 import sidly.wynnadhoc.utils.Debug
 import sidly.wynnadhoc.utils.LocationUtils
-import sidly.wynnadhoc.utils.datatypes.LevelRange
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.render.drawBox
 import kotlin.math.pow
 
 object ChestTracker {
+    val TIMER_REGEX = Regex("§7(?<timeLeft>\\d+)(?<unit>[dhms])")
+
     private val config get() = ConfigManager.INSTANCE.config.chest
     private var lastClickedChest: BlockPos? = null
     private val trappedChests = mutableSetOf<BlockPos>()
+    private val chestDataCache: MutableMap<BlockPos, ChestDataCache> = mutableMapOf()
+
+    fun cacheChestData(global: List<LootChest>) {
+        val local = ConfigManager.INSTANCE.chests
+        val globalKeys = mutableSetOf<BlockPos>()
+        // cache contains both local and global separately first we loop through all existing global and add both local and global data
+        for (chest in global) {
+            val pos = chest.pos ?: continue
+            globalKeys.add(pos)
+            chestDataCache[pos] = ChestDataCache.from(local[pos], chest)
+        }
+        // then we loop through remaining local and add with no global data
+        for (entry in local) {
+            if (globalKeys.contains(entry.key)) continue
+            chestDataCache[entry.key] = ChestDataCache.from(entry.value, null)
+        }
+    }
 
     fun onBlockEntityLoad(event: BlockEntityLoadedEvent) {
         if (event.blockEntity is ChestBlockEntity) {
@@ -39,55 +59,63 @@ object ChestTracker {
     }
 
     fun onEntityClicked(event: EntityClickedEvent) {
-        if (event.hitResult.entity is InteractionEntity) {
-            val pos = BlockPos.ofFloored(event.hitResult.entity.entityPos)
-            val block = event.world.getBlockState(pos).block
-            if (block === Blocks.CHEST || block === Blocks.TRAPPED_CHEST) {
-                lastClickedChest = pos
-            }
+        if (event.entity is InteractionEntity) {
+            lastClickedChest = null
+            val pos = event.entity.entityPos.add(0.0, 1.27, 0.0)
+            val searchBox = Box(pos.x - 0.7, pos.y - 0.7, pos.z - 0.7, pos.x + 0.7, pos.y + 0.7, pos.z + 0.7)
+            val textDisplays = event.world.getEntitiesByClass(
+                DisplayEntity.TextDisplayEntity::class.java,
+                searchBox
+            ) { _ -> true }
+
+            if (textDisplays.any { t -> t.text.string.contains("Loot Chest") }) lastClickedChest =
+                BlockPos.ofFloored(event.entity.entityPos)
         }
     }
 
     fun onChestItemsLoaded(event: ChestItemsLoadedEvent) {
         if (Models.Container.currentContainer is LootChestContainer && config.trackChests) {
             if (lastClickedChest == null) {
-                WynnAdhocClient.LOGGER.error("last clicked chest was null on chest items loaded")
+                WynnAdhocClient.LOGGER.warn("last clicked chest was null on chest items loaded")
                 return
             }
 
-            ConfigManager.INSTANCE.chests[lastClickedChest]?.onOpen()
+            val chest = ConfigManager.INSTANCE.chests[lastClickedChest] ?: return
+            chest.onOpen()
+            ChestCrowdsource.changedKeys.add(lastClickedChest)
 
-            val items = event.getItems()
-            val record = ChestRecord(lastClickedChest, items)
+            val items = event.getItems().mapNotNull { i -> EncodableItem.fromItem(i) }
+            val byteArray = EncodableItem.toByteArray(items)
 
-            ChestSaving.currentLoaded.add(record)
-            ChestSaving.saveLatest()
+            chest.addItems(byteArray)
+            chestDataCache[lastClickedChest]?.updateLocalWith(items)
         }
     }
 
-    // TODO check tier and add selector to set tier to show only non caves during lootrun / forced
     fun onWorldRender(event: WorldRenderEvent) {
-        val data = getCurrentLootrunData() ?: return
         val client = MinecraftClient.getInstance()
         val player = client.player
         if (client == null || player == null) return
 
-        val crono = data.currentMissionsActive.contains(MissionOptions.Chronokinesis)
+        val crono = LootrunCore.isMissionActive(MissionOptions.Chronokinesis)
         val missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent
-        if (missionReq || crono || config.forceEsp) {
+        val splunk = ScoreboardInfo.splunkChestReq > ScoreboardInfo.splunkChestCurrent
+        val highlightRelevantChests = ConfigManager.INSTANCE.config.lootrun.highlightRelevantChests
+        val shouldHighLight = highlightRelevantChests && (missionReq || crono || splunk)
+        if (shouldHighLight || config.forceEsp) {
             val currentTime = System.currentTimeMillis()
 
             for (knownChest in ConfigManager.INSTANCE.chests.entries) {
+                if (splunk && !missionReq && !crono && !config.forceEsp && knownChest.value.tier < 3) continue
                 val color = knownChest.value.getColor(currentTime)
+                if (!knownChest.value.isOpenable(currentTime) && config.onlyOpenable) continue
 
                 val distSqr = knownChest.key.getSquaredDistance(player.entityPos)
 
                 val maxDist = config.maxEspDistance.pow(2)
                 if (distSqr > maxDist) continue
 
-                if (config.shownColors.contains(ChestColor.from(color)) &&
-                    config.shownTiers.contains(ChestTier.from(knownChest.value.tier))
-                ) {
+                if (config.shownTiers.contains(ChestTier.from(knownChest.value.tier))) {
                     event.drawBox(knownChest.key.toBox(), color)
                 }
             }
@@ -105,53 +133,32 @@ object ChestTracker {
             }
             if (tier == -1) WynnAdhocClient.LOGGER.info(
                 Debug.Type.LOOTRUN,
-                "found unknown lootchest tier at ${event.blockPos}:"
+                "found unknown lootchest tier at ${event.blockPos}: ${event.string}"
             )
 
-            val world = MinecraftClient.getInstance().world ?: return
             val blockPos: BlockPos = event.blockPos.down(1)
-            val block = world.getBlockEntity(blockPos) ?: return
 
-            if (block is ChestBlockEntity) {
-                if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
-                    ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier)
-                }
+            if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
+                ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier, ByteArray(0))
             }
 
             if (config.displayLevel) addLevelRanges(event)
         }
+        if (config.displayLevel && event.string.matches(TIMER_REGEX)) addLevelRanges(event)
     }
 
-    // TODO make draggable list with even more options like possible mythics
-    // i could cache this, probably should, but it only runs once when you load the textdisplay so i dont wanna bother
     fun addLevelRanges(event: TextDisplaySyncEvent) {
         val copy = event.text.copy()
         val chestPos = LocationUtils.getBlockUnderVec3d(event.pos)
-        ChestSaving.getAllRecordsForChestAsync(chestPos).thenAccept { allRecordsForChest ->
-            val lvlQuantities: MutableMap<LevelRange, Int> = HashMap()
-            for (record in allRecordsForChest) {
-                val recordLvlQuantities = record.getLvlQuantities()
-                recordLvlQuantities.forEach { (key: LevelRange, value: Int) ->
-                    lvlQuantities.merge(
-                        key,
-                        value
-                    ) { a: Int, b: Int -> Integer.sum(a, b) }
-                }
-            }
-            val total = lvlQuantities.values.stream().mapToInt { obj: Int -> obj }.sum()
-            copy.siblings.add(Text.of("\nBoxes Found: $total"))
-            lvlQuantities.entries.stream()
-                .sorted { a: MutableMap.MutableEntry<LevelRange, Int>, b: MutableMap.MutableEntry<LevelRange, Int> ->
-                    b.value.compareTo(a.value)
-                }
-                .forEach { entry: MutableMap.MutableEntry<LevelRange, Int> ->
-                    val percent = ((entry.value / total.toDouble()) * 100).toInt()
-                    copy.siblings.add(Text.of("\n" + entry.key + " " + percent + "%"))
-                }
+        val chestDataCache = chestDataCache[chestPos] ?: return
 
-            MinecraftClient.getInstance().execute {
-                event.textDisplay.text = copy
-            }
+        config.chestDisplayOptions.forEach { option ->
+            val text = option.toText(chestDataCache)
+            copy.siblings.addAll(text)
+        }
+
+        MinecraftClient.getInstance().execute {
+            event.textDisplay.text = copy
         }
     }
 }

@@ -6,6 +6,12 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
 import sidly.wynnadhoc.config.gui.HudElementData;
 
 public class LootrunConfig {
+
+    @Expose
+    @ConfigOption(name = "Auto Highlight Chests", desc = "Highlights chests when relevant in a lootrun")
+    @ConfigEditorBoolean
+    public boolean highlightRelevantChests = true;
+
     @Expose
     @ConfigOption(name = "Show Beacon Overlay", desc = "Count of every beacon you have taken in your run")
     @ConfigEditorBoolean
@@ -19,9 +25,12 @@ public class LootrunConfig {
             1.0f
     );
 
+    /*
+    TODO broken
     @Expose
     @ConfigOption(name = "Show End Rewards Overlay", desc = "shows an overlay with your end rolls, sacs, pull, and effective pulls")
     @ConfigEditorBoolean
+     */
     public boolean showEndRewardsOverlay = false;
 
     @Expose
@@ -46,7 +55,7 @@ public class LootrunConfig {
     );
 
     @Expose
-    @ConfigOption(name = "Force Obscured Beacon Location", desc = "adds obscured beacons to the wynntills task locations")
+    @ConfigOption(name = "Obscured Beacon Location", desc = "adds obscured beacons to the wynntills task locations (really bad i would assume wynntills adds support soon itself)")
     @ConfigEditorBoolean
     public boolean obscuredBeaconLocations = false;
 }

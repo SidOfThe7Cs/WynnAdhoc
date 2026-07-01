@@ -9,7 +9,7 @@ public enum MissionOptions {
     InterestScheme("Interest Scheme", "Gaining 2 Pulls adds an additional Flying Chest to completing your next Yellow Beacon. (Max 12)"),
     ThrillSeeker("Thrill Seeker", "Gain +1 Pull per Red Beacon challenge completed. This amount increases by +1 per 6 challenges completed (max +3), which resets upon taking a Green Beacon."),
     OrphionsGrace("Orphion's Grace", "Boons are now 50% more effective."),
-    OpalOffering("Opal Offering", "After getting a Curse, consume 1 Boon to gain +2 Pulls (+1 per 50% Potency)"),
+    OpalOffering("Opal Offering", "After getting a Curse, consume 1 Boon to gain +1 Pulls (+2 per 50% Potency over 100%)"),
     Gourmand("Gourmand", "Gain 2 beacon choices for this challenge for every beacon reroll used."),
     Porphyrophobia("Porphyrophobia", "Getting offered a Purple Beacon gives +1 Curse. Purple Beacons now give twice as many Pulls."),
     SacrificialRitual("Sacrificial Ritual", "After finishing a Challenge, consume 1 Pull to gain +3 Challenge."),

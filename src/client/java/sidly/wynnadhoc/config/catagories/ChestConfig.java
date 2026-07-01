@@ -2,11 +2,9 @@ package sidly.wynnadhoc.config.catagories;
 
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDraggableList;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorSlider;
-import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
-import sidly.wynnadhoc.features.chests.ChestColor;
+import io.github.notenoughupdates.moulconfig.ChromaColour;
+import io.github.notenoughupdates.moulconfig.annotations.*;
+import sidly.wynnadhoc.features.chests.ChestDataDisplayOption;
 import sidly.wynnadhoc.features.chests.ChestTier;
 
 import java.util.List;
@@ -17,24 +15,38 @@ public class ChestConfig {
     @ConfigEditorBoolean
     public boolean autoCloseChests = false;
 
-    // TODO esp accordion
     @Expose
-    @ConfigOption(name = "Force Chest Esp", desc = "Draws outline of known nearby chests")
+    @ConfigOption(name = "Highlight Chests", desc = "Draws outline of known nearby chests")
     @ConfigEditorBoolean
     public boolean forceEsp = false;
 
     @Expose
-    @ConfigOption(name = "Only Color", desc = "The colors chest esp should show, green is > 3d, yellow is > 30m, red is < 30m")
-    @ConfigEditorDraggableList
-    public List<ChestColor> shownColors = Lists.newArrayList(ChestColor.GREEN, ChestColor.YELLOW);
+    @ConfigOption(name = "Ready Color", desc = "color when over 3d since last open")
+    @ConfigEditorColour
+    public String readyColor = ChromaColour.special(0, 255, 0, 255, 0);
 
     @Expose
-    @ConfigOption(name = "Only Tier", desc = "the tiers chest esp should show")
+    @ConfigOption(name = "Openable Color", desc = "color when over 30m since last open")
+    @ConfigEditorColour
+    public String openableColor = ChromaColour.special(0, 255, 255, 255, 0);
+
+    @Expose
+    @ConfigOption(name = "Cooldown Color", desc = "color when less than 3om since last open")
+    @ConfigEditorColour
+    public String cdColor = ChromaColour.special(0, 255, 255, 0, 0);
+
+    @Expose
+    @ConfigOption(name = "Only Openable", desc = "only show openable chests")
+    @ConfigEditorBoolean
+    public boolean onlyOpenable = true;
+
+    @Expose
+    @ConfigOption(name = "Only Tier", desc = "the tiers to show")
     @ConfigEditorDraggableList
     public List<ChestTier> shownTiers = Lists.newArrayList(ChestTier.values());
 
     @Expose
-    @ConfigOption(name = "Max Distance", desc = "Max distance to show chest esp")
+    @ConfigOption(name = "Max Distance", desc = "Max distance to show chests")
     @ConfigEditorSlider(minValue = 0.0F, maxValue = 1000.0F, minStep = 5.0F)
     public double maxEspDistance = 150.0F;
 
@@ -44,7 +56,21 @@ public class ChestConfig {
     public boolean trackChests = true;
 
     @Expose
-    @ConfigOption(name = "Display Level", desc = "Display the % of the items you have gotten from a chest that are in each level range")
+    @ConfigOption(name = "Display Data", desc = "quick toggle for the below selector")
     @ConfigEditorBoolean
     public boolean displayLevel = true;
+
+    @Expose
+    @ConfigOption(name = "Display Data", desc = "what data should be displayed on the chest (do note order matters)")
+    @ConfigEditorDraggableList
+    public List<ChestDataDisplayOption> chestDisplayOptions = Lists.newArrayList(
+            ChestDataDisplayOption.LOCAL_ING_COUNT,
+            ChestDataDisplayOption.LOCAL_ITEM_COUNT,
+            ChestDataDisplayOption.GLOBAL_ITEM_PERCENTS
+    );
+
+    @Expose
+    @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations and items between all users with this setting on")
+    @ConfigEditorBoolean
+    public boolean syncChests = true;
 }

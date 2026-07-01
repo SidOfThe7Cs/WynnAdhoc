@@ -216,6 +216,13 @@ object LootrunCore {
         }
     }
 
+    fun isMissionActive(mission: MissionOptions): Boolean {
+        val data = getCurrentLootrunData() ?: return false
+        val contains = data.currentMissionsActive.contains(mission)
+        val inProgress = ScoreboardInfo.missionInProgress == mission.displayName
+        return contains && !inProgress
+    }
+
     // adds a mission to the active list but active list also contains in progress so called from scoreboard
     fun addMission(name: String) {
         val data = getCurrentLootrunData() ?: return

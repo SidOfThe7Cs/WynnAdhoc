@@ -10,6 +10,7 @@ public class ChatMessageEvent extends Event<ChatMessageEvent> {
     public String cleanMessage;
     public String[] splitMessage;
     public String strippedByWynntills;
+    public boolean canceled = false;
 
     public ChatMessageEvent(String message) {
         this.message = message;

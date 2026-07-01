@@ -16,8 +16,6 @@ import sidly.wynnadhoc.utils.datatypes.toBlockPos
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.datatypes.toVec3d
 import java.awt.Color
-import kotlin.math.ln
-import kotlin.math.sqrt
 
 object RenderUtils {
     private val config get() = ConfigManager.INSTANCE.config.gui
@@ -52,7 +50,6 @@ object RenderUtils {
 
         event.drawLineToEye(Vec3d(0.5, 82.5, 0.5), Color.ORANGE)
     }
-
 
     fun drawLines(
         event: WorldRenderEvent,

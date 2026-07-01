@@ -2,6 +2,9 @@ package sidly.wynnadhoc.config;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import io.github.notenoughupdates.moulconfig.gui.GuiContext;
 import io.github.notenoughupdates.moulconfig.gui.GuiElementComponent;
 import io.github.notenoughupdates.moulconfig.gui.MoulConfigEditor;
@@ -12,21 +15,23 @@ import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.config.saves.BasicSavable;
-import sidly.wynnadhoc.config.saves.ChestsSaveData;
-import sidly.wynnadhoc.config.saves.Config;
-import sidly.wynnadhoc.config.saves.LootrunSaveData;
+import sidly.wynnadhoc.config.saves.*;
+import sidly.wynnadhoc.features.chests.ChestTracker;
+import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
+import sidly.wynnadhoc.server.ChestCrowdsource;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
@@ -66,6 +71,16 @@ public class ConfigManager {
                         return map;
                     }
             )
+            .registerTypeAdapter(ItemStack.class, (JsonSerializer<ItemStack>) (src, typeOfSrc, context) -> {
+                DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(JsonOps.INSTANCE, src);
+                return result.result().orElse(null);
+            })
+            .registerTypeAdapter(ItemStack.class, (JsonDeserializer<ItemStack>) (json, typeOfT, context) -> {
+                DataResult<Pair<ItemStack, JsonElement>> result = ItemStack.CODEC.decode(JsonOps.INSTANCE, json);
+                Pair<ItemStack, JsonElement> pair = result.result().orElse(null);
+                if (pair == null) return null;
+                return pair.getFirst();
+            })
             .setPrettyPrinting().create();
     private static Path CONFIG_DIR = FabricLoader.getInstance()
             .getConfigDir()
@@ -82,26 +97,12 @@ public class ConfigManager {
         return CONFIG_DIR;
     }
 
-    private final Path TOKEN_PATH = getConfigDir().resolve("token.txt");
-    private String token = "";
-
-    public String getToken() {
-        if (token.isEmpty()) {
-            if (TOKEN_PATH.toFile().exists()) {
-                try {
-                    token = Files.readString(TOKEN_PATH);
-                } catch (IOException e) {
-                    WynnAdhocClient.LOGGER.warn("failed to read token");
-                }
-            }
-        }
-        return token;
-    }
-
     public Config config = new Config();
 
     private LootrunSaveData lootrunSaveData;
     private ChestsSaveData chests;
+    private SessionToken sessionToken;
+    private LastVersion lastVersion;
 
     public LootrunData getLootrun(String uuid) {
         if (uuid.isEmpty()) {
@@ -119,6 +120,33 @@ public class ConfigManager {
         return chests.chests;
     }
 
+    public String getToken() {
+        return sessionToken.token == null ? "" : sessionToken.token;
+    }
+
+    public String getLastVersion() {
+        return lastVersion.lastVersion == null ? "0.0.0" : lastVersion.lastVersion;
+    }
+
+    public void setLastVersion(String newVersion) {
+        this.lastVersion.lastVersion = newVersion;
+    }
+
+    public static CompletableFuture<Integer> loadChestsFromServer() {
+        if (!INSTANCE.config.chest.syncChests) {
+            ChestTracker.INSTANCE.cacheChestData(List.of());
+            return CompletableFuture.completedFuture(0);
+        }
+        CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests();
+        return downloadedChests.thenApply((l) -> {
+            ChestTracker.INSTANCE.cacheChestData(l);
+            return l.size();
+        });
+    }
+
+    public void storeToken(String sessionToken) {
+        this.sessionToken.token = sessionToken;
+    }
 
     public Screen getConfigScreen(Screen parent) {
 
@@ -153,6 +181,8 @@ public class ConfigManager {
     public void load() {
         ConfigManager.INSTANCE.lootrunSaveData = new LootrunSaveData();
         ConfigManager.INSTANCE.chests = new ChestsSaveData();
+        ConfigManager.INSTANCE.sessionToken = new SessionToken();
+        ConfigManager.INSTANCE.lastVersion = new LastVersion();
 
         BasicSavable.loadAll();
 
@@ -171,6 +201,8 @@ public class ConfigManager {
             WynnAdhocClient.LOGGER.error("Config file could not be loaded");
             this.config = new Config();
         }
+
+        loadChestsFromServer();
     }
 
     public void save() {
@@ -178,5 +210,7 @@ public class ConfigManager {
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
     }
 
-
+    public void saveToken() {
+        sessionToken.save();
+    }
 }
