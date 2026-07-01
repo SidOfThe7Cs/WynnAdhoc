@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
-    private static final Gson DEFUALT_GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson DEFUALT_GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestsSaveData.ChestData>>() {
                     }.getType(),
@@ -130,6 +130,7 @@ public class ConfigManager {
 
     public void setLastVersion(String newVersion) {
         this.lastVersion.lastVersion = newVersion;
+        this.lastVersion.save();
     }
 
     public static CompletableFuture<Integer> loadChestsFromServer() {
@@ -146,6 +147,7 @@ public class ConfigManager {
 
     public void storeToken(String sessionToken) {
         this.sessionToken.token = sessionToken;
+        this.sessionToken.save();
     }
 
     public Screen getConfigScreen(Screen parent) {
@@ -208,9 +210,5 @@ public class ConfigManager {
     public void save() {
         BasicSavable.saveAll();
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
-    }
-
-    public void saveToken() {
-        sessionToken.save();
     }
 }

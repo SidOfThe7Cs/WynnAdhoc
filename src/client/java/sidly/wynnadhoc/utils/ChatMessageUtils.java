@@ -4,27 +4,49 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatMessageUtils {
 
-    public static void sendChatCommand(String command) { // command starts directly NOT with a slash
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
-        if (player != null && command != null && !command.isEmpty()) {
-            player.networkHandler.sendChatCommand(command);
-        }
+    public static void sendChatCommand(String command) {
+        if (command == null || command.isEmpty()) return;
+        String cmd = command.startsWith("/") ? command.substring(1) : command;
+        MinecraftClient.getInstance().execute(() -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            ClientPlayerEntity player = client.player;
+            if (player != null) {
+                player.networkHandler.sendChatCommand(cmd);
+            }
+        });
     }
 
-    public static void sendChatMessage(String message) { // this sends client side only
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
-        if (player != null && message != null && !message.isEmpty()) {
-            player.sendMessage(Text.literal(message), false);
-        }
+    public static void sendChatMessage(String message) {
+        sendChatMessage(Text.literal(message));
     }
 
+    public static void sendChatMessage(Text text) {
+        MinecraftClient.getInstance().execute(() -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            ClientPlayerEntity player = client.player;
+            if (player != null && text != null) {
+                player.sendMessage(text, false);
+            }
+        });
+    }
+
+    public static void sendChatMessage(List<Text> text) {
+        MinecraftClient.getInstance().execute(() -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            ClientPlayerEntity player = client.player;
+            if (player != null && text != null) {
+                for (Text t : text) {
+                    player.sendMessage(t, false);
+                }
+            }
+        });
+    }
 
     public static String[] extractTextBeforeSpecificString(String input, String specificString) {
         // Define regex pattern to match everything before the specific string
@@ -53,12 +75,10 @@ public class ChatMessageUtils {
             // Extract text after the specific string
             afterSpecific = input.substring(matcher.end()).trim();
             remaining = beforeSpecific + afterSpecific;
-        }
-        else return new String[] {"", input};
+        } else return new String[]{"", input};
 
-        return new String[] { extracted, remaining };
+        return new String[]{extracted, remaining};
     }
-
 
 
 }
