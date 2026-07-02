@@ -36,15 +36,16 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
             this.lastOpened = new HashMap<>();
         }
 
-        public void addItems(byte[] items) {
+        public byte[] addItems(byte[] items) {
             if (this.items == null || this.items.length == 0) {
                 this.items = items;
-                return;
+                return this.items;
             }
             byte[] newTotal = new byte[this.items.length + items.length];
             System.arraycopy(this.items, 0, newTotal, 0, this.items.length);
             System.arraycopy(items, 0, newTotal, this.items.length, items.length);
             this.items = newTotal;
+            return this.items;
         }
 
         public void onOpen() {
