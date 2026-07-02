@@ -9,13 +9,15 @@ import java.util.List;
 
 public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
     public final GenericContainerScreen containerScreen;
+    public final List<ItemStack> items;
 
-    public List<ItemStack> getItems() {
+    private List<ItemStack> initItems() {
         int containerSlots = containerScreen.getScreenHandler().slots.size() - 36; // inventory is 36 size
 
         List<ItemStack> items = new ArrayList<>();
         for (int i = 0; i < containerSlots; i++) {
-            items.add(containerScreen.getScreenHandler().getSlot(i).getStack());
+            ItemStack stack = containerScreen.getScreenHandler().getSlot(i).getStack();
+            items.add(stack);
         }
 
         return items;
@@ -23,6 +25,7 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
 
     public ChestItemsLoadedEvent(GenericContainerScreen containerScreen) {
         this.containerScreen = containerScreen;
+        this.items = initItems();
         this.fire();
     }
 
@@ -40,10 +43,15 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
 
 
     private static boolean itemsLoaded = false;
+    private static int openTicks;
 
     public static void onScreenRender(ScreenRenderEvent event) {
         if (!(event.screen instanceof GenericContainerScreen container)) return;
-        if (itemsLoaded) return; // already triggered
+        if (itemsLoaded) {
+            openTicks++;
+            if (openTicks == 3) new ChestItemsLoadedEvent(container);
+            return;
+        }
 
         boolean hasNonAir = false;
         int containerSlots = container.getScreenHandler().slots.size() - 36; // inventory is 36 size
@@ -57,11 +65,11 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
 
         if (hasNonAir) {
             itemsLoaded = true;
-            new ChestItemsLoadedEvent(container);
         }
     }
 
     public static void onScreenOpened() {
+        openTicks = 0;
         itemsLoaded = false;
     }
 

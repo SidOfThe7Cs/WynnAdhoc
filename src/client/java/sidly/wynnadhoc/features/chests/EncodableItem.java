@@ -16,6 +16,7 @@ public interface EncodableItem {
     }
 
     static EncodableItem fromItem(ItemStack itemStack) {
+        if (itemStack == null) return null;
         BoxItem boxItem = BoxItem.fromItem(itemStack);
         if (boxItem != null) return boxItem;
         IngredientItem ingItem = IngredientItem.fromItem(itemStack);
