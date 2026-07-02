@@ -184,7 +184,6 @@ public class CrowdsourceMain {
         WynnAdhocClient.LOGGER.info(Debug.Type.SERVER, "WynnAdhoc auth successful");
 
         client.execute(() -> ChatMessageUtils.sendChatMessage("WynnAdhoc authentication successful"));
-        ConfigManager.INSTANCE.saveToken();
     }
 
     private static void storeSessionToken(String sessionToken) {

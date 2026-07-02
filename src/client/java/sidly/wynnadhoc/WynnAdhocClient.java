@@ -64,7 +64,10 @@ public class WynnAdhocClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register(CommandRegistrationEvent::new);
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(WorldChangeEvent::new);
         ScreenEvents.AFTER_INIT.register(ScreenOpenedEvent::new);
-        ClientPlayConnectionEvents.DISCONNECT.register(ChestCrowdsource::submitChests);
+        ClientPlayConnectionEvents.DISCONNECT.register(DisconnectEvent::new);
+
+        Event.register(DisconnectEvent.class, ChestCrowdsource::submitChests);
+        Event.register(DisconnectEvent.class, ConfigManager.INSTANCE::save);
 
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
         Event.register(ClientTickEvent.class, LootrunCore.INSTANCE::onClientTick);

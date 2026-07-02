@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
-    private static final Gson DEFUALT_GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson DEFUALT_GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestsSaveData.ChestData>>() {
                     }.getType(),
@@ -130,22 +130,30 @@ public class ConfigManager {
 
     public void setLastVersion(String newVersion) {
         this.lastVersion.lastVersion = newVersion;
+        this.lastVersion.save();
     }
 
     public static CompletableFuture<Integer> loadChestsFromServer() {
+        ChestTracker.INSTANCE.cacheChestData(List.of());
         if (!INSTANCE.config.chest.syncChests) {
-            ChestTracker.INSTANCE.cacheChestData(List.of());
             return CompletableFuture.completedFuture(0);
         }
         CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests();
         return downloadedChests.thenApply((l) -> {
             ChestTracker.INSTANCE.cacheChestData(l);
+            Map<BlockPos, ChestsSaveData.ChestData> existingChests = INSTANCE.chests.chests;
+            l.forEach((chest) -> {
+                if (!existingChests.containsKey(chest.getPos())) {
+                    existingChests.put(chest.getPos(), new ChestsSaveData.ChestData(chest.tier(), new byte[0]));
+                }
+            });
             return l.size();
         });
     }
 
     public void storeToken(String sessionToken) {
         this.sessionToken.token = sessionToken;
+        this.sessionToken.save();
     }
 
     public Screen getConfigScreen(Screen parent) {
@@ -208,9 +216,5 @@ public class ConfigManager {
     public void save() {
         BasicSavable.saveAll();
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
-    }
-
-    public void saveToken() {
-        sessionToken.save();
     }
 }

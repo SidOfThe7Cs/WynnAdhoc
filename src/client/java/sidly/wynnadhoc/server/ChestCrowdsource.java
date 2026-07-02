@@ -2,8 +2,6 @@ package sidly.wynnadhoc.server;
 
 import com.google.gson.reflect.TypeToken;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
@@ -102,10 +100,6 @@ public class ChestCrowdsource {
                     }
                 });
         return count;
-    }
-
-    public static void submitChests(ClientPlayNetworkHandler netHand, MinecraftClient client) {
-        submitChests();
     }
 
     public static int submitAllChests() {
