@@ -2,6 +2,7 @@ package sidly.wynnadhoc.features.chests
 
 import com.wynntils.core.components.Models
 import com.wynntils.models.containers.containers.reward.LootChestContainer
+import io.github.notenoughupdates.moulconfig.ChromaColour.Companion.forLegacyString
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
@@ -85,6 +86,7 @@ object ChestTracker {
             ChestCrowdsource.changedKeys.add(lastClickedChest)
 
             val items = event.getItems().mapNotNull { i -> EncodableItem.fromItem(i) }
+            WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "found items: $items")
             val byteArray = EncodableItem.toByteArray(items)
 
             chest.addItems(byteArray)
@@ -104,20 +106,21 @@ object ChestTracker {
         val shouldHighLight = highlightRelevantChests && (missionReq || crono || splunk)
         if (shouldHighLight || config.forceEsp) {
             val currentTime = System.currentTimeMillis()
-
+            val onlySplunk = splunk && !missionReq && !crono && !config.forceEsp
             for (knownChest in ConfigManager.INSTANCE.chests.entries) {
-                if (splunk && !missionReq && !crono && !config.forceEsp && knownChest.value.tier < 3) continue
-                val color = knownChest.value.getColor(currentTime)
-                if (!knownChest.value.isOpenable(currentTime) && config.onlyOpenable) continue
+                if (!config.shownTiers.contains(ChestTier.from(knownChest.value.tier))) continue
+                val isSplunkChest = knownChest.value.tier > 2 && splunk
+                if (onlySplunk && !isSplunkChest) continue
+                if (!isSplunkChest && config.onlyOpenable && !knownChest.value.isOpenable(currentTime)) continue
+                val color = if (isSplunkChest) {
+                    forLegacyString(config.readyColor).getEffectiveColour()
+                } else knownChest.value.getColor(currentTime)
 
                 val distSqr = knownChest.key.getSquaredDistance(player.entityPos)
-
                 val maxDist = config.maxEspDistance.pow(2)
                 if (distSqr > maxDist) continue
 
-                if (config.shownTiers.contains(ChestTier.from(knownChest.value.tier))) {
-                    event.drawBox(knownChest.key.toBox(), color)
-                }
+                event.drawBox(knownChest.key.toBox(), color)
             }
         }
     }
@@ -151,9 +154,7 @@ object ChestTracker {
     fun addLevelRanges(event: TextDisplaySyncEvent) {
         val copy = event.text.copy()
         val chestPos = LocationUtils.getBlockUnderVec3d(event.pos)
-        WynnAdhocClient.LOGGER.temp("chestpos at: $chestPos")
         val chestDataCache = chestDataCache[chestPos] ?: return
-        WynnAdhocClient.LOGGER.temp("chest data: $chestDataCache")
 
         config.chestDisplayOptions.forEach { option ->
             val text = option.toText(chestDataCache)
