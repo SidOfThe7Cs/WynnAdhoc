@@ -28,6 +28,7 @@ import sidly.wynnadhoc.server.ChestCrowdsource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,14 +141,15 @@ public class ConfigManager {
         }
         CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests();
         return downloadedChests.thenApply((l) -> {
-            ChestTracker.INSTANCE.cacheChestData(l);
+            Collection<LootChest> compressedList = LootChest.compressChestData(l);
+            ChestTracker.INSTANCE.cacheChestData(compressedList);
             Map<BlockPos, ChestsSaveData.ChestData> existingChests = INSTANCE.chests.chests;
-            l.forEach((chest) -> {
+            compressedList.forEach((chest) -> {
                 if (!existingChests.containsKey(chest.getPos())) {
                     existingChests.put(chest.getPos(), new ChestsSaveData.ChestData(chest.tier(), new byte[0]));
                 }
             });
-            return l.size();
+            return compressedList.size();
         });
     }
 

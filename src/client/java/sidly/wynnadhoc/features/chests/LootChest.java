@@ -2,12 +2,28 @@ package sidly.wynnadhoc.features.chests;
 
 import com.google.gson.*;
 import net.minecraft.util.math.BlockPos;
+import sidly.wynnadhoc.utils.BitUtils;
 
-import java.util.Base64;
+import java.util.*;
 
 public record LootChest(int x, int y, int z, int tier, byte[] chestData) {
     public BlockPos getPos() {
         return new BlockPos(x, y, z);
+    }
+
+    public static Collection<LootChest> compressChestData(List<LootChest> chests) {
+        Map<BlockPos, LootChest> newData = new HashMap<>();
+        chests.forEach(c -> {
+            newData.merge(c.getPos(), c, (existing, newChest) -> {
+                byte[] combinedData = BitUtils.combineByteArrays(existing.chestData, newChest.chestData);
+                return new LootChest(
+                        existing.x, existing.y, existing.z,
+                        existing.tier,
+                        combinedData
+                );
+            });
+        });
+        return newData.values();
     }
 
     // custom deserializer since spring automatically encodes to base64 but gson does not
