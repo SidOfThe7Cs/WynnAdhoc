@@ -89,8 +89,12 @@ object ChestTracker {
             WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "found items: $items")
             val byteArray = EncodableItem.toByteArray(items)
 
-            chest.addItems(byteArray)
-            chestDataCache[lastClickedChest]?.updateLocalWith(items)
+            val newTotalItems = chest.addItems(byteArray)
+            if (config.chestDisplayOptions.contains(ChestDataDisplayOption.LOCAL_ITEM_PERCENTS) ||
+                config.chestDisplayOptions.contains(ChestDataDisplayOption.LOCAL_ING_PERCENTS)
+            ) {
+                chestDataCache[lastClickedChest]?.updateLocal(newTotalItems)
+            } else chestDataCache[lastClickedChest]?.addLocalCounts(byteArray)
         }
     }
 

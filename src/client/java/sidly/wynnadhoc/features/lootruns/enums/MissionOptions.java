@@ -26,8 +26,8 @@ public enum MissionOptions {
     Ostinato("Ostinato", "Taking a Boon type you already have will grant +2 Pulls per duplicate you own. Your Boons will be reduced in potency by 50% for every duplicate type."),
     BelezaPura("Beleza Pura", "If an Aqua Beacon is offered, all beacons offered alongside it will be boosted by that same Aqua."),
     HighSpirits("High Spirits ", "Gain +50% Vibrancy chance."),
-    KnifeEdge("Knife Edge", "Add +1 Crimson Beacon to your beacon pool."),
-    KingsCourt("King's Court", "Gain +50% Vibrancy chance."),
+    KnifeEdge("Knife Edge", "After completing a challenge, gain +7 pulls. This amount is reduced by 1 per challenge remaining (min 0)"),
+    KingsCourt("King's Court", "Add +1 Crimson Beacon to your beacon pool."),
     CompleteChaos("Complete Chaos", "After finishing a Challenge, get an additional random Beacon reward. ");
 
     private final String displayName;
