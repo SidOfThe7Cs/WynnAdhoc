@@ -8,7 +8,7 @@ import sidly.wynnadhoc.config.gui.HudElementData;
 public class LootrunConfig {
 
     @Expose
-    @ConfigOption(name = "Auto Highlight Chests", desc = "Highlights chests when relevant in a lootrun")
+    @ConfigOption(name = "Dynamic Chest Highlight", desc = "Highlights chests when relevant in a lootrun")
     @ConfigEditorBoolean
     public boolean highlightRelevantChests = true;
 

@@ -24,7 +24,7 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public WarConfig war = new WarConfig();
 
     @Expose
-    @Category(name = "Chest Related Settings", desc = "chest related settings")
+    @Category(name = "Chest Settings", desc = "chest settings")
     public ChestConfig chest = new ChestConfig();
 
     @Expose
