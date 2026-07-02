@@ -32,7 +32,7 @@ object ChestTracker {
     private val trappedChests = mutableSetOf<BlockPos>()
     private val chestDataCache: MutableMap<BlockPos, ChestDataCache> = mutableMapOf()
 
-    fun cacheChestData(global: List<LootChest>) {
+    fun cacheChestData(global: Collection<LootChest>) {
         val local = ConfigManager.INSTANCE.chests
         val globalKeys = mutableSetOf<BlockPos>()
         // cache contains both local and global separately first we loop through all existing global and add both local and global data
