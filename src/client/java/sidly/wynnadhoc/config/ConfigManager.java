@@ -134,13 +134,19 @@ public class ConfigManager {
     }
 
     public static CompletableFuture<Integer> loadChestsFromServer() {
+        ChestTracker.INSTANCE.cacheChestData(List.of());
         if (!INSTANCE.config.chest.syncChests) {
-            ChestTracker.INSTANCE.cacheChestData(List.of());
             return CompletableFuture.completedFuture(0);
         }
         CompletableFuture<List<LootChest>> downloadedChests = ChestCrowdsource.getChests();
         return downloadedChests.thenApply((l) -> {
             ChestTracker.INSTANCE.cacheChestData(l);
+            Map<BlockPos, ChestsSaveData.ChestData> existingChests = INSTANCE.chests.chests;
+            l.forEach((chest) -> {
+                if (!existingChests.containsKey(chest.getPos())) {
+                    existingChests.put(chest.getPos(), new ChestsSaveData.ChestData(chest.tier(), new byte[0]));
+                }
+            });
             return l.size();
         });
     }

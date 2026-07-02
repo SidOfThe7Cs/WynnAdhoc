@@ -140,6 +140,7 @@ object ChestTracker {
 
             if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
                 ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier, ByteArray(0))
+                chestDataCache[blockPos] = ChestDataCache.from(null, null)
             }
 
             if (config.displayLevel) addLevelRanges(event)
@@ -150,7 +151,9 @@ object ChestTracker {
     fun addLevelRanges(event: TextDisplaySyncEvent) {
         val copy = event.text.copy()
         val chestPos = LocationUtils.getBlockUnderVec3d(event.pos)
+        WynnAdhocClient.LOGGER.temp("chestpos at: $chestPos")
         val chestDataCache = chestDataCache[chestPos] ?: return
+        WynnAdhocClient.LOGGER.temp("chest data: $chestDataCache")
 
         config.chestDisplayOptions.forEach { option ->
             val text = option.toText(chestDataCache)
