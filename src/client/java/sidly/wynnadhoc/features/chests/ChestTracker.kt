@@ -85,7 +85,7 @@ object ChestTracker {
             chest.onOpen()
             ChestCrowdsource.changedKeys.add(lastClickedChest)
 
-            val items = event.getItems().mapNotNull { i -> EncodableItem.fromItem(i) }
+            val items = event.items.mapNotNull { i -> EncodableItem.fromItem(i) }
             WynnAdhocClient.LOGGER.info(Debug.Type.LOOTRUN, "found items: $items")
             val byteArray = EncodableItem.toByteArray(items)
 
