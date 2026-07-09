@@ -21,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import sidly.wynnadhoc.utils.render.ButtonContainer;
 import sidly.wynnadhoc.utils.render.TextureInfo;
+import sidly.wynnadhoc.wapi.item.WynnItem;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -93,6 +94,7 @@ public class CustomWynntillsMapWaypoints {
 
         @Override
         public void close() {
+            selectChestLvlRange(buttonContainer);
             MinecraftClient.getInstance().setScreen(oldMapScreen);
         }
 
@@ -119,23 +121,30 @@ public class CustomWynntillsMapWaypoints {
 
             buttonContainer.addButton(Text.literal("Hide All"),
                     (b) -> {
-                        selectedLvl = -1;
+                        selectedLvls = new ArrayList<>();
+                        buttonContainer.hideAll();
                         close();
                     }, 20);
 
 
             buttonContainer.addButton(Text.literal("Show All"),
                     (b) -> {
-                        selectedLvl = -2;
+                        selectedLvls = null;
                         close();
                     }, 20);
 
+            // TODO map by lvl (could also add matched alias to the render text)
+            Map<Integer, Set<WynnItem>> items = new HashMap<>();
             for (int i = 1; i <= 120; i += 5) {
-                buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
+                ButtonContainer.ToggleButton button = buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
                         (b) -> {
-                            selectChestLvlRange(b);
-                            close();
                         }, 20);
+                for (int j = i; j < i + 4; j++) {
+                    button.addAlias(String.valueOf(j));
+                    Set<WynnItem> wynnItems = items.get(j);
+                    if (wynnItems == null) continue;
+                    wynnItems.forEach(item -> button.addAlias(item.internalName()));
+                }
             }
         }
 
@@ -172,39 +181,59 @@ public class CustomWynntillsMapWaypoints {
     }
 
     private final static Pattern BUTTON_LVL_REGEX = Pattern.compile("Select Lvl (\\d+).*");
-    private static int selectedLvl = -1;
+    private static List<Integer> selectedLvls = new ArrayList<>();
 
     public static List<Poi> getSelectedPois() {
         List<Poi> pois = new ArrayList<>();
-        if (selectedLvl == -1) return pois;
+        if (selectedLvls != null && selectedLvls.isEmpty()) return pois;
 
         Map<@NotNull BlockPos, @NotNull ChestDataCache> chestDataCache = ChestTracker.INSTANCE.getChestDataCache();
         for (Map.Entry<BlockPos, ChestDataCache> entry : chestDataCache.entrySet()) {
             Map<Integer, Integer> itemPercents = entry.getValue().getItemPercents();
-            if (selectedLvl == -2) { // show all
+            if (selectedLvls == null) { // show all
                 Optional<Map.Entry<Integer, Integer>> highest = itemPercents.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue));
                 if (highest.isEmpty()) continue;
                 int lvl = highest.get().getKey();
                 ChestPoi chestPoi = new ChestPoi(lvl + " - " + (lvl + 4) + " " + highest.get().getValue() + "%", entry.getKey(), CommonColors.WHITE);
                 pois.add(chestPoi);
             } else {
-                Integer percent = itemPercents.getOrDefault(selectedLvl, null);
-                if (percent == null) continue;
-                CustomColor color = CommonColors.RED;
-                if (percent > 15) color = CommonColors.YELLOW;
-                if (percent > 40) color = CommonColors.GREEN;
-                ChestPoi chestPoi = new ChestPoi(selectedLvl + " - " + (selectedLvl + 4) + " " + percent + "%", entry.getKey(), color);
-                pois.add(chestPoi);
+                Map<BlockPos, Map<Integer, Integer>> chests = new HashMap<>();
+                for (Integer lvl : selectedLvls) {
+                    Integer percent = itemPercents.getOrDefault(lvl, null);
+                    if (percent == null) continue;
+                    Map<Integer, Integer> chest = chests.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                    chest.put(lvl, percent);
+                }
+
+                for (Map.Entry<BlockPos, Map<Integer, Integer>> chestToRender : chests.entrySet()) {
+                    Map<Integer, Integer> lvlToPercent = chestToRender.getValue();
+                    BlockPos chestPos = chestToRender.getKey();
+                    CustomColor color = CommonColors.RED;
+                    StringBuilder sb = new StringBuilder();
+                    for (Map.Entry<Integer, Integer> lvlEntry : lvlToPercent.entrySet()) {
+                        if (!sb.isEmpty()) sb.append(" : ");
+                        int lvl = lvlEntry.getKey();
+                        int percent = lvlEntry.getValue();
+                        if (percent > 15 && color != CommonColors.GREEN) color = CommonColors.YELLOW;
+                        if (percent > 40) color = CommonColors.GREEN;
+                        sb.append("lvl ").append(lvl).append(" - ").append(lvl + 4).append(" ").append(percent).append("%");
+                    }
+                    ChestPoi chestPoi = new ChestPoi(sb.toString(), chestPos, color);
+                    pois.add(chestPoi);
+                }
             }
         }
 
         return pois;
     }
 
-    public static void selectChestLvlRange(ButtonWidget button) {
-        Matcher matcher = BUTTON_LVL_REGEX.matcher(button.getMessage().getString());
-        if (matcher.matches()) {
-            selectedLvl = Integer.parseInt(matcher.group(1));
+    public static void selectChestLvlRange(ButtonContainer container) {
+        selectedLvls = new ArrayList<>();
+        for (ButtonContainer.ToggleButton button : container.getSelected()) {
+            Matcher matcher = BUTTON_LVL_REGEX.matcher(button.getText().getString());
+            if (matcher.matches()) {
+                selectedLvls.add(Integer.parseInt(matcher.group(1)));
+            }
         }
     }
 }
