@@ -14,6 +14,7 @@
     "ScreenMixin",
     "SlotClickedMixin",
     "StatusEffectMixin",
+    "WynntillsMapScreenMixin",
     "WynntillsModMixin",
     "WynntilsScreenMixin",
     "accessors.GuildLogScreenAccessor",

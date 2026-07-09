@@ -32,6 +32,10 @@ object ChestTracker {
     private val trappedChests = mutableSetOf<BlockPos>()
     private val chestDataCache: MutableMap<BlockPos, ChestDataCache> = mutableMapOf()
 
+    fun getChestDataCache(): Map<BlockPos, ChestDataCache> {
+        return chestDataCache
+    }
+
     fun cacheChestData(global: Collection<LootChest>) {
         val local = ConfigManager.INSTANCE.chests
         val globalKeys = mutableSetOf<BlockPos>()
