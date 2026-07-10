@@ -30,7 +30,10 @@ public class VersionUtils {
     private static final List<Pair<String, String>> changelog = new ArrayList<>();
 
     static {
-        changelog("0.0.0", "V0 shouldn't ever print changelog");
+        changelog("0.0.0",
+                """
+                        """
+        );
         changelog("0.0.1",
                 """
                         Added in-Game Changelogs
@@ -43,6 +46,12 @@ public class VersionUtils {
         );
         changelog("0.0.2",
                 "Added automatic update checking"
+        );
+        changelog("0.0.3",
+                """
+                        "Added a button to the wynntills map to select chest waypoints"
+                        "Added /wynnadhoc and /wynnadhoc Config as alternate ways to open the config"
+                        """
         );
     }
 

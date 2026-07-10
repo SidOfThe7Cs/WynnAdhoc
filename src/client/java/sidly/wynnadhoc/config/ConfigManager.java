@@ -2,6 +2,7 @@ package sidly.wynnadhoc.config;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
@@ -12,6 +13,8 @@ import io.github.notenoughupdates.moulconfig.platform.MoulConfigScreenComponent;
 import io.github.notenoughupdates.moulconfig.processor.BuiltinMoulConfigGuis;
 import io.github.notenoughupdates.moulconfig.processor.ConfigProcessorDriver;
 import io.github.notenoughupdates.moulconfig.processor.MoulConfigProcessor;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,6 +23,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.saves.*;
+import sidly.wynnadhoc.event.CommandRegistrationEvent;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
@@ -218,5 +222,18 @@ public class ConfigManager {
     public void save() {
         BasicSavable.saveAll();
         ConfigUtil.saveConfig(this.config, MAIN_CONFIG_FILE, GSON);
+    }
+
+    public static void registerCommands(CommandRegistrationEvent event) {
+        event.register(ClientCommandManager.literal("Config").executes(ConfigManager::openConfigScreen));
+        event.dispatcher.register(ClientCommandManager.literal("WynnAdhoc").executes(ConfigManager::openConfigScreen));
+        event.dispatcher.register(ClientCommandManager.literal("wynnadhoc").executes(ConfigManager::openConfigScreen));
+    }
+
+    private static int openConfigScreen(CommandContext<FabricClientCommandSource> ctx) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Screen configScreen = ConfigManager.INSTANCE.getConfigScreen(null);
+        client.execute(() -> client.setScreen(configScreen));
+        return 1;
     }
 }
