@@ -139,6 +139,7 @@ public class CustomWynntillsMapWaypoints {
                 ButtonContainer.ToggleButton button = buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
                         (b) -> {
                         }, 20);
+                if (selectedLvls.contains(i)) button.setToggled(true);
                 for (int j = i; j < i + 4; j++) {
                     button.addAlias(String.valueOf(j));
                     Set<WynnItem> wynnItems = items.get(j);
@@ -210,7 +211,7 @@ public class CustomWynntillsMapWaypoints {
                     BlockPos chestPos = chestToRender.getKey();
                     CustomColor color = CommonColors.RED;
                     StringBuilder sb = new StringBuilder();
-                    for (Map.Entry<Integer, Integer> lvlEntry : lvlToPercent.entrySet()) {
+                    for (Map.Entry<Integer, Integer> lvlEntry : lvlToPercent.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList().reversed()) {
                         if (!sb.isEmpty()) sb.append(" : ");
                         int lvl = lvlEntry.getKey();
                         int percent = lvlEntry.getValue();

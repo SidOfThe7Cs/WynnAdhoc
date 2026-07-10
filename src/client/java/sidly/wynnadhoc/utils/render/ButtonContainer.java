@@ -54,6 +54,10 @@ public class ButtonContainer {
         public Text getText() {
             return text;
         }
+
+        public void setToggled(boolean toggled) {
+            this.shown = toggled;
+        }
     }
 
     private static final float SCROLL_FACTOR = 15f;
