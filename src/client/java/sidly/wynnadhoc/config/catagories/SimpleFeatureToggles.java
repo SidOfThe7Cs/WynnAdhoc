@@ -17,6 +17,11 @@ public class SimpleFeatureToggles {
         ALWAYS
     }
 
+    @Expose
+    @ConfigOption(name = "Hide Ing Pouch Tooltip", desc = "Hides the tooltip of the ingredient pouch")
+    @ConfigEditorBoolean
+    public boolean hideIngredientPouchTooltip = false;
+
     /*
         @Expose
         @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")

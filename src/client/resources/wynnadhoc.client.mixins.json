@@ -21,6 +21,7 @@
     "accessors.HandledScreenAccessor",
     "accessors.ItemDisplayEntityAccessor",
     "accessors.LootrunBeaconMarkerAccessor",
+    "accessors.SlotAccessor",
     "accessors.StyledTextAccessor",
     "accessors.TerritoryManagementScreenAccessor",
     "accessors.TextDisplayEntityAccessor",

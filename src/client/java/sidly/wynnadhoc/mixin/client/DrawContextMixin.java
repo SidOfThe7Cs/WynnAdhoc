@@ -21,10 +21,10 @@ public class DrawContextMixin {
             method = "drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/util/Identifier;)V",
             at = @At(
                     value = "HEAD"
-            )
-    )
+            ),
+            cancellable = true)
     private void drawTooltip(TextRenderer textRenderer, List<Text> text, Optional<TooltipData> data, int x, int y, @Nullable Identifier texture, CallbackInfo ci) {
-        DrawTooltipEvent event = new DrawTooltipEvent(text);
-        //return event.getModifiedTooltip();
+        DrawTooltipEvent event = new DrawTooltipEvent(text, x, y);
+        if (event.isHidden()) ci.cancel();
     }
 }

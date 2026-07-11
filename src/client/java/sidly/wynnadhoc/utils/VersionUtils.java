@@ -52,6 +52,7 @@ public class VersionUtils {
                         Added a button to the wynntills map to select chest waypoints
                         Added /wynnadhoc and /wynnadhoc Config as alternate ways to open the config
                         Added an option to automatically close loot chests if there is not a favorited item in them
+                        Added a toggle to hide the ingredient pouch tooltip
                         """
         );
     }
