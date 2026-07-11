@@ -53,6 +53,7 @@ public class VersionUtils {
                         Added /wynnadhoc and /wynnadhoc Config as alternate ways to open the config
                         Added an option to automatically close loot chests if there is not a favorited item in them
                         Added a toggle to hide the ingredient pouch tooltip
+                        Hopefully fix failures to load sometimes voiding configs
                         """
         );
     }
