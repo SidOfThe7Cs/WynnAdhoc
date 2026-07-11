@@ -1,13 +1,18 @@
 package sidly.wynnadhoc.features.chests
 
 import com.wynntils.core.components.Models
+import com.wynntils.features.inventory.ItemFavoriteFeature
 import com.wynntils.models.containers.containers.reward.LootChestContainer
+import com.wynntils.models.gear.type.GearTier
 import io.github.notenoughupdates.moulconfig.ChromaColour.Companion.forLegacyString
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.decoration.InteractionEntity
+import net.minecraft.item.ItemStack
+import net.minecraft.screen.ScreenHandler
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import sidly.wynnadhoc.WynnAdhocClient
@@ -17,11 +22,15 @@ import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.features.lootruns.LootrunCore
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo
 import sidly.wynnadhoc.features.lootruns.enums.MissionOptions
+import sidly.wynnadhoc.mixin.client.Invoker.IsFavoritedInvoker
 import sidly.wynnadhoc.server.ChestCrowdsource
 import sidly.wynnadhoc.utils.Debug
+import sidly.wynnadhoc.utils.FormatUtils
+import sidly.wynnadhoc.utils.ItemUtils
 import sidly.wynnadhoc.utils.LocationUtils
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.render.drawBox
+import java.util.regex.Pattern
 import kotlin.math.pow
 
 object ChestTracker {
@@ -79,6 +88,43 @@ object ChestTracker {
     }
 
     fun onChestItemsLoaded(event: ChestItemsLoadedEvent) {
+        logChestContents(event)
+        autoCloseChest(event)
+    }
+
+    private fun autoCloseChest(event: ChestItemsLoadedEvent) {
+        if (!config.autoCloseChests) return
+        if (!event.isLootChest && !event.isChallengeReward && !event.isFlyingChest) return
+        val hotBarPotions: MutableMap<Int, Int> = getHotBarPotions(event.containerScreen)
+        event.items.forEach { item ->
+            if (ItemUtils.getItemRarity(item) == GearTier.MYTHIC) return // check item rarity from wynntills
+            val encodedItem = EncodableItem.fromItem(item)
+            if (encodedItem is BoxItem && encodedItem.rarity == GearTier.MYTHIC) return // check item rarity from own code
+            if ((ItemFavoriteFeature() as IsFavoritedInvoker).invokeIsFavorited(item)) return // check if is wynntills favorite
+            // check for potions
+            if ((item.getName().string == "Potion of Healing [3/3]") && !hotBarPotions.isEmpty()) {
+                var healAmount = -1
+                val tooltip = ItemUtils.getTooltip(item)
+                for (line in tooltip) {
+                    val string = FormatUtils.removeColorCodes(line.string)
+                    val pattern = Pattern.compile("Heal:\\s*(\\d+)")
+                    val matcher = pattern.matcher(string)
+                    if (matcher.find()) {
+                        healAmount = matcher.group(1).toInt()
+                    }
+                }
+                if (healAmount == -1) return@forEach // should be effectively like continue
+                val currentAtLeastAsGood = hotBarPotions.entries.stream()
+                    .filter { e -> e.key >= healAmount } // ignore potions in hotbar stack that are less than the current one (would get overwritten)
+                    .mapToInt { e -> e.value } // map to the current max for that line
+                    .sum() // sum the maxes because you cant replace a 1 stack with a 3 stack of the same amount
+                if (currentAtLeastAsGood < 30) return // we could use that potions
+            }
+        }
+        MinecraftClient.getInstance().player?.closeHandledScreen()
+    }
+
+    private fun logChestContents(event: ChestItemsLoadedEvent) {
         if (Models.Container.currentContainer is LootChestContainer && config.trackChests) {
             if (lastClickedChest == null) {
                 WynnAdhocClient.LOGGER.warn("last clicked chest was null on chest items loaded")
@@ -172,5 +218,38 @@ object ChestTracker {
         MinecraftClient.getInstance().execute {
             event.textDisplay.text = copy
         }
+    }
+
+    /**
+     * heal amount mapped to max
+     */
+    private fun getHotBarPotions(screen: GenericContainerScreen): MutableMap<Int, Int> {
+        val handler: ScreenHandler = screen.screenHandler
+        val size = handler.slots.size
+        var potions: ItemStack? = null
+
+        for (i in size - 9..<size) {
+            val stack = handler.slots[i].stack
+            if (stack.getName().string.contains("Potions of Healing")) {
+                potions = stack
+            }
+        }
+
+        if (potions != null) {
+            val result: MutableMap<Int, Int> = HashMap()
+            val pattern = Pattern.compile("\\+(\\d+).*?\\[(\\d+)/(\\d+)]")
+
+            val tooltip = ItemUtils.getTooltip(potions)
+            for (line in tooltip) {
+                val string = FormatUtils.removeColorCodes(line.string)
+                val matcher = pattern.matcher(string)
+                if (matcher.find()) {
+                    val healAmount = matcher.group(1).toInt()
+                    val max = matcher.group(3).toInt()
+                    result[healAmount] = max
+                }
+            }
+            return result
+        } else return HashMap(0)
     }
 }

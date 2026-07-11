@@ -43,13 +43,12 @@ public class ReParty {
                             long delay = 0;
                             for (String member : savedPartyMembers) {
                                 if (Objects.equals(member, playerName)) continue; // skip self
-                                delay += 1000L; // add delay before to wait for party create cmd
+                                delay += 300L; // add delay before to wait for party create cmd
                                 scheduler.schedule(() -> MinecraftClient.getInstance().execute(() ->
                                         ChatMessageUtils.sendChatCommand("party invite " + member)), delay, TimeUnit.MILLISECONDS);
                             }
-
+                            // all cmds are scheduled immediately with increasing delay and shutdown waits for all currently scheduled to finish
                             scheduler.shutdown();
-
                             return 1;
                         })
                 )
