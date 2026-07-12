@@ -89,7 +89,7 @@ object ChestTracker {
 
     fun onChestItemsLoaded(event: ChestItemsLoadedEvent) {
         logChestContents(event)
-        autoCloseChest(event)
+        //autoCloseChest(event)
     }
 
     private fun autoCloseChest(event: ChestItemsLoadedEvent) {

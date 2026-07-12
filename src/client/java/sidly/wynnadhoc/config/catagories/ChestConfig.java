@@ -21,11 +21,6 @@ public class ChestConfig {
     public boolean forceEsp = false;
 
     @Expose
-    @ConfigOption(name = "Auto Close", desc = "Automatically closes loot chests if there are no favorited items (or mythics)")
-    @ConfigEditorBoolean
-    public boolean autoCloseChests = false;
-
-    @Expose
     @ConfigOption(name = "Delay Ticks", desc = "Delay in ticks to wait after the first item is detected to close")
     @ConfigEditorSlider(minValue = 0.0F, maxValue = 10.0F, minStep = 1.0F)
     public double delayTicks = 5;
