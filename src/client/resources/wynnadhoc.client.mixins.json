@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ChatMixin",
+    "ClientConnectionMixin",
     "ClientPlayNetworkHandlerMixin",
     "DrawContextMixin",
     "FunctionManagerMixin",
