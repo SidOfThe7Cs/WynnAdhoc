@@ -110,7 +110,7 @@ public class ConfigUtil {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void saveConfig(Object config, File file, Gson gson, boolean useGzip) {
         if (brokenClasses.contains(config.getClass())) return;
-        File tempFile = new File(file.getParent(), file.getName() + ".temp");
+        File tempFile = new File(file.getParent(), file.getName() + "-" + System.currentTimeMillis() + ".temp");
         try {
             tempFile.createNewFile();
             try (
@@ -136,6 +136,7 @@ public class ConfigUtil {
             } catch (IOException e) {
                 // If atomic move fails it could be because it isn't supported or because the implementation of it
                 // doesn't overwrite the old file, in this case we will try a normal move.
+                WynnAdhocClient.LOGGER.warn("Atomic move failed attempting normal");
                 Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {

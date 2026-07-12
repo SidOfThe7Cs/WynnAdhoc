@@ -130,6 +130,7 @@ public class CustomWynntillsMapWaypoints {
             buttonContainer.addButton(Text.literal("Show All"),
                     (b) -> {
                         selectedLvls = null;
+                        buttonContainer.showAll();
                         close();
                     }, 20);
 

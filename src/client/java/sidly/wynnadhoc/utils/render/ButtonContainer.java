@@ -139,4 +139,8 @@ public class ButtonContainer {
     public void hideAll() {
         buttons.forEach(b -> b.shown = false);
     }
+
+    public void showAll() {
+        buttons.forEach(b -> b.shown = true);
+    }
 }

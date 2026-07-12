@@ -45,10 +45,22 @@ public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
     public static final Debug LOGGER = new Debug(MOD_ID);
 
+    private static boolean savedOnClose = false;
+
     @Override
     public void onInitializeClient() {
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> ConfigManager.INSTANCE.save());
-        Runtime.getRuntime().addShutdownHook(new Thread(ConfigManager.INSTANCE::save));
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+            if (!savedOnClose) {
+                savedOnClose = true;
+                ConfigManager.INSTANCE.save();
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!savedOnClose) {
+                savedOnClose = true;
+                ConfigManager.INSTANCE.save();
+            }
+        }));
 
         // register events
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvent::onClientTick);
@@ -120,7 +132,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
-        Event.register(PlayerLoadedEvent.class, CrowdsourceMain::startAuth);
+        Event.register(PlayerLoadedEvent.class, () -> CrowdsourceMain.startAuth());
         Event.register(PlayerLoadedEvent.class, VersionUtils::onPLayerLoad);
 
         Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);

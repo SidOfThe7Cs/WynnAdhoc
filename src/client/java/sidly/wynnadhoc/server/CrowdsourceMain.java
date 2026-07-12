@@ -32,14 +32,23 @@ public class CrowdsourceMain {
             .build();
 
     public static void startAuth() {
+        startAuth(false);
+    }
+
+    public static void startAuth(boolean force) {
         MinecraftClient client = MinecraftClient.getInstance();
 
         String url = CrowdsourceMain.SERVER_URL + "/api/auth/start";
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT))
-                .header("X-Session-Token", ConfigManager.INSTANCE.getToken())
+                .timeout(Duration.ofSeconds(CrowdsourceMain.TIMEOUT));
+
+        if (!force) {
+            builder.header("X-Session-Token", ConfigManager.INSTANCE.getToken());
+        }
+
+        HttpRequest request = builder
                 .header("Accept", "application/json")
                 .GET()
                 .build();
@@ -194,6 +203,13 @@ public class CrowdsourceMain {
         event.register(ClientCommandManager.literal("reAuth")
                 .executes(ctx -> {
                     startAuth();
+                    return 1;
+                })
+        );
+
+        event.register(ClientCommandManager.literal("forceReAuth")
+                .executes(ctx -> {
+                    startAuth(true);
                     return 1;
                 })
         );

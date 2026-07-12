@@ -49,7 +49,7 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
         if (!(event.screen instanceof GenericContainerScreen container)) return;
         if (itemsLoaded) {
             openTicks++;
-            if (openTicks >= ConfigManager.INSTANCE.config.chest.delayTicks) new ChestItemsLoadedEvent(container);
+            if (openTicks == ConfigManager.INSTANCE.config.chest.delayTicks) new ChestItemsLoadedEvent(container);
             return;
         }
 
