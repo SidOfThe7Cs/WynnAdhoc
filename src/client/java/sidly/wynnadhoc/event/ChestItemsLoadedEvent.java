@@ -3,6 +3,7 @@ package sidly.wynnadhoc.event;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
+import sidly.wynnadhoc.config.ConfigManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
         if (!(event.screen instanceof GenericContainerScreen container)) return;
         if (itemsLoaded) {
             openTicks++;
-            if (openTicks == 3) new ChestItemsLoadedEvent(container);
+            if (openTicks == ConfigManager.INSTANCE.config.chest.delayTicks) new ChestItemsLoadedEvent(container);
             return;
         }
 

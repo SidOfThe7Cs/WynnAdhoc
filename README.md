@@ -7,5 +7,6 @@ turn on night vision when in the end biome\
 show wind prison on enemies\
 show marks on enemies\
 show time until war starts\
-command /wynnadhoc reParty save/invite to save the current part list and reinvite everyone later
+command /wynnadhoc reParty save/invite to save the current part list and reinvite everyone later\
+hide ingredient pouch tooltip
 

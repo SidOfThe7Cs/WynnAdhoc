@@ -13,13 +13,17 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static sidly.wynnadhoc.config.ConfigManager.GSON;
 
 public class ConfigUtil {
+    private static final Set<Class<?>> brokenClasses = new HashSet<>();
+
     public static <T> @Nullable T loadConfig(Class<T> configClass, File file, Gson gson) {
         return loadConfig(configClass, file, gson, false);
     }
@@ -46,6 +50,7 @@ public class ConfigUtil {
         ) {
             return gson.fromJson(reader, configClass);
         } catch (JsonSyntaxException e) {
+            brokenClasses.add(configClass);
             // JSON structure error (wrong types, missing fields, etc.)
             WynnAdhocClient.LOGGER.error("JSON Syntax Error in " + file.getName() + ": " + e.getMessage());
 
@@ -67,6 +72,7 @@ public class ConfigUtil {
             makeBackup(file, ".corrupted");
 
         } catch (JsonParseException e) {
+            brokenClasses.add(configClass);
             // Generic JSON parsing error
             WynnAdhocClient.LOGGER.error("JSON Parse Error in " + file.getName() + ": " + e.getMessage());
             if (!handleError) return null;
@@ -74,12 +80,14 @@ public class ConfigUtil {
             makeBackup(file, ".corrupted");
 
         } catch (IOException e) {
+            brokenClasses.add(configClass);
             // File reading error
             WynnAdhocClient.LOGGER.error("IO Error reading " + file.getName() + ": " + e.getMessage());
             if (!handleError) return null;
             e.printStackTrace();
 
         } catch (Exception e) {
+            brokenClasses.add(configClass);
             // Any other error
             WynnAdhocClient.LOGGER.error("Unexpected error loading " + file.getName() + ": " + e.getMessage());
             if (!handleError) return null;
@@ -101,7 +109,8 @@ public class ConfigUtil {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void saveConfig(Object config, File file, Gson gson, boolean useGzip) {
-        File tempFile = new File(file.getParent(), file.getName() + ".temp");
+        if (brokenClasses.contains(config.getClass())) return;
+        File tempFile = new File(file.getParent(), file.getName() + "-" + System.currentTimeMillis() + ".temp");
         try {
             tempFile.createNewFile();
             try (
@@ -127,6 +136,7 @@ public class ConfigUtil {
             } catch (IOException e) {
                 // If atomic move fails it could be because it isn't supported or because the implementation of it
                 // doesn't overwrite the old file, in this case we will try a normal move.
+                WynnAdhocClient.LOGGER.warn("Atomic move failed attempting normal");
                 Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {

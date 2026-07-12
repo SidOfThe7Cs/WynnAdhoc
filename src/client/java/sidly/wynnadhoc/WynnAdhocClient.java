@@ -49,10 +49,22 @@ public class WynnAdhocClient implements ClientModInitializer {
     public static final String MOD_ID = "wynnadhoc";
     public static final Debug LOGGER = new Debug(MOD_ID);
 
+    private static boolean savedOnClose = false;
+
     @Override
     public void onInitializeClient() {
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> ConfigManager.INSTANCE.save());
-        Runtime.getRuntime().addShutdownHook(new Thread(ConfigManager.INSTANCE::save));
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+            if (!savedOnClose) {
+                savedOnClose = true;
+                ConfigManager.INSTANCE.save();
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!savedOnClose) {
+                savedOnClose = true;
+                ConfigManager.INSTANCE.save();
+            }
+        }));
 
         // register events
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvent::onClientTick);
@@ -136,6 +148,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);
         Event.register(CommandRegistrationEvent.class, CrowdsourceMain::registerCommands);
         Event.register(CommandRegistrationEvent.class, ReParty::registerCommands);
+        Event.register(CommandRegistrationEvent.class, ConfigManager::registerCommands);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

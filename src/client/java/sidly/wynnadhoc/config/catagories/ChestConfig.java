@@ -21,6 +21,21 @@ public class ChestConfig {
     public boolean forceEsp = false;
 
     @Expose
+    @ConfigOption(name = "Auto Close", desc = "Automatically closes loot chests if there are no favorited items (or mythics)")
+    @ConfigEditorBoolean
+    public boolean autoCloseChests = false;
+
+    @Expose
+    @ConfigOption(name = "Delay Ticks", desc = "Delay in ticks to wait after the first item is detected to close")
+    @ConfigEditorSlider(minValue = 0.0F, maxValue = 10.0F, minStep = 1.0F)
+    public double delayTicks = 5;
+
+    @Expose
+    @ConfigOption(name = "Keep Potions", desc = "Do not close the chest if there are health potions in it and you need them")
+    @ConfigEditorBoolean
+    public boolean keepPotions = true;
+
+    @Expose
     @ConfigOption(name = "Ready Color", desc = "color when over 3d since last open")
     @ConfigEditorColour
     public String readyColor = ChromaColour.special(0, 255, 0, 255, 0);

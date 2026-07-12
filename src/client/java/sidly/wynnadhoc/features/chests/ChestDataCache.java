@@ -18,6 +18,10 @@ public record ChestDataCache(
         Map<Integer, Integer> globalIngPercents,
         Map<Integer, Integer> localIngPercents
 ) {
+    public Map<Integer, Integer> getItemPercents() {
+        if (globalIngPercents.isEmpty()) return localItemPercents;
+        return globalItemPercents;
+    }
 
     public void addLocalCounts(byte[] newItems) {
         List<EncodableItem> localItems = EncodableItem.fromByteArray(newItems);
