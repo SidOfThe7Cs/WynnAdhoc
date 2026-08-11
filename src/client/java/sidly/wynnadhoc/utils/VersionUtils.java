@@ -56,6 +56,11 @@ public class VersionUtils {
                         Hopefully fix failures to load sometimes voiding configs
                         """
         );
+        changelog("0.0.4",
+                """
+                        improve thread safety when saving config
+                        """
+        );
     }
 
     private static void changelog(String v, String changes) {
