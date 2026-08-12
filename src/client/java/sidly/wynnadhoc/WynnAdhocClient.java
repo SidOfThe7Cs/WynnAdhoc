@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
+import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.features.HealthRegenTick;
 import sidly.wynnadhoc.features.ReParty;
@@ -85,6 +86,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
         Event.register(ClientTickEvent.class, SpellMacros::onTick);
         Event.register(ClientTickEvent.class, PlayerLoadedEvent::onTick);
+        Event.register(ClientTickEvent.class, BasicSavable::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 

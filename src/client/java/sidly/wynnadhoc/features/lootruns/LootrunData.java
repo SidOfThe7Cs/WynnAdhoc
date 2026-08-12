@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features.lootruns;
 
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.features.lootruns.enums.*;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class LootrunData {
 
     public void addPullsSinceLastYellow(int value) {
         pullsSinceLastYellow += value;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     // TODO actually track correctly
@@ -43,14 +45,17 @@ public class LootrunData {
 
     public void addCursesSinceLastBoon(int curses) {
         cursesSinceLastBoon += curses;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public void resetCursesSinceLastBoon() {
         cursesSinceLastBoon = 0;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public void resetPullsSinceLastYellow() {
         pullsSinceLastYellow = 0;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public Map<Camps, Camp> getCampData() {
@@ -74,6 +79,7 @@ public class LootrunData {
 
     public void setActiveCamp() {
         activeCamp = Camps.getClosestCamp();
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public Camps getActiveCamp() {
@@ -94,10 +100,12 @@ public class LootrunData {
 
     public void setStatus(LootrunStatus status) {
         this.status = status;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public void setAquaStatus(AquaStatus aquaStatus) {
         this.aquaStatus = aquaStatus;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public List<BeaconOptions> getCurrentBeaconOptions() {
@@ -122,15 +130,18 @@ public class LootrunData {
 
     public void clearActiveBeaconColor() {
         this.activeBeaconColor = null;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public void activateBeacon() {
         activeBeaconColor = possibleActiveBeaconColor;
         possibleActiveBeaconColor = null;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public void setPossibleActiveBeaconColor(BeaconColor possibleActiveBeaconColor) {
         this.possibleActiveBeaconColor = possibleActiveBeaconColor;
+        ConfigManager.INSTANCE.lootrunChanged();
     }
 
     public EndStats getEndStats() {
@@ -143,6 +154,7 @@ public class LootrunData {
 
     public void setBeaconRerolls(int beaconRerolls) {
         this.beaconRerolls = beaconRerolls;
+        ConfigManager.INSTANCE.lootrunChanged();
         // TODO update display fix beacon reroll tracking
     }
 }

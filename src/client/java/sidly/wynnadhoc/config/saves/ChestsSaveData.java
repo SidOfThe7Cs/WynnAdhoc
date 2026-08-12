@@ -9,8 +9,10 @@ import sidly.wynnadhoc.models.Character;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
@@ -78,6 +80,18 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
             // never been opened or 3 days have passed
             if (last == -1L || last + TimeUnit.DAYS.toMillis(3) < now) color = config().readyColor;
             return ChromaColour.forLegacyString(color).getEffectiveColour();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            ChestData chestData = (ChestData) o;
+            return tier == chestData.tier && Objects.equals(lastOpened, chestData.lastOpened) && Objects.deepEquals(items, chestData.items);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(tier, lastOpened, Arrays.hashCode(items));
         }
     }
 

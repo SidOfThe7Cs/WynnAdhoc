@@ -76,7 +76,8 @@ public class Debug {
         TEMP,
         SPELL,
         HUD,
-        SERVER;
+        SERVER,
+        IO;
 
         public String get(String message) {
             return "[" + this.name() + "] " + message;

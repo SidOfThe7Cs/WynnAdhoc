@@ -6,7 +6,16 @@ import java.io.File;
 
 public class SessionToken extends BasicSavable<SessionToken> {
     public static final File SAVE_FILE = ConfigManager.getConfigDir().resolve("session_token.json").toFile();
-    public String token;
+    private String token;
+
+    public String getToken() {
+        return token == null ? "" : token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+        changed();
+    }
 
     public SessionToken() {
         super(SAVE_FILE, SessionToken.class);

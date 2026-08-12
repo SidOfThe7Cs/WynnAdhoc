@@ -59,6 +59,7 @@ public class VersionUtils {
         changelog("0.0.4",
                 """
                         improve thread safety when saving config
+                        Multithread saving and save more often
                         """
         );
     }
