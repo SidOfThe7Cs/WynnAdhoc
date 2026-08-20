@@ -10,6 +10,7 @@ import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.event.ForEachEntityRenderEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
+import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitbox
 import sidly.wynnadhoc.utils.isRareMob
 import sidly.wynnadhoc.utils.render.drawBox
@@ -25,8 +26,12 @@ object RareMobs {
                 if (!rareMobs.contains(event.entity.id)) {
                     rareMobs.put(event.entity.id)
                     val name = event.entity.text.siblings.getOrNull(2)?.string ?: "Unknown"
-                    WynnAdhocClient.LOGGER.temp("rare mob \"$name\" spawned at " + event.entity.x + " " + event.entity.y + " " + event.entity.z)
-                    ChatMessageUtils.sendChatMessage("rare mob \"$name\" spawned at " + event.entity.x + " " + event.entity.y + " " + event.entity.z)
+
+                    val formattedX = event.entity.x.formatOneDecimal()
+                    val formattedY = event.entity.y.formatOneDecimal()
+                    val formattedZ = event.entity.z.formatOneDecimal()
+                    WynnAdhocClient.LOGGER.temp("rare mob \"$name\" spawned at $formattedX $formattedY $formattedZ")
+                    ChatMessageUtils.sendChatMessage("rare mob \"$name\" spawned at $formattedX $formattedY $formattedZ")
 
                     val soundInstance = PositionedSoundInstance(
                         SoundEvents.ENTITY_WITHER_SPAWN,
