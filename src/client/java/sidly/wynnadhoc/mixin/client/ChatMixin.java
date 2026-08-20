@@ -19,7 +19,8 @@ public class ChatMixin {
     @Inject(method = "onSystemChatReceived", at = @At("HEAD"))
     private void onSystemChatReceived(SystemMessageEvent.ChatReceivedEvent event, CallbackInfo ci) {
         String plain = event.getMessage().getString();
-        ChatMessageEvent chatMessageEvent = new ChatMessageEvent(plain);
+        ChatMessageEvent chatMessageEvent = new ChatMessageEvent(plain, event.getStyledText());
+        event.setMessage(chatMessageEvent.styledText.getComponent());
         if (chatMessageEvent.canceled) {
             event.setCanceled(true);
         }

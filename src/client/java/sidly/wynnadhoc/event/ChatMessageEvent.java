@@ -11,8 +11,10 @@ public class ChatMessageEvent extends Event<ChatMessageEvent> {
     public String[] splitMessage;
     public String strippedByWynntills;
     public boolean canceled = false;
+    public StyledText styledText;
 
-    public ChatMessageEvent(String message) {
+    public ChatMessageEvent(String message, StyledText styledText) {
+        this.styledText = styledText;
         this.message = message;
         this.asciiOnlyMessage = FormatUtils.removeNonAscii(message);
         this.cleanMessage = FormatUtils.removeColorCodes(message);

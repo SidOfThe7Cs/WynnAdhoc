@@ -32,6 +32,10 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public LootrunConfig lootrun = new LootrunConfig();
 
     @Expose
+    @Category(name = "Ping Settings", desc = "ping settings")
+    public PingConfig ping = new PingConfig();
+
+    @Expose
     @Category(name = "Guild Settings", desc = "guild settings")
     public GuildConfig guild = new GuildConfig();
 
