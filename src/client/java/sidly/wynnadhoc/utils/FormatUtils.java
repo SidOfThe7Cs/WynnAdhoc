@@ -3,6 +3,7 @@ package sidly.wynnadhoc.utils;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 
+import java.awt.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -183,6 +184,10 @@ public class FormatUtils {
         }
 
         return parts;
+    }
+
+    public static Color getMythicColor() {
+        return new Color(11141290);
     }
 
 }

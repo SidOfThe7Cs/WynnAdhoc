@@ -17,6 +17,7 @@ object ArrowPointer {
     private const val RADIUS = 0.12
     private const val MAX_DISTANCE = 200
 
+    // TODO rework all of this maybe when vulcan exists?
     class Pointer(private val destination: Vec3d, private val color: Color) {
         fun draw(event: HudRenderEvent) {
             val screenCoords = RenderUtils.worldToScreenCoords(destination) ?: return
@@ -24,20 +25,45 @@ object ArrowPointer {
             val center = Vector2d(event.context.scaledWindowWidth / 2.0, event.context.scaledWindowHeight / 2.0)
             val dx = screenCoords.x - center.x
             val dy = screenCoords.y - center.y
-            val angle = atan2(dy, dx)
+            val angle = atan2(dy, dx) // radians
             val pointOnCircle = getClosestPointOnCircle(screenCoords, center, radius)
             val dist = MinecraftClient.getInstance().player?.squaredDistanceTo(destination) ?: 0.0
             val alphaColor = color.withAlpha(calculateAlpha(dist))
 
             drawRingArc(event.context, center, radius, radius - 1.5, angle, alphaColor)
 
-            val p1 = Vector2d(pointOnCircle.x - 3.0, pointOnCircle.y - 3.0)
-            val p2 = Vector2d(pointOnCircle.x + 3.0, pointOnCircle.y - 3.0)
-            val p3 = Vector2d(pointOnCircle.x + 3.0, pointOnCircle.y + 3.0)
-            val p4 = Vector2d(pointOnCircle.x - 3.0, pointOnCircle.y + 3.0)
+            val size = event.context.scaledWindowHeight * 0.009
+            val basePoints = listOf(
+                Vector2d(-size, -size), // top-left
+                Vector2d(size, -size),  // top-right
+                Vector2d(size, size),   // bottom-right
+                Vector2d(-size, size)   // bottom-left
+            )
 
-            event.context.drawFilledQuad(p1, p2, p3, p4, Color.GREEN.rgb)
+            val cos = cos(angle - Math.toRadians(45.0))
+            val sin = sin(angle - Math.toRadians(45.0))
+
+            val rotatedPoints = basePoints.map { p ->
+                rotatePoint(Vector2d(pointOnCircle.x + p.x, pointOnCircle.y + p.y), pointOnCircle, cos, sin)
+            }
+
+            event.context.drawFilledQuad(
+                rotatedPoints[1],
+                rotatedPoints[1],
+                rotatedPoints[2],
+                rotatedPoints[3],
+                color.rgb
+            )
         }
+    }
+
+    private fun rotatePoint(point: Vector2d, center: Vector2d, cos: Double, sin: Double): Vector2d {
+        val dx = point.x - center.x
+        val dy = point.y - center.y
+        return Vector2d(
+            center.x + dx * cos - dy * sin,
+            center.y + dx * sin + dy * cos
+        )
     }
 
     private fun drawRingArc(

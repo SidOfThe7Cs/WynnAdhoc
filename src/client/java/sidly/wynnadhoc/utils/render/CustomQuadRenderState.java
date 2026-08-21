@@ -9,7 +9,6 @@ import net.minecraft.client.texture.TextureSetup;
 import org.joml.Matrix3x2fc;
 import org.joml.Vector2d;
 import org.jspecify.annotations.Nullable;
-import sidly.wynnadhoc.WynnAdhocClient;
 
 public record CustomQuadRenderState(
         Matrix3x2fc pose,
@@ -35,7 +34,6 @@ public record CustomQuadRenderState(
 
     @Override
     public void setupVertices(VertexConsumer vertices) {
-        WynnAdhocClient.LOGGER.temp("adding vertices: " + p1 + " " + p2 + " " + p3 + " " + p4);
         vertices.vertex(this.pose(), (float) this.p1.x, (float) this.p1.y).color(color);
         vertices.vertex(this.pose(), (float) this.p2.x, (float) this.p2.y).color(color);
         vertices.vertex(this.pose(), (float) this.p3.x, (float) this.p3.y).color(color);

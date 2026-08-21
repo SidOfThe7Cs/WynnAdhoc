@@ -9,12 +9,13 @@ import net.minecraft.util.math.random.Random
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.event.ForEachEntityRenderEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
+import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
 import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitbox
 import sidly.wynnadhoc.utils.isRareMob
+import sidly.wynnadhoc.utils.render.ArrowPointer
 import sidly.wynnadhoc.utils.render.drawBox
-import java.awt.Color
 import java.util.concurrent.TimeUnit
 
 object RareMobs {
@@ -43,7 +44,8 @@ object RareMobs {
                     )
                     MinecraftClient.getInstance().soundManager.play(soundInstance)
                 }
-                event.renderEvent.drawBox(event.entity.getVehicleHitbox(), Color.MAGENTA)
+                event.renderEvent.drawBox(event.entity.getVehicleHitbox(), FormatUtils.getMythicColor())
+                ArrowPointer.addPointer(ArrowPointer.Pointer(event.entity.entityPos, FormatUtils.getMythicColor()))
             }
         }
     }

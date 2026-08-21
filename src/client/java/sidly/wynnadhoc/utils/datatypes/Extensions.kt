@@ -89,6 +89,8 @@ fun Box.edges(): List<Line> {
     )
 }
 
+fun Double.formatOneDecimal(): String = "%.1f".format(this)
+
 // this guy shouldnt be here
 fun <T> MutableList<T>.getLast(): T? {
     if (this.isEmpty()) return null
