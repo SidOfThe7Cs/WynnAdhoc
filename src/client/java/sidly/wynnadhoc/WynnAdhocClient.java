@@ -95,7 +95,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ChatMessageEvent.class, GuildLogs.INSTANCE::onChatMessage);
         Event.register(ChatMessageEvent.class, ReParty.INSTANCE::onChat);
         Event.register(ChatMessageEvent.class, Ping.INSTANCE::onChat);
-        Event.register(ChatMessageEvent.class, BombShare::onChat);
+        Event.register(ChatMessageEvent.class, BombShare.INSTANCE::onChat);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
         Event.register(HudRenderEvent.class, ArrowPointer.INSTANCE::onScreenRender);
