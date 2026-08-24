@@ -2,19 +2,21 @@ package sidly.wynnadhoc.features
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
+import com.wynntils.models.worlds.event.WorldStateEvent
+import com.wynntils.models.worlds.type.WorldState
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.MinecraftClient
 import sidly.wynnadhoc.event.ChatMessageEvent
 import sidly.wynnadhoc.event.CommandRegistrationEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import sidly.wynnadhoc.utils.DelayedRun
 import java.util.regex.Pattern
 
 object ReParty {
     private var waitingForPartyList = false
     private var newServer = ""
+    private var invOnSwap = false
     private val savedPartyMembers: MutableList<String> = ArrayList()
     private val PARTY_LIST: Pattern = Pattern.compile("^Party members: (.+)$")
 
@@ -26,6 +28,13 @@ object ReParty {
                     1
                 }
                 .then(
+                    ClientCommandManager.literal("invite")
+                        .executes { _: CommandContext<FabricClientCommandSource> ->
+                            inviteSavedMembers()
+                            1
+                        }
+                )
+                .then(
                     ClientCommandManager.literal("save")
                         .executes { _: CommandContext<FabricClientCommandSource> ->
                             waitingForPartyList = true
@@ -34,13 +43,16 @@ object ReParty {
                         }
                 )
                 .then(
-                    ClientCommandManager.argument("switch_to", StringArgumentType.string())
-                        .executes { ctx: CommandContext<FabricClientCommandSource> ->
-                            waitingForPartyList = true
-                            newServer = ctx.getArgument("switch_to", String::class.java)
-                            ChatMessageUtils.sendChatCommand("party list")
-                            1
-                        }
+                    ClientCommandManager.literal("switch")
+                        .then(
+                            ClientCommandManager.argument("server", StringArgumentType.string())
+                                .executes { ctx: CommandContext<FabricClientCommandSource> ->
+                                    waitingForPartyList = true
+                                    newServer = ctx.getArgument("server", String::class.java)
+                                    ChatMessageUtils.sendChatCommand("party list")
+                                    1
+                                }
+                        )
                 )
         )
 
@@ -71,20 +83,17 @@ object ReParty {
         ChatMessageUtils.sendChatCommand("party create")
 
         val playerName = MinecraftClient.getInstance().player!!.name.string
-        val scheduler = Executors.newScheduledThreadPool(1)
 
-        var delay: Long = 0
+        var delay = 0
         for (member in savedPartyMembers) {
             if (member == playerName) continue  // skip self
 
-            delay += 300L // add delay before to wait for party create cmd
-            scheduler.schedule(Runnable {
-                MinecraftClient.getInstance()
-                    .execute(Runnable { ChatMessageUtils.sendChatCommand("party invite $member") })
-            }, delay, TimeUnit.MILLISECONDS)
+            delay += 7 // add delay before to wait for party create cmd
+            DelayedRun.runDelayed({
+                ChatMessageUtils.sendChatCommand("party invite $member")
+            }, delay)
         }
         // all cmds are scheduled immediately with increasing delay and shutdown waits for all currently scheduled to finish
-        scheduler.shutdown()
     }
 
     fun getPartyMembers(msg: String): MutableList<String> {
@@ -128,10 +137,23 @@ object ReParty {
             }
             ChatMessageUtils.sendChatMessage(sb.toString())
             if (!newServer.isEmpty()) {
-                ChatMessageUtils.sendChatCommand("switch $newServer")
+                val serverCopy = newServer
+
+                // no idea why this is necessary but just sending the command does nothing
+                DelayedRun.runDelayed({
+                    invOnSwap = true
+                    ChatMessageUtils.sendChatCommand("switch $serverCopy")
+                }, 10)
                 newServer = ""
             }
-            //TODO on world swap reinv
+        }
+    }
+
+    fun onWorldChange(event: WorldStateEvent) {
+        if (event.newState != WorldState.WORLD) return
+        if (invOnSwap) {
+            invOnSwap = false
+            inviteSavedMembers()
         }
     }
 }

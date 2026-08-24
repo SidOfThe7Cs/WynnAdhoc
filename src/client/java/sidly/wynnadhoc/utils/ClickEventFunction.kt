@@ -30,6 +30,7 @@ enum class ClickEventFunction {
             Optional.ofNullable(NbtString.of(name))
         )
 
+    // initialize here to avoid infinite init loops
     companion object {
         val RUN_FUNCTION_ID: Identifier = Identifier.ofVanilla("chat_click_run_function")
 

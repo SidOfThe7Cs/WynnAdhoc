@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class VersionUtils {
 
-    public static final Pattern VERSION_PATTERN = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)$");
+    public static final Pattern VERSION_PATTERN = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)$" );
     private static final List<Pair<String, String>> changelog = new ArrayList<>();
 
     static {
@@ -60,9 +60,10 @@ public class VersionUtils {
                 """
                         improve thread safety when saving config
                         Multithread saving and save more often
-                        Add wynnmods ping system
-                        Add BombShare
+                        wynnmods ping system
+                        BombShare (clickable chat messages or /wynnadhoc bombshare)
                         Highlight rare mobs
+                        /rp switch <server> to save party -> switch worlds -> reinvite
                         """
         );
     }
@@ -134,7 +135,7 @@ public class VersionUtils {
         SVersion currentV = SVersion.parse(getCurrentVersion());
         if (lastKnownV == null || currentV == null) return;
 
-        if (Objects.equals(lastKnownV.toString(), "0.0.0")) {
+        if (Objects.equals(lastKnownV.toString(), "0.0.0" )) {
             ConfigManager.INSTANCE.setLastVersion(currentV.toString());
             return;
         }
@@ -144,7 +145,7 @@ public class VersionUtils {
         for (Pair<String, String> entry : changelog) {
             SVersion changesV = SVersion.parse(entry.getFirst());
             if (changesV != null && changesV.isBetween(lastKnownV, currentV)) {
-                sb.append(entry.getFirst()).append("\n").append(entry.getSecond());
+                sb.append(entry.getFirst()).append("\n" ).append(entry.getSecond());
             }
         }
 
@@ -160,22 +161,22 @@ public class VersionUtils {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.github.com/repos/SidOfThe7Cs/WynnAdhoc/releases/latest"))
-                .header("Accept", "application/vnd.github.v3+json")
+                .uri(URI.create("https://api.github.com/repos/SidOfThe7Cs/WynnAdhoc/releases/latest" ))
+                .header("Accept", "application/vnd.github.v3+json" )
                 .GET()
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonElement body = JsonParser.parseString(response.body());
-            String versionString = body.getAsJsonObject().get("tag_name").getAsString();
+            String versionString = body.getAsJsonObject().get("tag_name" ).getAsString();
             SVersion version = SVersion.parse(versionString);
             if (version == null) return;
             if (version.compareTo(SVersion.parse(getCurrentVersion())) > 0) {
-                MutableText message = Text.literal("there is is a new WynnAdhoc update available, download from ");
-                MutableText link = Text.literal("https://github.com/SidOfThe7Cs/WynnAdhoc/releases/latest").styled(s ->
+                MutableText message = Text.literal("there is is a new WynnAdhoc update available, download from " );
+                MutableText link = Text.literal("https://github.com/SidOfThe7Cs/WynnAdhoc/releases/latest" ).styled(s ->
                         s.withColor(Formatting.BLUE)
                                 .withUnderline(true)
-                                .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://github.com/SidOfThe7Cs/WynnAdhoc/releases/latest")))
+                                .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://github.com/SidOfThe7Cs/WynnAdhoc/releases/latest" )))
                 );
                 message.getSiblings().add(link);
                 ChatMessageUtils.sendChatMessage(message);
