@@ -60,6 +60,9 @@ public class VersionUtils {
                 """
                         improve thread safety when saving config
                         Multithread saving and save more often
+                        Add wynnmods ping system
+                        Add BombShare
+                        Highlight rare mobs
                         """
         );
     }

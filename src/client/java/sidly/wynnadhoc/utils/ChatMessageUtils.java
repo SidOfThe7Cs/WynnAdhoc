@@ -12,7 +12,7 @@ public class ChatMessageUtils {
 
     public static void sendChatCommand(String command) {
         if (command == null || command.isEmpty()) return;
-        String cmd = command.startsWith("/") ? command.substring(1) : command;
+        String cmd = command.startsWith("/" ) ? command.substring(1) : command;
         MinecraftClient.getInstance().execute(() -> {
             MinecraftClient client = MinecraftClient.getInstance();
             ClientPlayerEntity player = client.player;
@@ -79,6 +79,4 @@ public class ChatMessageUtils {
 
         return new String[]{extracted, remaining};
     }
-
-
 }

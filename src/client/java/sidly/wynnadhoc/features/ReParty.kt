@@ -38,6 +38,7 @@ object ReParty {
                         .executes { ctx: CommandContext<FabricClientCommandSource> ->
                             waitingForPartyList = true
                             newServer = ctx.getArgument("switch_to", String::class.java)
+                            ChatMessageUtils.sendChatCommand("party list")
                             1
                         }
                 )
@@ -130,7 +131,7 @@ object ReParty {
                 ChatMessageUtils.sendChatCommand("switch $newServer")
                 newServer = ""
             }
-            //TODO on world swap
+            //TODO on world swap reinv
         }
     }
 }

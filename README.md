@@ -9,4 +9,6 @@ show marks on enemies\
 show time until war starts\
 command /wynnadhoc reParty save/invite to save the current part list and reinvite everyone later\
 hide ingredient pouch tooltip
+click chat message to share bombs when people ask
+highlight rare mobs
 

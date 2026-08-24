@@ -147,6 +147,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(CommandRegistrationEvent.class, CrowdsourceMain::registerCommands);
         Event.register(CommandRegistrationEvent.class, ReParty.INSTANCE::registerCommands);
         Event.register(CommandRegistrationEvent.class, ConfigManager::registerCommands);
+        Event.register(CommandRegistrationEvent.class, BombShare.INSTANCE::registerCommands);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

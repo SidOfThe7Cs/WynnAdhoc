@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.features
 
+import com.mojang.brigadier.context.CommandContext
 import com.wynntils.core.components.Models
 import com.wynntils.core.text.StyledText
 import com.wynntils.core.text.StyledTextPart
@@ -7,11 +8,16 @@ import com.wynntils.core.text.type.StyleType
 import com.wynntils.models.worlds.type.BombInfo
 import com.wynntils.models.worlds.type.BombType
 import com.wynntils.utils.type.IterationDecision
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.ClickEvent
-import net.minecraft.text.ClickEvent.RunCommand
 import net.minecraft.text.Style
 import net.minecraft.util.Pair
+import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.ChatMessageEvent
+import sidly.wynnadhoc.event.CommandRegistrationEvent
+import sidly.wynnadhoc.utils.ChatMessageUtils
+import sidly.wynnadhoc.utils.ClickEventFunction
 import java.util.*
 import java.util.function.Consumer
 import java.util.regex.Pattern
@@ -40,6 +46,7 @@ object BombShare {
     }
 
     fun onChat(event: ChatMessageEvent) {
+        if (!ConfigManager.INSTANCE.config.toggles.bombShare) return
         event.styledText = addClickEvents(event.styledText, clickEventsToAdd)
     }
 
@@ -158,14 +165,60 @@ object BombShare {
         }
     }
 
-    enum class Bomb(val type: BombType?, val displayName: String) {
-        PROF(null, "Profs"),
-        LOOT(BombType.LOOT, "Loot"),
-        CHEST_LOOT(BombType.LOOT_CHEST, "Chest Loot"),
-        XP(BombType.COMBAT_XP, "DXp");
+    enum class Bomb(val type: BombType?, val displayName: String, val clickEvent: ClickEventFunction) {
+        PROF(null, "Profs", ClickEventFunction.BOMB_SHARE_PROF),
+        LOOT(BombType.LOOT, "Loot", ClickEventFunction.BOMB_SHARE_LOOT),
+        CHEST_LOOT(BombType.LOOT_CHEST, "Chest Loot", ClickEventFunction.BOMB_SHARE_CHEST),
+        XP(BombType.COMBAT_XP, "DXp", ClickEventFunction.BOMB_SHARE_XP);
 
         fun getClickEvent(): ClickEvent {
-            return RunCommand("g $displayName on ${getBombShare(this)}")
+            return clickEvent.clickEvent
         }
+
+        fun getChatCommand(): Runnable {
+            return Runnable {
+                ChatMessageUtils.sendChatCommand(
+                    "g $displayName on ${
+                        getBombShare(
+                            this
+                        )
+                    }"
+                )
+            }
+        }
+    }
+
+    fun registerCommands(event: CommandRegistrationEvent) {
+        event.register(
+            ClientCommandManager.literal("ShareBombs")
+                .then(
+                    ClientCommandManager.literal("prof")
+                        .executes { _: CommandContext<FabricClientCommandSource> ->
+                            Bomb.PROF.getChatCommand().run()
+                            1
+                        }
+                )
+                .then(
+                    ClientCommandManager.literal("xp")
+                        .executes { _: CommandContext<FabricClientCommandSource> ->
+                            Bomb.XP.getChatCommand().run()
+                            1
+                        }
+                )
+                .then(
+                    ClientCommandManager.literal("loot")
+                        .executes { _: CommandContext<FabricClientCommandSource> ->
+                            Bomb.LOOT.getChatCommand().run()
+                            1
+                        }
+                )
+                .then(
+                    ClientCommandManager.literal("chest")
+                        .executes { _: CommandContext<FabricClientCommandSource> ->
+                            Bomb.CHEST_LOOT.getChatCommand().run()
+                            1
+                        }
+                )
+        )
     }
 }
