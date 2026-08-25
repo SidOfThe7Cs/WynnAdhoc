@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 
 import java.util.Arrays;
@@ -36,11 +35,9 @@ public class ChatMixin {
             List<Text> text = part.getComponent().getSiblings();
             text.forEach(t -> {
                 ClickEvent clickEvent = t.getStyle().getClickEvent();
-                WynnAdhocClient.LOGGER.temp("clickEvent: " + part.getComponent());
                 if (clickEvent != null) {
                     String clickEventString = clickEventToString(clickEvent);
                     HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal(clickEventString));
-                    WynnAdhocClient.LOGGER.temp("found hover event: " + hoverEvent.getAction().asString());
                     finalText.append(t.copy().setStyle(t.getStyle().withHoverEvent(hoverEvent)));
                 } else finalText.append(t);
             });

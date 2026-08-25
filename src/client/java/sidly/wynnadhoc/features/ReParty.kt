@@ -7,6 +7,7 @@ import com.wynntils.models.worlds.type.WorldState
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.MinecraftClient
+import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.event.ChatMessageEvent
 import sidly.wynnadhoc.event.CommandRegistrationEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
@@ -88,8 +89,9 @@ object ReParty {
         for (member in savedPartyMembers) {
             if (member == playerName) continue  // skip self
 
-            delay += 7 // add delay before to wait for party create cmd
+            delay += 20 // add delay before to wait for party create cmd
             DelayedRun.runDelayed({
+                WynnAdhocClient.LOGGER.temp("inviting $member")
                 ChatMessageUtils.sendChatCommand("party invite $member")
             }, delay)
         }
