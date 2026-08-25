@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import org.jetbrains.annotations.Nullable;
 import sidly.wynnadhoc.WynnAdhocClient;
+import sidly.wynnadhoc.utils.AsyncUtils;
 import sidly.wynnadhoc.utils.Debug;
 
 import java.io.*;
@@ -105,15 +106,15 @@ public class ConfigUtil {
     private static final List<String> unimportantConfigs = List.of();
 
     public static void saveConfig(Object config, File file) {
-        saveConfig(config, file, GSON, false);
+        AsyncUtils.runAsync(() -> saveConfig(config, file, GSON, false));
     }
 
     public static void saveConfig(Object config, File file, Gson gson) {
-        saveConfig(config, file, gson, false);
+        AsyncUtils.runAsync(() -> saveConfig(config, file, gson, false));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void saveConfig(Object config, File file, Gson gson, boolean useGzip) {
+    private static void saveConfig(Object config, File file, Gson gson, boolean useGzip) {
         if (brokenClasses.contains(config.getClass())) return;
 
         synchronized (getLock(file)) {
@@ -122,6 +123,7 @@ public class ConfigUtil {
             try {
                 file.getParentFile().mkdirs();
                 tempFile = File.createTempFile(file.getName() + "-", ".temp", file.getParentFile());
+                WynnAdhocClient.LOGGER.info(Debug.Type.IO, "creating temp file " + tempFile.getName());
                 try (
                         BufferedWriter writer = useGzip ?
                                 new BufferedWriter(new OutputStreamWriter(
@@ -148,6 +150,7 @@ public class ConfigUtil {
 
                 try {
                     Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.ATOMIC_MOVE);
+                    WynnAdhocClient.LOGGER.info(Debug.Type.IO, "moved " + tempFile.getName() + " to " + file.getName());
                 } catch (IOException e) {
                     // If atomic move fails it could be because it isn't supported or because the implementation of it
                     // doesn't overwrite the old file, in this case we will try a normal move.

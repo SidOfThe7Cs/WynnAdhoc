@@ -3,6 +3,7 @@ package sidly.wynnadhoc;
 import com.wynntils.mc.event.ChangeCarriedItemEvent;
 import com.wynntils.mc.event.SetSlotEvent;
 import com.wynntils.models.spells.event.SpellEvent;
+import com.wynntils.models.worlds.event.WorldStateEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents;
@@ -17,11 +18,9 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
+import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.features.HealthRegenTick;
-import sidly.wynnadhoc.features.ReParty;
-import sidly.wynnadhoc.features.SpellMacros;
-import sidly.wynnadhoc.features.WindPrison;
+import sidly.wynnadhoc.features.*;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
@@ -40,9 +39,11 @@ import sidly.wynnadhoc.features.war.WarTimer;
 import sidly.wynnadhoc.server.ChestCrowdsource;
 import sidly.wynnadhoc.server.CrowdsourceMain;
 import sidly.wynnadhoc.utils.Debug;
+import sidly.wynnadhoc.utils.DelayedRun;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.auto.MouseLerper;
 import sidly.wynnadhoc.utils.VersionUtils;
+import sidly.wynnadhoc.utils.render.ArrowPointer;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 
 public class WynnAdhocClient implements ClientModInitializer {
@@ -91,6 +92,9 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, MouseLerper::tick);
         Event.register(ClientTickEvent.class, SpellMacros::onTick);
         Event.register(ClientTickEvent.class, PlayerLoadedEvent::onTick);
+        Event.register(ClientTickEvent.class, BasicSavable::onTick);
+        Event.register(ClientTickEvent.class, ArrowPointer.INSTANCE::onTick);
+        Event.register(ClientTickEvent.class, DelayedRun.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
@@ -99,9 +103,12 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ChatMessageEvent.class, LootrunCore.INSTANCE::onChatMessage);
         Event.register(ChatMessageEvent.class, WarCore::onChatMessage);
         Event.register(ChatMessageEvent.class, GuildLogs.INSTANCE::onChatMessage);
-        Event.register(ChatMessageEvent.class, ReParty::onChat);
+        Event.register(ChatMessageEvent.class, ReParty.INSTANCE::onChat);
+        Event.register(ChatMessageEvent.class, Ping.INSTANCE::onChat);
+        Event.register(ChatMessageEvent.class, BombShare.INSTANCE::onChat);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
+        Event.register(HudRenderEvent.class, ArrowPointer.INSTANCE::onScreenRender);
 
         Event.register(ScreenRenderEvent.class, DB::parseScreen);
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
@@ -118,6 +125,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(WorldRenderEvent.class, NOL.INSTANCE::onWorldRender);
         Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
         Event.register(WorldRenderEvent.class, ForEachEntityRenderEvent::onRender);
+        Event.register(WorldRenderEvent.class, Ping.INSTANCE::onWorldRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
@@ -126,35 +134,43 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
-
-        Event.register(CharacterUuidUpdateEvent.class, Overlays::updateAll);
+        Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
+        Event.register(ForEachEntityRenderEvent.class, RareMobs.INSTANCE::onEachEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
+        Event.register(KeyboardEvent.class, Ping.INSTANCE::onKeyPressed);
+        Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
+        Event.register(MouseButtonEvent.class, Ping.INSTANCE::onMouseButton);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
         Event.register(MouseButtonEvent.class, SpellMacros::onMouseButton);
-        Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
-        Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
+
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
         Event.register(WorldChangeEvent.class, SpellMacros::onWorldChange);
+
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(TextDisplaySyncEvent.class, ProfNodeCore::onTextDisplaySync);
+
+        Event.register(CharacterUuidUpdateEvent.class, Overlays::updateAll);
+        Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
-        Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
         Event.register(PlayerLoadedEvent.class, () -> CrowdsourceMain.startAuth());
         Event.register(PlayerLoadedEvent.class, VersionUtils::onPLayerLoad);
 
         Event.register(CommandRegistrationEvent.class, ChestCrowdsource::register);
         Event.register(CommandRegistrationEvent.class, CrowdsourceMain::registerCommands);
-        Event.register(CommandRegistrationEvent.class, ReParty::registerCommands);
+        Event.register(CommandRegistrationEvent.class, ReParty.INSTANCE::registerCommands);
         Event.register(CommandRegistrationEvent.class, ConfigManager::registerCommands);
+        Event.register(CommandRegistrationEvent.class, BombShare.INSTANCE::registerCommands);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);
         NeoEvent.register(SpellEvent.Failed.class, SpellMacros::onFail);
         NeoEvent.register(ChangeCarriedItemEvent.class, SpellMacros::onItemSwap);
         NeoEvent.register(SetSlotEvent.Post.class, SpellMacros::onSetSlotEvent);
+
+        NeoEvent.register(WorldStateEvent.class, ReParty.INSTANCE::onWorldChange);
 
         LootrunLogger.load();
         ConfigManager.INSTANCE.load();
@@ -168,7 +184,6 @@ public class WynnAdhocClient implements ClientModInitializer {
 /*TODO main list
 move renderutils into worldrenderevent where possible (it should also be kotlin with optional args)
 
-auto update checker
 remove wynntills as depend and add function for hasWynntils and isOnWynncraft
 icon
 fix spellcaster

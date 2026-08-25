@@ -2,20 +2,25 @@ package sidly.wynnadhoc.utils.render
 
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider.Immediate
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
+import org.joml.Matrix3x2f
 import org.joml.Matrix4f
+import org.joml.Vector2d
 import org.joml.Vector3f
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.WorldRenderEvent
+import sidly.wynnadhoc.mixin.client.Invoker.GameRendererInvoker
 import sidly.wynnadhoc.utils.datatypes.edges
 import sidly.wynnadhoc.utils.datatypes.toBlockPos
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.datatypes.toVec3d
 import java.awt.Color
+import kotlin.math.*
 
 object RenderUtils {
     private val config get() = ConfigManager.INSTANCE.config.gui
@@ -51,6 +56,7 @@ object RenderUtils {
         event.drawLineToEye(Vec3d(0.5, 82.5, 0.5), Color.ORANGE)
     }
 
+    // where line strip
     fun drawLines(
         event: WorldRenderEvent,
         inputLines: List<Line>,
@@ -91,6 +97,126 @@ object RenderUtils {
         buf.vertex(matrix, point.x.toFloat(), point.y.toFloat(), point.z.toFloat())
             .color(color.red, color.green, color.blue, color.alpha)
     }
+
+    fun getMesh(points: Set<Vec3d>): List<Line> {
+        if (points.size < 2) return emptyList()
+
+        val pointList = points.toList()
+        val lines = mutableListOf<Line>()
+
+        for (i in pointList.indices) {
+            for (j in i + 1 until pointList.size) {
+                lines.add(Line(pointList[i], pointList[j]))
+            }
+        }
+
+        return lines
+    }
+
+    fun worldToScreenCoords(worldCoords: Vec3d): Vector2d? {
+        // check nulls
+        val client = MinecraftClient.getInstance() ?: return null
+        if (client.player == null) return null
+
+        // get stuff
+        val renderer = client.gameRenderer
+        val camera = renderer.camera
+
+        val screenWidth = client.window.scaledWidth
+        val screenHeight = client.window.scaledHeight
+        val cameraPos: Vec3d = camera.cameraPos
+        val yaw = Math.toRadians(camera.yaw.toDouble()).toFloat()
+        val pitch = Math.toRadians(-camera.pitch.toDouble()).toFloat()
+        val FOV: Double = (renderer as Any as GameRendererInvoker).invokeGetFov(
+            camera,
+            client.renderTickCounter.dynamicDeltaTicks,
+            true
+        ).toDouble()
+
+        // Calculate relative position to camera
+        var dx = worldCoords.x - cameraPos.x
+        val dy = worldCoords.y - cameraPos.y
+        val dz = worldCoords.z - cameraPos.z
+        dx *= -1.0 // we dont ask questions we just provide solutions
+
+        // Rotate based on yaw (horizontal rotation)
+        val x = dx * cos(yaw.toDouble()) - dz * sin(yaw.toDouble())
+        var z = dx * sin(yaw.toDouble()) + dz * cos(yaw.toDouble())
+
+        // Rotate based on pitch (vertical rotation)
+        val y = dy * cos(pitch.toDouble()) - z * sin(pitch.toDouble())
+        z = dy * sin(pitch.toDouble()) + z * cos(pitch.toDouble())
+
+        // if behind camera dont do weird stuff
+        if (z <= 0.1) {
+            z = 0.1
+        }
+
+
+        // Perspective projection
+        val scale = min(screenWidth, screenHeight) / (2.0 * tan(Math.toRadians(FOV) / 2))
+        var screenX = (x / z) * scale + screenWidth / 2
+        var screenY = (-y / z) * scale + screenHeight / 2
+
+        val minSize = 4
+        val edgeSize = minSize * 3
+        var size = (100 / z).toInt()
+        size = max(size, minSize)
+
+        if (screenX < 0) {
+            screenX = 0.0
+            size = edgeSize
+        }
+        if (screenY < 0) {
+            screenY = 0.0
+            size = edgeSize
+        }
+        if (screenX > screenWidth) {
+            screenX = screenWidth.toDouble()
+            size = edgeSize
+        }
+        if (screenY > screenHeight) {
+            screenY = screenHeight.toDouble()
+            size = edgeSize
+        }
+        return Vector2d(screenX, screenY)
+    }
+
+    fun worldToScreenCoords(worldCoords: Vector3f): Vector2d? {
+        val coords = Vec3d(worldCoords.x.toDouble(), worldCoords.y.toDouble(), worldCoords.z.toDouble())
+        return worldToScreenCoords(coords)
+    }
+}
+
+fun DrawContext.drawFilledQuad(
+    p1: Vector2d,
+    p2: Vector2d,
+    p3: Vector2d,
+    p4: Vector2d,
+    color: Int,
+) {
+    val points = listOf(p1, p2, p3, p4)
+
+    val centerX = points.sumOf { it.x } / 4.0
+    val centerY = points.sumOf { it.y } / 4.0
+
+    val sorted = points.sortedWith { a, b ->
+        val angleA = atan2(a.y - centerY, a.x - centerX)
+        val angleB = atan2(b.y - centerY, b.x - centerX)
+        angleA.compareTo(angleB)
+    }
+
+    this.state.addSimpleElement(
+        CustomQuadRenderState(
+            Matrix3x2f(this.matrices),
+            sorted[3],
+            sorted[2],
+            sorted[1],
+            sorted[0],
+            color,
+            this.scissorStack.peekLast(),
+        )
+    )
 }
 
 fun List<Vec3d>.toLines(): List<Line> {
@@ -129,6 +255,25 @@ fun WorldRenderEvent.drawLineToEye(end: Vec3d?, color: Color, xray: Boolean = tr
     val lookDirection = this.camera.rotation.transform(Vector3f(0f, 0f, -1f)).toVec3d()
     val line = Line(this.camera.cameraPos.add(lookDirection.multiply(2.0)), end)
     RenderUtils.drawLines(this, mutableListOf(line), color, xray)
+}
+
+fun WorldRenderEvent.drawPing(
+    loc: Vec3d,
+    size: Double = 0.3,
+    alphaMultiplier: Float = 0.5f,
+    thicknessMultiplier: Double = 1.0,
+    color: Color = Color.RED,
+) {
+    val points: MutableSet<Vec3d> = mutableSetOf()
+    points.add(loc.add(size, 0.0, 0.0))
+    points.add(loc.add(-size, 0.0, 0.0))
+    points.add(loc.add(0.0, size, 0.0))
+    points.add(loc.add(0.0, -size, 0.0))
+    points.add(loc.add(0.0, 0.0, size))
+    points.add(loc.add(0.0, 0.0, -size))
+
+    val mesh = RenderUtils.getMesh(points)
+    RenderUtils.drawLines(this, mesh, color, true, thicknessMultiplier)
 }
 
 fun WorldRenderEvent.drawBox(

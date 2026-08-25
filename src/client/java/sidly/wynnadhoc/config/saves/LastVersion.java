@@ -6,7 +6,16 @@ import java.io.File;
 
 public class LastVersion extends BasicSavable<LastVersion> {
     public static final File SAVE_FILE = ConfigManager.getConfigDir().resolve("last_version.json").toFile();
-    public String lastVersion;
+    private String lastVersion;
+
+    public String getLastVersion() {
+        return lastVersion == null ? "0.0.0" : lastVersion;
+    }
+
+    public void setLastVersion(String lastVersion) {
+        this.lastVersion = lastVersion;
+        changed();
+    }
 
     public LastVersion() {
         super(SAVE_FILE, LastVersion.class);

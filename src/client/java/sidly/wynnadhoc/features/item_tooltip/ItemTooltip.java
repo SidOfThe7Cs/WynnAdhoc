@@ -18,6 +18,7 @@ public class ItemTooltip {
         if (!ConfigManager.INSTANCE.config.toggles.hideIngredientPouchTooltip) return;
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
         if (currentScreen instanceof HandledScreen<?> handlesScreen) {
+            if (event.tooltip.isEmpty()) return;
             String title = event.tooltip.getFirst().getString();
             HandledScreenAccessor screenAcc = (HandledScreenAccessor) handlesScreen;
             SlotAccessor slot = (SlotAccessor) screenAcc.getFocusedSlot();

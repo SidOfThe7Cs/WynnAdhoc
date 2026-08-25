@@ -6,6 +6,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import org.joml.Vector3f
 import sidly.wynnadhoc.utils.render.Line
+import java.awt.Color
 
 fun Vec3d.toBlockPos(): BlockPos {
     return BlockPos(this.x.toInt(), this.y.toInt(), this.z.toInt())
@@ -88,8 +89,14 @@ fun Box.edges(): List<Line> {
     )
 }
 
+fun Double.formatOneDecimal(): String = "%.1f".format(this)
+
 // this guy shouldnt be here
 fun <T> MutableList<T>.getLast(): T? {
     if (this.isEmpty()) return null
     return this[this.size - 1]
+}
+
+fun Color.withAlpha(alpha: Float): Color {
+    return Color(this.red / 255f, this.green / 255f, this.blue / 255f, alpha)
 }

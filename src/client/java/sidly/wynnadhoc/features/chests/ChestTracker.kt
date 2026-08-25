@@ -88,6 +88,7 @@ object ChestTracker {
     }
 
     fun onChestItemsLoaded(event: ChestItemsLoadedEvent) {
+        ConfigManager.INSTANCE.chestsChanged()
         logChestContents(event)
         //autoCloseChest(event)
     }
@@ -197,6 +198,7 @@ object ChestTracker {
 
             if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
                 ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier, ByteArray(0))
+                ConfigManager.INSTANCE.chestsChanged()
                 chestDataCache[blockPos] = ChestDataCache.from(null, null)
             }
 

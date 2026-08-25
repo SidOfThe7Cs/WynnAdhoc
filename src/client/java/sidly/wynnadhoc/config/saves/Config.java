@@ -40,6 +40,14 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public RaidConfig raid = new RaidConfig();
 
     @Expose
+    @Category(name = "Ping Settings", desc = "ping settings")
+    public PingConfig ping = new PingConfig();
+
+    @Expose
+    @Category(name = "Rare Mob Settings", desc = "rae mob settings")
+    public RareMobConfig rareMob = new RareMobConfig();
+
+    @Expose
     @Category(name = "Guild Settings", desc = "guild settings")
     public GuildConfig guild = new GuildConfig();
 

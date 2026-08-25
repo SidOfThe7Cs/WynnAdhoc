@@ -1,5 +1,6 @@
 package sidly.wynnadhoc.mixin.client;
 
+import com.wynntils.core.text.StyledText;
 import com.wynntils.mc.event.SystemMessageEvent;
 import net.minecraft.text.*;
 import net.minecraft.text.ClickEvent.*;
@@ -10,40 +11,38 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ChatMessageEvent;
-import sidly.wynnadhoc.mixin.client.accessors.StyledTextAccessor;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mixin(value = com.wynntils.handlers.chat.ChatHandler.class, remap = false)
 public class ChatMixin {
-    @Inject(method = "onSystemChatReceived", at = @At("HEAD"))
+    @Inject(method = "onSystemChatReceived", at = @At("HEAD" ))
     private void onSystemChatReceived(SystemMessageEvent.ChatReceivedEvent event, CallbackInfo ci) {
         String plain = event.getMessage().getString();
-        ChatMessageEvent chatMessageEvent = new ChatMessageEvent(plain);
+        ChatMessageEvent chatMessageEvent = new ChatMessageEvent(plain, event.getStyledText());
+        event.setMessage(chatMessageEvent.styledText.getComponent());
         if (chatMessageEvent.canceled) {
             event.setCanceled(true);
         }
 
-        StyledTextAccessor accessor = ((StyledTextAccessor) (Object) event.getStyledText());
-        if (accessor == null) return;
-        List<ClickEvent> clickEvents = accessor.getClickEvents();
-        boolean noHoverEvents = accessor.getHoverEvents().isEmpty();
+        if (ConfigManager.INSTANCE.config.debug.showCmdOnChatHover) {
+            MutableText finalText = Text.literal("" );
+            StyledText[] textParts = event.getStyledText().getPartsAsTextArray();
+            Arrays.stream(textParts).forEach(part -> {
+                List<Text> text = part.getComponent().getSiblings();
+                text.forEach(t -> {
+                    Style style = t.getStyle();
+                    ClickEvent clickEvent = style.getClickEvent();
+                    if (clickEvent != null && style.getHoverEvent() == null) {
+                        String clickEventString = clickEventToString(clickEvent);
+                        HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal(clickEventString));
+                        finalText.append(t.copy().setStyle(t.getStyle().withHoverEvent(hoverEvent)));
+                    } else finalText.append(t);
+                });
 
-        StringBuilder sb = new StringBuilder();
-        for (ClickEvent clickEvent : clickEvents) {
-            String clickEventString = clickEventToString(clickEvent);
-            if (ConfigManager.INSTANCE.config.debug.showCmdOnChatHover && noHoverEvents) {
-                if (!sb.isEmpty()) sb.append("\n");
-                sb.append(clickEventString);
-            }
-        }
-        HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal(sb.toString()));
-
-        // copy to avoid infinite recursion
-        if (noHoverEvents && hoverEvent != null) {
-            Style style = event.getMessage().getStyle();
-            Style newStyle = style.withHoverEvent(hoverEvent);
-            ((MutableText) event.getMessage()).setStyle(newStyle);
+            });
+            event.setMessage(finalText);
         }
     }
 
@@ -93,9 +92,12 @@ public class ChatMixin {
                 case CUSTOM -> {
                     // For CUSTOM, this is plugin/mod specific
                     Custom custom = (Custom) clickEvent;
-                    yield custom.id() + " " + custom.payload();
+                    yield custom.id().getPath() + " " + custom.payload();
                 }
             });
+            if (action.equals(Action.CUSTOM)) {
+                return whatDO;
+            }
             return action.asString() + " " + whatDO;
         }
         return "";

@@ -41,4 +41,9 @@ public class SimpleFeatureToggles {
     @ConfigOption(name = "Marks Count", desc = "Draw marks count on mobs")
     @ConfigEditorBoolean
     public boolean showMarksCount = false;
+
+    @Expose
+    @ConfigOption(name = "Bomb Share", desc = "Inject clickable commands into chat messages that are likely asking where bombs are")
+    @ConfigEditorBoolean
+    public boolean bombShare = true;
 }

@@ -114,27 +114,39 @@ public class ConfigManager {
             WynnAdhocClient.LOGGER.warn("got lootrun data while uuid was null this is not real data");
             return new LootrunData(new HashMap<>(), "");
         }
-        return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> new LootrunData(new HashMap<>(), uuid));
+        return lootrunSaveData.lootruns.computeIfAbsent(uuid, k -> {
+            ConfigManager.INSTANCE.lootrunSaveData.changed();
+            return new LootrunData(new HashMap<>(), uuid);
+        });
     }
 
     public void resetLootrun(String uuid) {
         lootrunSaveData.lootruns.put(uuid, new LootrunData(lootrunSaveData.lootruns.get(uuid).getCampData(), uuid)); // create new object but preserve camp data
+        lootrunSaveData.changed();
     }
 
     public Map<BlockPos, ChestsSaveData.ChestData> getChests() {
         return chests.chests;
     }
 
+    public void chestsChanged() {
+        chests.changed();
+    }
+
+    public void lootrunChanged() {
+        lootrunSaveData.changed();
+    }
+
     public String getToken() {
-        return sessionToken.token == null ? "" : sessionToken.token;
+        return sessionToken.getToken();
     }
 
     public String getLastVersion() {
-        return lastVersion.lastVersion == null ? "0.0.0" : lastVersion.lastVersion;
+        return lastVersion.getLastVersion();
     }
 
     public void setLastVersion(String newVersion) {
-        this.lastVersion.lastVersion = newVersion;
+        this.lastVersion.setLastVersion(newVersion);
         this.lastVersion.save();
     }
 
@@ -158,7 +170,7 @@ public class ConfigManager {
     }
 
     public void storeToken(String sessionToken) {
-        this.sessionToken.token = sessionToken;
+        this.sessionToken.setToken(sessionToken);
         this.sessionToken.save();
     }
 
