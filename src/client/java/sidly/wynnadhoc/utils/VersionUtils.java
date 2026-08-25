@@ -64,6 +64,7 @@ public class VersionUtils {
                         BombShare (clickable chat messages or /wynnadhoc bombshare)
                         Highlight rare mobs
                         /rp switch <server> to save party -> switch worlds -> reinvite
+                        Fix hover events showing as one message when there are multiple click events in one message
                         """
         );
     }

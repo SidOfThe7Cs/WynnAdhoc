@@ -2,16 +2,14 @@ package sidly.wynnadhoc.mixin.client;
 
 import com.wynntils.core.text.StyledText;
 import com.wynntils.mc.event.SystemMessageEvent;
-import net.minecraft.text.ClickEvent;
+import net.minecraft.text.*;
 import net.minecraft.text.ClickEvent.*;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 
 import java.util.Arrays;
@@ -28,22 +26,24 @@ public class ChatMixin {
             event.setCanceled(true);
         }
 
-        MutableText finalText = Text.literal("" );
+        if (ConfigManager.INSTANCE.config.debug.showCmdOnChatHover) {
+            MutableText finalText = Text.literal("" );
+            StyledText[] textParts = event.getStyledText().getPartsAsTextArray();
+            Arrays.stream(textParts).forEach(part -> {
+                List<Text> text = part.getComponent().getSiblings();
+                text.forEach(t -> {
+                    Style style = t.getStyle();
+                    ClickEvent clickEvent = style.getClickEvent();
+                    if (clickEvent != null && style.getHoverEvent() == null) {
+                        String clickEventString = clickEventToString(clickEvent);
+                        HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal(clickEventString));
+                        finalText.append(t.copy().setStyle(t.getStyle().withHoverEvent(hoverEvent)));
+                    } else finalText.append(t);
+                });
 
-        StyledText[] textParts = event.getStyledText().getPartsAsTextArray();
-        Arrays.stream(textParts).forEach(part -> {
-            List<Text> text = part.getComponent().getSiblings();
-            text.forEach(t -> {
-                ClickEvent clickEvent = t.getStyle().getClickEvent();
-                if (clickEvent != null) {
-                    String clickEventString = clickEventToString(clickEvent);
-                    HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal(clickEventString));
-                    finalText.append(t.copy().setStyle(t.getStyle().withHoverEvent(hoverEvent)));
-                } else finalText.append(t);
             });
-
-        });
-        event.setMessage(finalText);
+            event.setMessage(finalText);
+        }
     }
 
     @Unique
