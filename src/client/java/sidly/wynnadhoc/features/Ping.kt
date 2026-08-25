@@ -51,7 +51,7 @@ object Ping {
     fun onWorldRender(event: WorldRenderEvent) {
         waypoints.stream().forEach { w: Vec3d ->
             run {
-                if (config().renderArrowPointer) ArrowPointer.addPointer(ArrowPointer.Pointer(w, Color.BLUE))
+                if (config().renderArrowPointer) ArrowPointer.addPointer(ArrowPointer.Pointer(w, Color.RED))
                 event.drawPing(w)
             }
         }

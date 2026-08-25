@@ -6,31 +6,35 @@ import net.minecraft.util.math.Vec3d
 import org.joml.Vector2d
 import sidly.wynnadhoc.event.ClientTickEvent
 import sidly.wynnadhoc.event.HudRenderEvent
-import sidly.wynnadhoc.utils.datatypes.withAlpha
 import java.awt.Color
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 
 object ArrowPointer {
     private const val RADIUS = 0.12
-    private const val MAX_DISTANCE = 200
 
     // TODO rework all of this maybe when vulcan exists?
     class Pointer(private val destination: Vec3d, private val color: Color) {
         fun draw(event: HudRenderEvent) {
-            val screenCoords = RenderUtils.worldToScreenCoords(destination) ?: return
+            val camera = MinecraftClient.getInstance().cameraEntity ?: return
+            val cameraPos = camera.eyePos
+            val dx = destination.x - cameraPos.x
+            val dz = destination.z - cameraPos.z
+            val dirAngle = atan2(-dx, dz) % (PI * 2)
+            val camAngle = Math.toRadians((camera.yaw % 360).toDouble())
+            val angle = dirAngle - camAngle - PI / 2
             val radius = event.context.scaledWindowHeight * RADIUS
             val center = Vector2d(event.context.scaledWindowWidth / 2.0, event.context.scaledWindowHeight / 2.0)
+            //val pointOnCircle = getClosestPointOnCircle(screenCoords, center, radius)
+            /*
+            val screenCoords = RenderUtils.worldToScreenCoords(destination) ?: return
             val dx = screenCoords.x - center.x
             val dy = screenCoords.y - center.y
-            val angle = atan2(dy, dx) // radians
-            val pointOnCircle = getClosestPointOnCircle(screenCoords, center, radius)
-            val dist = MinecraftClient.getInstance().player?.squaredDistanceTo(destination) ?: 0.0
-            val alphaColor = color.withAlpha(calculateAlpha(dist))
 
-            drawRingArc(event.context, center, radius, radius - 1.5, angle, alphaColor)
+            val angle = atan2(dy, dx) // radians
+
+             */
+
+            drawRingArc(event.context, center, radius, radius - 1.5, angle, color)
 
             val size = event.context.scaledWindowHeight * 0.009
             val basePoints = listOf(
@@ -43,6 +47,7 @@ object ArrowPointer {
             val cos = cos(angle - Math.toRadians(45.0))
             val sin = sin(angle - Math.toRadians(45.0))
 
+            /*
             val rotatedPoints = basePoints.map { p ->
                 rotatePoint(Vector2d(pointOnCircle.x + p.x, pointOnCircle.y + p.y), pointOnCircle, cos, sin)
             }
@@ -54,6 +59,8 @@ object ArrowPointer {
                 rotatedPoints[3],
                 color.rgb
             )
+
+             */
         }
     }
 
@@ -102,10 +109,6 @@ object ArrowPointer {
 
             context.fill(minX, minY, maxX + 1, maxY + 1, color.rgb)
         }
-    }
-
-    private fun calculateAlpha(distanceSQ: Double): Float {
-        return if (distanceSQ < MAX_DISTANCE * MAX_DISTANCE) (0.3 + 0.7 * (1.0 - distanceSQ / (MAX_DISTANCE * MAX_DISTANCE))).toFloat() else 0.0f
     }
 
     fun getClosestPointOnCircle(screenCoords: Vector2d, center: Vector2d, radius: Double): Vector2d {
