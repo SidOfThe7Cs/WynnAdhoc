@@ -13,9 +13,9 @@ import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
 import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitbox
-import sidly.wynnadhoc.utils.isRareMob
 import sidly.wynnadhoc.utils.render.ArrowPointer
 import sidly.wynnadhoc.utils.render.drawBox
+import sidly.wynnadhoc.utils.text.TextDisplayParser
 import java.util.concurrent.TimeUnit
 
 object RareMobs {
@@ -25,7 +25,8 @@ object RareMobs {
     fun onEachEntity(event: ForEachEntityRenderEvent) {
         if (!config.mainToggle) return
         if (event.entity is DisplayEntity.TextDisplayEntity) {
-            if (event.entity.isRareMob()) {
+            val textDisplayParser = TextDisplayParser(event.entity)
+            if (textDisplayParser.isRareMob()) {
                 // new spawn (cant use .isnew as the textdisplay is sent to the client and then updated at a later point) i think
                 if (!rareMobs.contains(event.entity.id)) {
                     rareMobs.put(event.entity.id)
