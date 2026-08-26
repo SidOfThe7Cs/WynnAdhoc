@@ -1,18 +1,29 @@
 package sidly.wynnadhoc.utils.text
 
-import net.minecraft.text.*
-import net.minecraft.util.Identifier
+import net.minecraft.text.PlainTextContent
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.text.TextContent
 
 abstract class TextParser {
-    protected val parts: MutableList<TextPart> = mutableListOf()
+    private val parts: MutableList<TextPart> = mutableListOf()
 
     constructor()
     constructor(text: Text) : this() {
         extractParts(text, Style.EMPTY)
     }
 
-    fun find(condition: (TextPart) -> Boolean, startIndex: Int = 0): Int {
+    fun find(condition: (TextPart) -> Boolean, startIndex: Int = 0): TextPart? {
+        return parts.subList(startIndex, parts.size).firstOrNull { condition(it) }
+    }
+
+    fun findIndex(condition: (TextPart) -> Boolean, startIndex: Int = 0): Int {
         return parts.subList(startIndex, parts.size).indexOfFirst { condition(it) }
+    }
+
+    fun get(index: Int): TextPart? {
+        if (index < 0 || index >= parts.size) return null
+        return parts[index]
     }
 
     private fun extractParts(text: Text, parentStyle: Style) {
@@ -34,19 +45,4 @@ abstract class TextParser {
         else return content.toString()
     }
 
-    class TextPart(val string: String, val style: Style) {
-
-        fun getColor(): Int? {
-            return style.color?.rgb
-        }
-
-        fun getFontId(): Identifier? {
-            val font = style.font
-            return if (font is StyleSpriteSource.Font) font.id() else null
-        }
-
-        override fun toString(): String {
-            return "TextPart(string='$string', style=$style)"
-        }
-    }
 }

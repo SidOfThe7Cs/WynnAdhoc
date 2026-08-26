@@ -6,8 +6,7 @@ class TextDisplayParser : TextParser {
     constructor(display: DisplayEntity.TextDisplayEntity) : super(display.text)
 
     fun isRareMob(): Boolean {
-        if (parts.isEmpty()) return false
-        val part = parts[0]
+        val part = get(0) ?: return false
         val string = part.string == "\uE02A"
         val color = part.getColor()?.equals(0xCC29CC) ?: false
         val font = part.getFontId()?.path?.equals("common") ?: false

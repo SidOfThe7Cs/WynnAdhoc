@@ -32,7 +32,8 @@ object RareMobs {
                     rareMobs.put(event.entity.id)
 
                     if (config.chatMsg) {
-                        val name = event.entity.text.siblings.getOrNull(2)?.string ?: "Unknown"
+                        val name = textDisplayParser.find({ part -> part.isNotEmpty() }, 1)?.string ?: "Unknown"
+                        //val name = event.entity.text.siblings.getOrNull(2)?.string ?: "Unknown"
                         val formattedX = event.entity.x.formatOneDecimal()
                         val formattedY = event.entity.y.formatOneDecimal()
                         val formattedZ = event.entity.z.formatOneDecimal()
