@@ -20,7 +20,11 @@ import net.minecraft.util.Identifier
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.LootrunConfig
-import sidly.wynnadhoc.event.*
+import sidly.wynnadhoc.event.ChatMessageEvent
+import sidly.wynnadhoc.event.ClientTickEvent
+import sidly.wynnadhoc.event.ScreenRenderEvent
+import sidly.wynnadhoc.event.SlotClickedEvent
+import sidly.wynnadhoc.event.entity.ForEachEntityEvent
 import sidly.wynnadhoc.features.lootruns.enums.*
 import sidly.wynnadhoc.mixin.client.accessors.LootrunBeaconMarkerAccessor
 import sidly.wynnadhoc.mixin.client.accessors.WynntillsLootrunModelAccessor

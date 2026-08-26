@@ -1,6 +1,7 @@
-package sidly.wynnadhoc.event;
+package sidly.wynnadhoc.event.entity;
 
 import net.minecraft.entity.Entity;
+import sidly.wynnadhoc.event.Event;
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet;
 
 import java.util.concurrent.TimeUnit;

@@ -7,7 +7,7 @@ import net.minecraft.util.math.Box;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.SimpleFeatureToggles;
-import sidly.wynnadhoc.event.ForEachEntityRenderEvent;
+import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent;
 import sidly.wynnadhoc.utils.render.RenderUtilsKt;
 
 import java.awt.*;

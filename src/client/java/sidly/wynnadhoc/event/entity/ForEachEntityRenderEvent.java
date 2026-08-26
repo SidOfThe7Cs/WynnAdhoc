@@ -1,8 +1,9 @@
-package sidly.wynnadhoc.event;
+package sidly.wynnadhoc.event.entity;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import sidly.wynnadhoc.event.WorldRenderEvent;
 
 public class ForEachEntityRenderEvent extends BaseForEachEntityEvent<ForEachEntityRenderEvent> {
     public final WorldRenderEvent renderEvent;

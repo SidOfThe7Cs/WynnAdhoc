@@ -1,6 +1,7 @@
-package sidly.wynnadhoc.event;
+package sidly.wynnadhoc.event.entity;
 
 import net.minecraft.entity.Entity;
+import sidly.wynnadhoc.event.ClientTickEvent;
 
 public class ForEachEntityEvent extends BaseForEachEntityEvent<ForEachEntityEvent> {
     public ForEachEntityEvent(Entity entity) {

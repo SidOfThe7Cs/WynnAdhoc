@@ -7,7 +7,7 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.math.random.Random
 import sidly.wynnadhoc.config.ConfigManager
-import sidly.wynnadhoc.event.ForEachEntityRenderEvent
+import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
