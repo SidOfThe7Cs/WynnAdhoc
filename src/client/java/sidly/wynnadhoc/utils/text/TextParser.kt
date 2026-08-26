@@ -13,6 +13,10 @@ abstract class TextParser {
         extractParts(text, Style.EMPTY)
     }
 
+    constructor(text: List<Text>) : this() {
+        text.forEach { extractParts(it, Style.EMPTY) }
+    }
+
     fun find(condition: (TextPart) -> Boolean, startIndex: Int = 0): TextPart? {
         return parts.subList(startIndex, parts.size).firstOrNull { condition(it) }
     }
@@ -24,6 +28,10 @@ abstract class TextParser {
     fun get(index: Int): TextPart? {
         if (index < 0 || index >= parts.size) return null
         return parts[index]
+    }
+
+    fun get(): List<TextPart> {
+        return parts
     }
 
     private fun extractParts(text: Text, parentStyle: Style) {

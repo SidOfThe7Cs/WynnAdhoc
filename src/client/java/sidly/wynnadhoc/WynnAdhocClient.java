@@ -147,7 +147,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
-        Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
+        Event.register(DrawTooltipEvent.class, ItemTooltip.INSTANCE::onTooltipDraw);
         Event.register(PlayerLoadedEvent.class, () -> CrowdsourceMain.startAuth());
         Event.register(PlayerLoadedEvent.class, VersionUtils::onPLayerLoad);
 

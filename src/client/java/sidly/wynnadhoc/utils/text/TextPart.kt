@@ -2,12 +2,22 @@ package sidly.wynnadhoc.utils.text
 
 import net.minecraft.text.Style
 import net.minecraft.text.StyleSpriteSource
+import net.minecraft.text.TextColor
+import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
 class TextPart(val string: String, val style: Style) {
 
-    fun getColor(): Int? {
+    fun getColorRgb(): Int? {
         return style.color?.rgb
+    }
+
+    fun isNotColor(formattingColor: Formatting): Boolean {
+        return !isColor(formattingColor)
+    }
+
+    fun isColor(formattingColor: Formatting): Boolean {
+        return style.color?.equals(TextColor.fromFormatting(formattingColor)) ?: false
     }
 
     fun getFontId(): Identifier? {
