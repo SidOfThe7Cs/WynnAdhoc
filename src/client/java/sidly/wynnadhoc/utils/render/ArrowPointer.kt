@@ -16,23 +16,19 @@ object ArrowPointer {
     class Pointer(private val destination: Vec3d, private val color: Color) {
         fun draw(event: HudRenderEvent) {
             val camera = MinecraftClient.getInstance().cameraEntity ?: return
-            val cameraPos = camera.eyePos
-            val dx = destination.x - cameraPos.x
-            val dz = destination.z - cameraPos.z
-            val dirAngle = atan2(-dx, dz) % (PI * 2)
-            val camAngle = Math.toRadians((camera.yaw % 360).toDouble())
-            val angle = dirAngle - camAngle - PI / 2
+            val cameraPos = camera.entityPos
+            val view = camera.getRotationVec(0f) // direction we are looking
+            val dir: Vec3d = destination.subtract(cameraPos).normalize() // direction from camera to target
+            val screenRight = view.crossProduct(Vec3d.Y).normalize() // dir in 3d world space of the screen's x-axis
+            val screenUp = screenRight.crossProduct(view).normalize() // dir in 3d world space of the screen's y-axis
+            // points to the target from screen center in screen coords (magic)
+            val projected = dir.subtract(view.multiply(dir.dotProduct(view))).normalize()
+            val screenXAngle = projected.dotProduct(screenRight)
+            val screenYAngle = projected.dotProduct(screenUp)
+            val angle = atan2(screenXAngle, screenYAngle)
+
             val radius = event.context.scaledWindowHeight * RADIUS
             val center = Vector2d(event.context.scaledWindowWidth / 2.0, event.context.scaledWindowHeight / 2.0)
-            //val pointOnCircle = getClosestPointOnCircle(screenCoords, center, radius)
-            /*
-            val screenCoords = RenderUtils.worldToScreenCoords(destination) ?: return
-            val dx = screenCoords.x - center.x
-            val dy = screenCoords.y - center.y
-
-            val angle = atan2(dy, dx) // radians
-
-             */
 
             drawRingArc(event.context, center, radius, radius - 1.5, angle, color)
 
@@ -44,14 +40,14 @@ object ArrowPointer {
                 Vector2d(-size, size)   // bottom-left
             )
 
-            val cos = cos(angle - Math.toRadians(45.0))
-            val sin = sin(angle - Math.toRadians(45.0))
+            val x = center.x + radius * cos(angle - PI / 2)
+            val y = center.y + radius * sin(angle - PI / 2)
 
-            /*
             val rotatedPoints = basePoints.map { p ->
-                rotatePoint(Vector2d(pointOnCircle.x + p.x, pointOnCircle.y + p.y), pointOnCircle, cos, sin)
+                rotatePoint(Vector2d(x + p.x, y + p.y), Vector2d(x, y), angle - 3 * PI / 4)
             }
 
+            // lmao where triangle
             event.context.drawFilledQuad(
                 rotatedPoints[1],
                 rotatedPoints[1],
@@ -60,13 +56,14 @@ object ArrowPointer {
                 color.rgb
             )
 
-             */
         }
     }
 
-    private fun rotatePoint(point: Vector2d, center: Vector2d, cos: Double, sin: Double): Vector2d {
+    private fun rotatePoint(point: Vector2d, center: Vector2d, angle: Double): Vector2d {
         val dx = point.x - center.x
         val dy = point.y - center.y
+        val cos = cos(angle)
+        val sin = sin(angle)
         return Vector2d(
             center.x + dx * cos - dy * sin,
             center.y + dx * sin + dy * cos
@@ -83,8 +80,8 @@ object ArrowPointer {
     ) {
         val segments = 20
         val arcAngle = Math.PI * 0.2
-        val startAngle = angle - arcAngle / 2
-        val endAngle = angle + arcAngle / 2
+        val startAngle = (angle - arcAngle / 2) - PI / 2
+        val endAngle = (angle + arcAngle / 2) - PI / 2
 
         // Draw as a strip of quads
         for (i in 0 until segments) {
