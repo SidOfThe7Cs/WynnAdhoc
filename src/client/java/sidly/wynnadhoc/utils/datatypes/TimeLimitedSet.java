@@ -32,4 +32,9 @@ public class TimeLimitedSet<T> {
     public Stream<T> stream() {
         return elements().stream();
     }
+
+    public boolean isEmpty() {
+        cache.cleanUp();
+        return elements().isEmpty();
+    }
 }
