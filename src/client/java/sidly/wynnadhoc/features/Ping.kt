@@ -28,6 +28,7 @@ object Ping {
 
     private var waypoints = TimeLimitedSet<Vec3d>(60, TimeUnit.SECONDS)
     private var lastDuration = 60.0
+    private var lastPing: Vec3d? = null
 
     fun onChat(event: ChatMessageEvent) {
         if (!config().renderWynnmodPings) return
@@ -44,17 +45,21 @@ object Ping {
             val y = pingMatcher.group("y").toDouble()
             val z = pingMatcher.group("z").toDouble()
 
-            waypoints.put(Vec3d(x, y, z))
+            val loc = Vec3d(x, y, z)
+            waypoints.put(loc)
+            lastPing = loc
         }
     }
 
     fun onWorldRender(event: WorldRenderEvent) {
-        waypoints.stream().forEach { w: Vec3d ->
-            run {
-                if (config().renderArrowPointer) ArrowPointer.addPointer(ArrowPointer.Pointer(w, Color.RED))
-                event.drawPing(w)
-            }
-        }
+        if (waypoints.isEmpty) lastPing = null
+        if (config().onlyMostRecent) lastPing?.let { renderPing(event, it) }
+        else waypoints.stream().forEach { w: Vec3d -> renderPing(event, w) }
+    }
+
+    private fun renderPing(event: WorldRenderEvent, loc: Vec3d) {
+        if (config().renderArrowPointer) ArrowPointer.addPointer(ArrowPointer.Pointer(loc, Color.RED))
+        event.drawPing(loc)
     }
 
     fun onMouseButton(event: MouseButtonEvent) {

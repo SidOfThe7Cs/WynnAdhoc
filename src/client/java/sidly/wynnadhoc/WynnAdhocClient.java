@@ -20,6 +20,9 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
+import sidly.wynnadhoc.event.entity.EntityClickedEvent;
+import sidly.wynnadhoc.event.entity.ForEachEntityEvent;
+import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent;
 import sidly.wynnadhoc.features.*;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -154,7 +157,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);
         Event.register(EntityClickedEvent.class, ChestTracker.INSTANCE::onEntityClicked);
         Event.register(BlockEntityLoadedEvent.class, ChestTracker.INSTANCE::onBlockEntityLoad);
-        Event.register(DrawTooltipEvent.class, ItemTooltip::onTooltipDraw);
+        Event.register(DrawTooltipEvent.class, ItemTooltip.INSTANCE::onTooltipDraw);
         Event.register(PlayerLoadedEvent.class, () -> CrowdsourceMain.startAuth());
         Event.register(PlayerLoadedEvent.class, VersionUtils::onPLayerLoad);
 

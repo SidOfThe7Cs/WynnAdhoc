@@ -20,6 +20,11 @@ public class PingConfig {
     public boolean renderWynnmodPings = false;
 
     @Expose
+    @ConfigOption(name = "Only Most Recent", desc = "Only renders the most recent ping")
+    @ConfigEditorBoolean
+    public boolean onlyMostRecent = false;
+
+    @Expose
     @ConfigOption(name = "Ping Duration", desc = "How many seconds should the pings stay there")
     @ConfigEditorSlider(minValue = 0.f, maxValue = 500.f, minStep = 1.f)
     public double pingDuration = 60;

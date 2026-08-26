@@ -2,6 +2,7 @@ package sidly.wynnadhoc.event;
 
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.item.Item;
+import sidly.wynnadhoc.event.entity.ForEachEntityEvent;
 import sidly.wynnadhoc.utils.ItemUtils;
 
 public class NewItemDisplayEvent extends Event<NewItemDisplayEvent> {

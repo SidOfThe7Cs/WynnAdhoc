@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.event;
+package sidly.wynnadhoc.event.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -7,6 +7,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import org.jspecify.annotations.Nullable;
+import sidly.wynnadhoc.event.Event;
 
 public class EntityClickedEvent extends Event<EntityClickedEvent> {
     public PlayerEntity player;
@@ -25,7 +26,7 @@ public class EntityClickedEvent extends Event<EntityClickedEvent> {
     }
 
     public static ActionResult onEntityClicked(PlayerEntity playerEntity, World world, Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
-        new  EntityClickedEvent(playerEntity, world, hand, entity, entityHitResult);
+        new EntityClickedEvent(playerEntity, world, hand, entity, entityHitResult);
         return ActionResult.PASS;
     }
 }
