@@ -17,9 +17,8 @@ object ItemTooltip {
         if (!ConfigManager.INSTANCE.config.toggles.hideIngredientPouchTooltip) return
         val currentScreen = MinecraftClient.getInstance().currentScreen
         if (currentScreen is HandledScreen<*>) {
-            val screenAcc = currentScreen as HandledScreenAccessor
-            val slot = screenAcc.getFocusedSlot() as SlotAccessor
-            if (slot.index != 13) return
+            val slot = ((currentScreen as? HandledScreenAccessor)?.focusedSlot as? SlotAccessor)?.index ?: return
+            if (slot != 13) return
 
             val textParser = ItemTextParser(event.tooltip)
             if (textParser.isIngredientPouch()) event.hide()
