@@ -13,7 +13,6 @@ import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
 import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitboxFallback
-import sidly.wynnadhoc.utils.playerCanSee
 import sidly.wynnadhoc.utils.render.ArrowPointer
 import sidly.wynnadhoc.utils.render.drawBox
 import sidly.wynnadhoc.utils.text.TextDisplayParser
@@ -28,7 +27,6 @@ object RareMobs {
         if (event.entity is DisplayEntity.TextDisplayEntity) {
             val textDisplayParser = TextDisplayParser(event.entity)
             if (textDisplayParser.isRareMob()) {
-                if (!event.entity.playerCanSee()) return
                 // new spawn (cant use .isnew as the text display is sent to the client and then updated at a later point) I think
                 if (!rareMobs.contains(event.entity.id)) {
                     rareMobs.put(event.entity.id)
