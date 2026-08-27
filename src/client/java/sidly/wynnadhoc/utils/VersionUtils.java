@@ -65,7 +65,7 @@ public class VersionUtils {
                         Highlight rare mobs
                         /rp switch <server> to save party -> switch worlds -> reinvite
                         Fix hover events showing as one message when there are multiple click events in one message
-                        Fix hide ing pouch not working at all
+                        Fix hide ing pouch not working at all (on latest wynntils)
                         """
         );
     }
