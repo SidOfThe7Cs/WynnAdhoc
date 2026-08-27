@@ -39,7 +39,7 @@ object RareMobs {
                         val formattedX = event.entity.x.formatOneDecimal()
                         val formattedY = event.entity.y.formatOneDecimal()
                         val formattedZ = event.entity.z.formatOneDecimal()
-                        ChatMessageUtils.sendChatMessage("rare mob \"$name\" spawned at $formattedX $formattedY $formattedZ")
+                        ChatMessageUtils.sendChatMessage("rare mob \"$name\" found at $formattedX $formattedY $formattedZ")
                     }
 
                     if (config.playSound) {

@@ -12,7 +12,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.Style
-import net.minecraft.util.Pair
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.ChatMessageEvent
 import sidly.wynnadhoc.event.CommandRegistrationEvent
@@ -22,6 +21,7 @@ import java.util.*
 import java.util.function.Consumer
 import java.util.regex.Pattern
 import java.util.stream.Collectors
+import kotlin.math.max
 
 object BombShare {
     private val prof = mutableSetOf("prof", "profs", "speed bomb", "gxp")
@@ -59,19 +59,20 @@ object BombShare {
         })
         if (bomb != Bomb.PROF) {
             return activeBombs[bomb.type]
-                ?.sortedBy { it.right }
+                ?.sortedBy { it.second }
                 ?.reversed()
-                ?.joinToString(", ") { it.left }
+                ?.joinToString(", ") { it.first }
                 ?: "NONE"
         } else {
             val profXp: MutableList<Pair<String, Long>> = activeBombs[BombType.PROFESSION_XP] ?: mutableListOf()
             val profSpeed: MutableList<Pair<String, Long>> = activeBombs[BombType.PROFESSION_SPEED] ?: mutableListOf()
+            val xpMap = profXp.associate { it.first to it.second }
 
-            val profXpServers = profXp.map { it.left }.toSet()
+            val profXpServers = profXp.map { it.first }.toSet()
             val (bothServers, speedOnlyServers) = profSpeed
-                .sortedBy { it.right }
+                .sortedBy { max(it.second, xpMap.get(it.first) ?: 0L) }
                 .reversed()
-                .map { it.left }
+                .map { it.first }
                 .partition { it in profXpServers }
 
             val both = bothServers.joinToString(", ").ifEmpty { "NONE" }
