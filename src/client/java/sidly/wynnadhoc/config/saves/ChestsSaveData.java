@@ -1,10 +1,10 @@
 package sidly.wynnadhoc.config.saves;
 
-import io.github.notenoughupdates.moulconfig.ChromaColour;
 import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.config.catagories.ChestConfig;
+import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.models.Character;
 
 import java.awt.*;
@@ -71,7 +71,7 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
             String uuid = Character.INSTANCE.uuid();
             if (uuid.isEmpty()) {
                 WynnAdhocClient.LOGGER.warn("failed to get chest color, uuid is null");
-                return ChromaColour.forLegacyString(config().cdColor).getEffectiveColour();
+                return ChestTracker.INSTANCE.getColor(config().cdColor);
             }
             var color = config().cdColor;
             Long last = this.lastOpened.getOrDefault(uuid, -1L);
@@ -79,7 +79,7 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
             if (last + 1800000 < now) color = config().openableColor;
             // never been opened or 3 days have passed
             if (last == -1L || last + TimeUnit.DAYS.toMillis(3) < now) color = config().readyColor;
-            return ChromaColour.forLegacyString(color).getEffectiveColour();
+            return ChestTracker.INSTANCE.getColor(color);
         }
 
         @Override
