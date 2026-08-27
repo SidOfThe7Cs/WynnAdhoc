@@ -45,7 +45,7 @@ object ChestTracker {
     private var lastClickedChest: BlockPos? = null
     private val trappedChests = mutableSetOf<BlockPos>()
     private val chestDataCache: MutableMap<BlockPos, ChestDataCache> = mutableMapOf()
-    private val colorCache: MutableMap<String, Color> = mutableMapOf() // forLegacy string is really laggy
+    private val colorCache: MutableMap<String, Color> = mutableMapOf() // forLegacyString is really laggy
 
     fun getColor(string: String): Color {
         return colorCache.computeIfAbsent(string, { k -> forLegacyString(k).getEffectiveColour() })
