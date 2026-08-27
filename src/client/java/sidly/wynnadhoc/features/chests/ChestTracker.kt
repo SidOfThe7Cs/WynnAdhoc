@@ -34,6 +34,7 @@ import sidly.wynnadhoc.utils.ItemUtils
 import sidly.wynnadhoc.utils.LocationUtils
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.render.drawBox
+import java.awt.Color
 import java.util.regex.Pattern
 import kotlin.math.pow
 
@@ -44,6 +45,11 @@ object ChestTracker {
     private var lastClickedChest: BlockPos? = null
     private val trappedChests = mutableSetOf<BlockPos>()
     private val chestDataCache: MutableMap<BlockPos, ChestDataCache> = mutableMapOf()
+    private val colorCache: MutableMap<String, Color> = mutableMapOf() // forLegacyString is really laggy
+
+    fun getColor(string: String): Color {
+        return colorCache.computeIfAbsent(string, { k -> forLegacyString(k).getEffectiveColour() })
+    }
 
     fun getChestDataCache(): Map<BlockPos, ChestDataCache> {
         return chestDataCache
@@ -107,7 +113,7 @@ object ChestTracker {
             if (encodedItem is BoxItem && encodedItem.rarity == GearTier.MYTHIC) return // check item rarity from own code
             if ((ItemFavoriteFeature() as IsFavoritedInvoker).invokeIsFavorited(item)) return // check if is wynntills favorite
             // check for potions
-            if ((item.getName().string == "Potion of Healing [3/3]") && !hotBarPotions.isEmpty()) {
+            if (config.keepPotions && (item.getName().string == "Potion of Healing [3/3]") && !hotBarPotions.isEmpty()) {
                 var healAmount = -1
                 val tooltip = ItemUtils.getTooltip(item)
                 for (line in tooltip) {
@@ -171,9 +177,7 @@ object ChestTracker {
                 val isSplunkChest = knownChest.value.tier > 2 && splunk
                 if (onlySplunk && !isSplunkChest) continue
                 if (!isSplunkChest && config.onlyOpenable && !knownChest.value.isOpenable(currentTime)) continue
-                val color = if (isSplunkChest) {
-                    forLegacyString(config.readyColor).getEffectiveColour()
-                } else knownChest.value.getColor(currentTime)
+                val color = if (isSplunkChest) getColor(config.readyColor) else knownChest.value.getColor(currentTime)
 
                 val distSqr = knownChest.key.getSquaredDistance(player.entityPos)
                 val maxDist = config.maxEspDistance.pow(2)

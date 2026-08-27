@@ -16,6 +16,7 @@
     "ScreenMixin",
     "SlotClickedMixin",
     "StatusEffectMixin",
+    "WorldRendererMixin",
     "WynntillsMapScreenMixin",
     "WynntillsModMixin",
     "WynntilsScreenMixin",
