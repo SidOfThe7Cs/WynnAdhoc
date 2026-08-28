@@ -33,4 +33,9 @@ public class PingConfig {
     @ConfigOption(name = "Draw Arrow", desc = "Draws a arc that rotates around your cursor pointing toward each ping")
     @ConfigEditorBoolean
     public boolean renderArrowPointer = false;
+
+    @Expose
+    @ConfigOption(name = "Max Distance", desc = "Max distance to render pings")
+    @ConfigEditorSlider(minValue = 0.f, maxValue = 2000.f, minStep = 10.f)
+    public double maxDist = 250;
 }

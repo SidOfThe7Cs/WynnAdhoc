@@ -11,7 +11,9 @@ import com.wynntils.utils.type.IterationDecision
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
+import net.minecraft.text.Text
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.ChatMessageEvent
 import sidly.wynnadhoc.event.CommandRegistrationEvent
@@ -25,7 +27,7 @@ import kotlin.math.max
 
 object BombShare {
     private val prof = mutableSetOf("prof", "profs", "speed bomb", "gxp")
-    private val xp = mutableSetOf("xp bomb", "dxp", "cxp", "txp", "double xp")
+    private val xp = mutableSetOf("xp bomb", "dxp", "cxp", "txp", "double xp", "combat experience")
     private val chest = mutableSetOf("loot chest", "dcl", "chest loot", "cloot")
     private val loot = mutableSetOf("dloot", "loot bomb")
     private val clickEventsToAdd: MutableMap<String, Bomb> = mutableMapOf()
@@ -117,7 +119,9 @@ object BombShare {
                     .findFirst()
                     .orElse(matchedWord)
 
-                val clickEvent = wordClickMap.getOrDefault(originalWord, null)?.getClickEvent() ?: continue
+                val bombType = wordClickMap.getOrDefault(originalWord, null) ?: continue
+                val clickEvent = bombType.getClickEvent()
+                val hoverEvent = HoverEvent.ShowText(Text.literal("Bomb Share: " + bombType.displayName))
 
                 if (matcher.start() > lastEnd) {
                     val beforeText = partText.substring(lastEnd, matcher.start())
@@ -133,7 +137,7 @@ object BombShare {
 
                 // Use the actual matched text (preserving case) but with click event
                 val originalStyle = part.partStyle.style
-                val newStyle = originalStyle.withClickEvent(clickEvent)
+                val newStyle = originalStyle.withClickEvent(clickEvent).withHoverEvent(hoverEvent)
                 newParts.add(
                     StyledTextPart(
                         matchedWord,  // Use matched text to preserve original case

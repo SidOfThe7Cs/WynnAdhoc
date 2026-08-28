@@ -53,8 +53,14 @@ object Ping {
 
     fun onWorldRender(event: WorldRenderEvent) {
         if (waypoints.isEmpty) lastPing = null
-        if (config().onlyMostRecent) lastPing?.let { renderPing(event, it) }
-        else waypoints.stream().forEach { w: Vec3d -> renderPing(event, w) }
+        val player = MinecraftClient.getInstance().player?.entityPos ?: return
+        val maxDistSq = config().maxDist * config().maxDist
+        if (config().onlyMostRecent) lastPing
+            ?.takeIf { it.squaredDistanceTo(player) <= maxDistSq }
+            ?.let { renderPing(event, it) }
+        else waypoints.stream()
+            .filter { w -> w.squaredDistanceTo(player) <= maxDistSq }
+            .forEach { w: Vec3d -> renderPing(event, w) }
     }
 
     private fun renderPing(event: WorldRenderEvent, loc: Vec3d) {
@@ -81,7 +87,7 @@ object Ping {
 
         if (entity != null && world != null) {
             // Get the block the player is looking at
-            val hitResult = entity.raycast(120.0, 0.0f, false) // 100 blocks range
+            val hitResult = entity.raycast(200.0, 0.0f, false) // 100 blocks range
 
             if (hitResult != null && hitResult.type != HitResult.Type.MISS) {
                 // Get the position where the ray hits
