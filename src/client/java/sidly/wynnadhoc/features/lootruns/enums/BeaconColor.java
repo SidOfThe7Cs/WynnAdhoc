@@ -14,7 +14,7 @@ public enum BeaconColor {
     White("§f", 1, new BeaconEffect(15, 20, 25, 30)),
     Grey("§7", 3, new BeaconEffect(3, 4, 5, 5)),
     Red("§c", new BeaconEffect(6, 9, 12, 15)),
-    Rainbow("§d", new BeaconEffect(10, 20, 30, 40)),
+    Rainbow("§d", new BeaconEffect(15, 20, 25, 30)),
     Crimson("§4", 2, new BeaconEffect(2, 3, 4, 4)),
     Obscured("§0", new BeaconEffect(-1, -1, -1, -1));
 
