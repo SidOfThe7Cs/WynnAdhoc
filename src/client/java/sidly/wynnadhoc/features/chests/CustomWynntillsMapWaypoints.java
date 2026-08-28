@@ -192,37 +192,29 @@ public class CustomWynntillsMapWaypoints {
         Map<@NotNull BlockPos, @NotNull ChestDataCache> chestDataCache = ChestTracker.INSTANCE.getChestDataCache();
         for (Map.Entry<BlockPos, ChestDataCache> entry : chestDataCache.entrySet()) {
             Map<Integer, Integer> itemPercents = entry.getValue().getItemPercents();
-            if (selectedLvls == null) { // show all
-                Optional<Map.Entry<Integer, Integer>> highest = itemPercents.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue));
-                if (highest.isEmpty()) continue;
-                int lvl = highest.get().getKey();
-                ChestPoi chestPoi = new ChestPoi(lvl + " - " + (lvl + 4) + " " + highest.get().getValue() + "%", entry.getKey(), CommonColors.WHITE);
-                pois.add(chestPoi);
-            } else {
-                Map<BlockPos, Map<Integer, Integer>> chests = new HashMap<>();
-                for (Integer lvl : selectedLvls) {
-                    Integer percent = itemPercents.getOrDefault(lvl, null);
-                    if (percent == null) continue;
-                    Map<Integer, Integer> chest = chests.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
-                    chest.put(lvl, percent);
-                }
+            Map<BlockPos, Map<Integer, Integer>> chests = new HashMap<>();
+            for (Integer lvl : selectedLvls) {
+                Integer percent = itemPercents.getOrDefault(lvl, null);
+                if (percent == null) continue;
+                Map<Integer, Integer> chest = chests.computeIfAbsent(entry.getKey(), k -> new HashMap<>());
+                chest.put(lvl, percent);
+            }
 
-                for (Map.Entry<BlockPos, Map<Integer, Integer>> chestToRender : chests.entrySet()) {
-                    Map<Integer, Integer> lvlToPercent = chestToRender.getValue();
-                    BlockPos chestPos = chestToRender.getKey();
-                    CustomColor color = CommonColors.RED;
-                    StringBuilder sb = new StringBuilder();
-                    for (Map.Entry<Integer, Integer> lvlEntry : lvlToPercent.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList().reversed()) {
-                        if (!sb.isEmpty()) sb.append(" : ");
-                        int lvl = lvlEntry.getKey();
-                        int percent = lvlEntry.getValue();
-                        if (percent > 15 && color != CommonColors.GREEN) color = CommonColors.YELLOW;
-                        if (percent > 40) color = CommonColors.GREEN;
-                        sb.append("lvl ").append(lvl).append(" - ").append(lvl + 4).append(" ").append(percent).append("%");
-                    }
-                    ChestPoi chestPoi = new ChestPoi(sb.toString(), chestPos, color);
-                    pois.add(chestPoi);
+            for (Map.Entry<BlockPos, Map<Integer, Integer>> chestToRender : chests.entrySet()) {
+                Map<Integer, Integer> lvlToPercent = chestToRender.getValue();
+                BlockPos chestPos = chestToRender.getKey();
+                StringBuilder sb = new StringBuilder();
+                int percentSum = 0;
+                for (Map.Entry<Integer, Integer> lvlEntry : lvlToPercent.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList().reversed()) {
+                    if (!sb.isEmpty()) sb.append(" : ");
+                    int lvl = lvlEntry.getKey();
+                    int percent = lvlEntry.getValue();
+                    percentSum += percent;
+                    sb.append("lvl ").append(lvl).append(" - ").append(lvl + 4).append(" ").append(percent).append("%");
                 }
+                CustomColor color = percentSum > 40 ? CommonColors.GREEN : percentSum > 15 ? CommonColors.YELLOW : CommonColors.RED;
+                ChestPoi chestPoi = new ChestPoi(sb.toString(), chestPos, color);
+                pois.add(chestPoi);
             }
         }
 
