@@ -9,11 +9,14 @@ import net.minecraft.text.ClickEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.util.math.Box
 import net.minecraft.util.math.random.Random
 import sidly.wynnadhoc.config.ConfigManager
-import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent
+import sidly.wynnadhoc.event.WorldRenderEvent
+import sidly.wynnadhoc.event.entity.ForEachEntityEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.FormatUtils
+import sidly.wynnadhoc.utils.datatypes.TimeLimitedMap
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
 import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitboxFallback
@@ -26,16 +29,23 @@ import java.util.concurrent.TimeUnit
 object RareMobs {
     private val rareMobs = TimeLimitedSet<Int>(120, TimeUnit.SECONDS)
     private val config get() = ConfigManager.INSTANCE.config.rareMob
+    private var rareMobCache = TimeLimitedMap<Int, Box>(10, TimeUnit.SECONDS)
+    private var lastDuration = 10
 
-    fun onEachEntity(event: ForEachEntityRenderEvent) {
+    fun onEachEntity(event: ForEachEntityEvent) {
         if (!config.mainToggle) return
         if (event.entity is DisplayEntity.TextDisplayEntity) {
             val textDisplayParser = TextDisplayParser(event.entity)
             if (textDisplayParser.isRareMob()) {
+                if (config.cacheDuration != lastDuration) {
+                    rareMobCache = TimeLimitedMap<Int, Box>(config.cacheDuration.toLong(), TimeUnit.SECONDS)
+                    lastDuration = config.cacheDuration
+                }
                 if (!event.entity.playerCanSee()) return
+                rareMobCache.put(event.id, event.entity.getVehicleHitboxFallback())
                 // new spawn (cant use .isnew as the text display is sent to the client and then updated at a later point) I think
-                if (!rareMobs.contains(event.entity.id)) {
-                    rareMobs.put(event.entity.id)
+                if (!rareMobs.contains(event.id)) {
+                    rareMobs.put(event.id)
 
                     if (config.chatMsg) {
                         val name = textDisplayParser.find({ part -> part.isNotEmpty() }, 1)?.string ?: "Unknown"
@@ -65,14 +75,18 @@ object RareMobs {
                         MinecraftClient.getInstance().soundManager.play(soundInstance)
                     }
                 }
+            }
+        }
+    }
 
-                if (config.boxRareMobs) {
-                    event.renderEvent.drawBox(event.entity.getVehicleHitboxFallback(), FormatUtils.getMythicColor())
-                }
+    fun onWorldRender(event: WorldRenderEvent) {
+        rareMobCache.values().forEach { box ->
+            if (config.boxRareMobs) {
+                event.drawBox(box, FormatUtils.getMythicColor())
+            }
 
-                if (config.renderArrowPointer) {
-                    ArrowPointer.addPointer(ArrowPointer.Pointer(event.entity.entityPos, FormatUtils.getMythicColor()))
-                }
+            if (config.renderArrowPointer) {
+                ArrowPointer.addPointer(ArrowPointer.Pointer(box.center, FormatUtils.getMythicColor()))
             }
         }
     }

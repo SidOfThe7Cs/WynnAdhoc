@@ -119,6 +119,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
         Event.register(WorldRenderEvent.class, ForEachEntityRenderEvent::onRender);
         Event.register(WorldRenderEvent.class, Ping.INSTANCE::onWorldRender);
+        Event.register(WorldRenderEvent.class, RareMobs.INSTANCE::onWorldRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
@@ -128,7 +129,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
-        Event.register(ForEachEntityRenderEvent.class, RareMobs.INSTANCE::onEachEntity);
+        Event.register(ForEachEntityEvent.class, RareMobs.INSTANCE::onEachEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(KeyboardEvent.class, Ping.INSTANCE::onKeyPressed);

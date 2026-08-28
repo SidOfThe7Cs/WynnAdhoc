@@ -1,20 +1,12 @@
 package sidly.wynnadhoc.utils.datatypes;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-public class TimeLimitedSet<T> {
-    private final Cache<@NotNull T, @NotNull Boolean> cache;
-
+public class TimeLimitedSet<T> extends TimeLimitedMap<T, Boolean> {
     public TimeLimitedSet(long duration, TimeUnit unit) {
-        this.cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(duration, unit)
-                .build();
+        super(duration, unit);
     }
 
     public void put(T element) {
@@ -31,10 +23,5 @@ public class TimeLimitedSet<T> {
 
     public Stream<T> stream() {
         return elements().stream();
-    }
-
-    public boolean isEmpty() {
-        cache.cleanUp();
-        return elements().isEmpty();
     }
 }
