@@ -66,6 +66,7 @@ public class VersionUtils {
                         /rp switch <server> to save party -> switch worlds -> reinvite
                         Fix hover events showing as one message when there are multiple click events in one message
                         Fix hide ing pouch not working at all (on latest wynntils)
+                        Update time for chests to show as green from 3 -> 1 days
                         """
         );
     }

@@ -77,8 +77,8 @@ public class ChestsSaveData extends BasicSavable<ChestsSaveData> {
             Long last = this.lastOpened.getOrDefault(uuid, -1L);
             // 30 minutes has passed
             if (last + 1800000 < now) color = config().openableColor;
-            // never been opened or 3 days have passed
-            if (last == -1L || last + TimeUnit.DAYS.toMillis(3) < now) color = config().readyColor;
+            // never been opened or 1 days have passed
+            if (last == -1L || last + TimeUnit.DAYS.toMillis(1) < now) color = config().readyColor;
             return ChestTracker.INSTANCE.getColor(color);
         }
 
