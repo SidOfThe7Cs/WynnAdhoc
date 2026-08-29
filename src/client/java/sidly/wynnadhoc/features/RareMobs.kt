@@ -27,7 +27,7 @@ import sidly.wynnadhoc.utils.text.TextDisplayParser
 import java.util.concurrent.TimeUnit
 
 object RareMobs {
-    private val rareMobs = TimeLimitedSet<Int>(120, TimeUnit.SECONDS)
+    private val rareMobs = TimeLimitedSet<Int>(60, TimeUnit.SECONDS)
     private val config get() = ConfigManager.INSTANCE.config.rareMob
     private var rareMobCache = TimeLimitedMap<Int, Box>(10, TimeUnit.SECONDS)
     private var lastDuration = 10
@@ -44,7 +44,7 @@ object RareMobs {
                 if (!event.entity.playerCanSee()) return
                 rareMobCache.put(event.id, event.entity.getVehicleHitboxFallback())
                 // new spawn (cant use .isnew as the text display is sent to the client and then updated at a later point) I think
-                if (!rareMobs.contains(event.id)) {
+                if (!rareMobs.containsKeyAndRefresh(event.id)) {
                     rareMobs.put(event.id)
 
                     if (config.chatMsg) {
