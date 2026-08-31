@@ -50,13 +50,4 @@ class RareMobConfig {
     )
     @ConfigEditorSlider(minValue = 0f, maxValue = 5f, minStep = 0.2f)
     var volume = 2f
-
-    @Expose
-    @JvmField
-    @ConfigOption(
-        name = "Cache Duration",
-        desc = "How long in seconds should a rare mob still render after you see it after breaking line of sight, refreshed every time you see it"
-    )
-    @ConfigEditorSlider(minValue = 0f, maxValue = 30f, minStep = 1f)
-    var cacheDuration = 7
 }
