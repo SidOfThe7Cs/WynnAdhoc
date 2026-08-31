@@ -2,15 +2,18 @@ package sidly.wynnadhoc.utils
 
 import sidly.wynnadhoc.WynnAdhocClient
 import java.net.URI
+import java.net.URLEncoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
 
 object ApiUtils {
     fun basicQuery(endpoint: Endpoint, value: String): CompletableFuture<HttpResponse<String>> {
         val client = HttpClient.newHttpClient()
-        var string = endpoint.string + value
+        val encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20")
+        var string = endpoint.string + encodedValue
         if (endpoint.fullResult) string += "?fullResult"
         val request = HttpRequest.newBuilder()
             .uri(URI.create(string))
@@ -19,10 +22,10 @@ object ApiUtils {
         val response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
         response.whenComplete { response, throwable ->
             if (response.statusCode() != 200) {
-                WynnAdhocClient.LOGGER.warn("Api query failed with status ${response.statusCode()} $endpoint $value response: ${response.body()}")
+                WynnAdhocClient.LOGGER.warn("Api query failed with status ${response.statusCode()} $endpoint $encodedValue response: ${response.body()}")
             }
             if (throwable != null) {
-                WynnAdhocClient.LOGGER.warn("Api query $endpoint $value failed with throwable $throwable")
+                WynnAdhocClient.LOGGER.warn("Api query $endpoint $encodedValue failed with throwable $throwable")
             }
         }
         return response
