@@ -54,9 +54,9 @@ class RareMobConfig {
     @Expose
     @JvmField
     @ConfigOption(
-        name = "Cache Duration",
-        desc = "How long in seconds should a rare mob still render after you see it after breaking line of sight, refreshed every time you see it"
+        name = "Use Party Chat",
+        desc = "Send chat msg to party chat as well",
     )
-    @ConfigEditorSlider(minValue = 0f, maxValue = 30f, minStep = 1f)
-    var cacheDuration = 7
+    @ConfigEditorBoolean
+    var usePartyChat = false
 }

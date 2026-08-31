@@ -33,6 +33,15 @@ public class TimeLimitedMap<K, V> {
         return cache.getIfPresent(key) != null;
     }
 
+    public boolean containsKeyAndRefresh(K key) {
+        V element = cache.getIfPresent(key);
+        if (element != null) {
+            cache.put(key, element);
+            return true;
+        }
+        return false;
+    }
+
     public Collection<Map.Entry<K, V>> entries() {
         return cache.asMap().entrySet();
     }

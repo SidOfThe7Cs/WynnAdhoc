@@ -23,6 +23,7 @@ import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.entity.EntityClickedEvent;
 import sidly.wynnadhoc.event.entity.ForEachEntityEvent;
 import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent;
+import sidly.wynnadhoc.event.entity.MobRenderData;
 import sidly.wynnadhoc.features.*;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -36,6 +37,7 @@ import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.raids.NOL;
+import sidly.wynnadhoc.features.raid.TNA;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
@@ -129,6 +131,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
         Event.register(WorldRenderEvent.class, ForEachEntityRenderEvent::onRender);
         Event.register(WorldRenderEvent.class, Ping.INSTANCE::onWorldRender);
+        Event.register(WorldRenderEvent.class, MobRenderData.Companion::onWorldRender);
 
         Event.register(PreInitEvent.class, WarCore::registerHudElements);
         Event.register(PreInitEvent.class, Overlays::register);
@@ -139,6 +142,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(ForEachEntityRenderEvent.class, RareMobs.INSTANCE::onEachEntity);
+        Event.register(ForEachEntityEvent.class, TNA.INSTANCE::onEachEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(KeyboardEvent.class, Ping.INSTANCE::onKeyPressed);

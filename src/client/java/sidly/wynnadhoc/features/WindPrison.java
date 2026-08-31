@@ -24,6 +24,7 @@ public class WindPrison {
         return ConfigManager.INSTANCE.config.toggles;
     }
 
+    // TODO use new systems
     public static void onEntity(ForEachEntityRenderEvent event) {
         if (event.entity instanceof DisplayEntity.TextDisplayEntity textDisplay) {
             String string = textDisplay.getText().getString();

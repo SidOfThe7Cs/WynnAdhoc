@@ -69,6 +69,13 @@ public class VersionUtils {
                         Update time for chests to show as green from 3 -> 1 days
                         """
         );
+        changelog("0.0.5",
+                """
+                        highlight shadowlings
+                        send rare mob coords to party chat
+                        search the wynn api for mobs that drop a specific ingredient and add waypoints for its spawn locations
+                        """
+        );
     }
 
     private static void changelog(String v, String changes) {

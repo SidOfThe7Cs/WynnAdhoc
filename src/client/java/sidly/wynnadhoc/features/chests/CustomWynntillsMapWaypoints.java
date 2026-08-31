@@ -85,7 +85,7 @@ public class CustomWynntillsMapWaypoints {
                         26,
                         16,
                         9
-                ), 2);
+                ), 2, true);
 
         public SelectorScreen(MainMapScreen oldScreen) {
             super(Text.literal("Chest Level Selector Screen"));
