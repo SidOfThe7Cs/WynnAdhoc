@@ -5,6 +5,10 @@ import net.minecraft.client.sound.PositionedSoundInstance
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.minecraft.util.math.random.Random
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent
@@ -37,7 +41,14 @@ object RareMobs {
                         val formattedX = event.entity.x.formatOneDecimal()
                         val formattedY = event.entity.y.formatOneDecimal()
                         val formattedZ = event.entity.z.formatOneDecimal()
-                        ChatMessageUtils.sendChatMessage("rare mob \"$name\" found at $formattedX $formattedY $formattedZ")
+                        val msg = Text.literal("rare mob \"$name\" found at ")
+                        val coords = Text.literal("$formattedX $formattedY $formattedZ")
+                        val clickEvent =
+                            ClickEvent.RunCommand("wynntils compass at ${event.entity.x} ${event.entity.y} ${event.entity.z}")
+                        val style =
+                            Style.EMPTY.withColor(Formatting.DARK_AQUA).withUnderline(true).withClickEvent(clickEvent)
+                        msg.append(coords.setStyle(style))
+                        ChatMessageUtils.sendChatMessage(msg)
                     }
 
                     if (config.playSound) {
