@@ -39,13 +39,20 @@ object RareMobs {
         if (!event.isDetected) {
             event.markDetected()
 
+            val name = event.textParser.find({ part -> part.isNotEmpty() }, 1)?.string ?: "Unknown"
+            val msg = Text.literal("rare mob \"$name\" found at ")
+
+            if (config.usePartyChat) {
+                val partyMsg =
+                    "${event.entity.x.toInt()} ${event.entity.y.toInt()} ${event.entity.z.toInt()} found a $name"
+                ChatMessageUtils.sendChatCommand("p $partyMsg")
+            }
+
             if (config.chatMsg) {
-                val name = event.textParser.find({ part -> part.isNotEmpty() }, 1)?.string ?: "Unknown"
                 //val name = event.entity.text.siblings.getOrNull(2)?.string ?: "Unknown"
                 val formattedX = event.entity.x.formatOneDecimal()
                 val formattedY = event.entity.y.formatOneDecimal()
                 val formattedZ = event.entity.z.formatOneDecimal()
-                val msg = Text.literal("rare mob \"$name\" found at ")
                 val coords = Text.literal("$formattedX $formattedY $formattedZ")
 
                 val clickEvent =
@@ -54,10 +61,6 @@ object RareMobs {
                     Style.EMPTY.withColor(Formatting.DARK_AQUA).withUnderline(true).withClickEvent(clickEvent)
                 msg.append(coords.setStyle(style))
                 ChatMessageUtils.sendChatMessage(msg)
-
-                if (config.usePartyChat) {
-                    ChatMessageUtils.sendChatCommand("p ${msg.string}")
-                }
             }
 
             if (config.playSound) {
