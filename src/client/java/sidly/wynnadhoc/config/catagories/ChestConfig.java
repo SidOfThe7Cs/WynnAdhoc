@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.ChromaColour;
 import io.github.notenoughupdates.moulconfig.annotations.*;
+import org.lwjgl.glfw.GLFW;
 import sidly.wynnadhoc.features.chests.ChestDataDisplayOption;
 import sidly.wynnadhoc.features.chests.ChestTier;
 
@@ -14,6 +15,11 @@ public class ChestConfig {
     @ConfigOption(name = "Auto Close", desc = "Automatically takes favorited items and then closes loot chests")
     @ConfigEditorBoolean
     public boolean autoCloseChests = false;
+
+    @Expose
+    @ConfigOption(name = "Toggle Chest Highlight", desc = "Press this key to toggle chest highlight")
+    @ConfigEditorKeybind(defaultKey = GLFW.GLFW_KEY_UNKNOWN)
+    public int highlightToggleKeybind = GLFW.GLFW_KEY_UNKNOWN;
 
     @Expose
     @ConfigOption(name = "Highlight Chests", desc = "Draws outline of known nearby chests")

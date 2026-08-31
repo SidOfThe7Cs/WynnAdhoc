@@ -54,8 +54,8 @@ class RareMobConfig {
     @Expose
     @JvmField
     @ConfigOption(
-        name = "Use Party Chat",
-        desc = "Send chat msg to party chat as well",
+        name = "Msg Party Chat",
+        desc = "Send chat msg to party chat with spawn coords",
     )
     @ConfigEditorBoolean
     var usePartyChat = false
