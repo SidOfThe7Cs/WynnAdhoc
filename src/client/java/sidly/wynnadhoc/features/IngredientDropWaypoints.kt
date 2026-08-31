@@ -18,7 +18,6 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
-import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.utils.render.ButtonContainer
 import sidly.wynnadhoc.utils.render.TextureInfo
 import sidly.wynnadhoc.wapi.ItemDatabase
@@ -66,11 +65,7 @@ object IngredientDropWaypoints {
     private fun addWaypoint(name: String, pos: BlockPos) {
         val existing = currentWaypoints.find { it.location.asLocation().toBlockPos() == pos }
         if (existing != null) {
-            if (existing.name.contains(name)) {
-                WynnAdhocClient.LOGGER.temp("skipping waypoint: $name already exists in ${existing.name}")
-            } else {
-                existing.appendName(" $name")
-            }
+            if (!existing.name.contains(name)) existing.appendName(" $name")
         } else currentWaypoints.add(MobPoi(name, pos, CommonColors.WHITE))
     }
 

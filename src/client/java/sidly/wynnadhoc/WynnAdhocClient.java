@@ -135,11 +135,13 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityEvent.class, TNA.INSTANCE::onEachEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
-        Event.register(KeyboardEvent.class, Ping.INSTANCE::onKeyPressed);
+        Event.register(KeyboardEvent.class, ButtonPressEvent::onKey);
         Event.register(KeyboardEvent.class, SpellMacros::onKeyPressed);
-        Event.register(MouseButtonEvent.class, Ping.INSTANCE::onMouseButton);
+        Event.register(MouseButtonEvent.class, ButtonPressEvent::onMouse);
         Event.register(MouseButtonEvent.class, HudElementManager::onMouseEvent);
         Event.register(MouseButtonEvent.class, SpellMacros::onMouseButton);
+        Event.register(ButtonPressEvent.class, Ping.INSTANCE::onButton);
+        Event.register(ButtonPressEvent.class, ChestTracker.INSTANCE::onButton);
 
         Event.register(WorldChangeEvent.class, HealthRegenTick::onWorldChange);
         Event.register(WorldChangeEvent.class, SpellMacros::onWorldChange);

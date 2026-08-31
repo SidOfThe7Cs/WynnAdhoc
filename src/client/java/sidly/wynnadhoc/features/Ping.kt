@@ -5,9 +5,8 @@ import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.Vec3d
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.config.catagories.PingConfig
+import sidly.wynnadhoc.event.ButtonPressEvent
 import sidly.wynnadhoc.event.ChatMessageEvent
-import sidly.wynnadhoc.event.KeyboardEvent
-import sidly.wynnadhoc.event.MouseButtonEvent
 import sidly.wynnadhoc.event.WorldRenderEvent
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
@@ -68,16 +67,8 @@ object Ping {
         event.drawPing(loc)
     }
 
-    fun onMouseButton(event: MouseButtonEvent) {
-        if (event.isPress && event.input.button == config().pingKeybind) {
-            sendPing()
-        }
-    }
-
-    fun onKeyPressed(event: KeyboardEvent) {
-        if (event.action == 1 && event.key == config().pingKeybind) {
-            sendPing()
-        }
+    fun onButton(event: ButtonPressEvent) {
+        if (event.isButton(config().pingKeybind)) sendPing()
     }
 
     private fun sendPing() {

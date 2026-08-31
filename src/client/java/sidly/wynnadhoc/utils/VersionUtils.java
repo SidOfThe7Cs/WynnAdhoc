@@ -74,6 +74,7 @@ public class VersionUtils {
                         highlight shadowlings
                         send rare mob coords to party chat
                         search the wynn api for mobs that drop a specific ingredient and add waypoints for its spawn locations
+                        keybind to toggle chest highlight
                         """
         );
     }
