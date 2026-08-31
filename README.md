@@ -10,5 +10,6 @@ show time until war starts\
 command /rp save/invite/switch to save the current part list and reinvite everyone later\
 hide ingredient pouch tooltip\
 click chat message to share bombs when people ask\
-highlight rare mobs (if you have LOS)
+highlight rare mobs (if you have LOS)\
+highlight shadowlings
 

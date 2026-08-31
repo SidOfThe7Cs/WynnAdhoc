@@ -47,12 +47,17 @@ object RareMobs {
                 val formattedZ = event.entity.z.formatOneDecimal()
                 val msg = Text.literal("rare mob \"$name\" found at ")
                 val coords = Text.literal("$formattedX $formattedY $formattedZ")
+
                 val clickEvent =
                     ClickEvent.RunCommand("wynntils compass at ${event.entity.x} ${event.entity.y} ${event.entity.z}")
                 val style =
                     Style.EMPTY.withColor(Formatting.DARK_AQUA).withUnderline(true).withClickEvent(clickEvent)
                 msg.append(coords.setStyle(style))
                 ChatMessageUtils.sendChatMessage(msg)
+
+                if (config.usePartyChat) {
+                    ChatMessageUtils.sendChatCommand("p ${msg.string}")
+                }
             }
 
             if (config.playSound) {

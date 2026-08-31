@@ -50,4 +50,13 @@ class RareMobConfig {
     )
     @ConfigEditorSlider(minValue = 0f, maxValue = 5f, minStep = 0.2f)
     var volume = 2f
+
+    @Expose
+    @JvmField
+    @ConfigOption(
+        name = "Use Party Chat",
+        desc = "Send chat msg to party chat as well",
+    )
+    @ConfigEditorBoolean
+    var usePartyChat = false
 }
