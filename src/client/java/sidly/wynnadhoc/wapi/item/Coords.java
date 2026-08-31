@@ -1,12 +1,17 @@
 package sidly.wynnadhoc.wapi.item;
 
 import com.google.gson.*;
+import net.minecraft.util.math.BlockPos;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
 public record Coords(int x, int y, int z, int r) {
+    public BlockPos getBlockPos() {
+        return new BlockPos(x, y, z);
+    }
+
     public static JsonDeserializer<Set<Coords>> getTypeAdaptor() {
         return (JsonElement json, Type typeOfT, JsonDeserializationContext ctx) -> {
             Set<Coords> coordsSet = new HashSet<>();

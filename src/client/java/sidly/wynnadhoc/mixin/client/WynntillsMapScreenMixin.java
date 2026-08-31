@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import sidly.wynnadhoc.features.IngredientDropWaypoints;
 import sidly.wynnadhoc.features.chests.CustomWynntillsMapWaypoints;
 
 import java.util.List;
@@ -27,6 +28,13 @@ public class WynntillsMapScreenMixin extends AbstractMapScreen {
                         Text.literal("[WynnAdhoc] Click to filter chest waypoints")
                 )
         ));
+        super.addMapButton(new MapButton(
+                Texture.FIREBALL,
+                (b) -> MinecraftClient.getInstance().setScreen(new IngredientDropWaypoints.SelectorScreen((MainMapScreen) (Object) this)),
+                List.of(
+                        Text.literal("[WynnAdhoc] Click to search wapi for ingredient drop locations")
+                )
+        ));
     }
 
     @ModifyArg(
@@ -39,6 +47,7 @@ public class WynntillsMapScreenMixin extends AbstractMapScreen {
     )
     private List<Poi> renderPois(List<Poi> pois) {
         pois.addAll(CustomWynntillsMapWaypoints.getSelectedPois());
+        pois.addAll(IngredientDropWaypoints.INSTANCE.getWaypoints());
         return pois;
     }
 }

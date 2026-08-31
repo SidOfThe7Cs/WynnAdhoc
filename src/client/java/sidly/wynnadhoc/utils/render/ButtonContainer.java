@@ -8,8 +8,11 @@ import net.minecraft.text.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 public class ButtonContainer {
     public static class ToggleButton {
@@ -62,17 +65,19 @@ public class ButtonContainer {
 
     private static final float SCROLL_FACTOR = 15f;
 
-    private final List<ToggleButton> buttons = new ArrayList<>();
+    private final ConcurrentLinkedQueue<ToggleButton> buttons = new ConcurrentLinkedQueue<>();
     private final TextureInfo backgroundTexture;
     private final int spacing;
+    private final boolean filterBySearchBarText;
 
     private String filterString = "";
     private int scrollAmount = 0;
     private int buttonHeightSum = 0;
 
-    public ButtonContainer(TextureInfo backgroundTexture, int spacing) {
+    public ButtonContainer(TextureInfo backgroundTexture, int spacing, boolean filterSearch) {
         this.backgroundTexture = backgroundTexture;
         this.spacing = spacing;
+        this.filterBySearchBarText = filterSearch;
     }
 
     public void setFilterString(String filterString) {
@@ -88,6 +93,10 @@ public class ButtonContainer {
         return buttonData;
     }
 
+    public void addButton(ToggleButton button) {
+        buttons.add(button);
+    }
+
     public void render(DrawContext context, int mouseX, int mouseY, float partialTick, Screen parent) {
         if (buttons.isEmpty()) return;
         backgroundTexture.enableScissor(context, parent);
@@ -95,15 +104,27 @@ public class ButtonContainer {
         int yOffset = spacing + scrollAmount;
         for (ToggleButton cButton : buttons) {
             ButtonWidget button = cButton.getButton();
-            if (filterString.isEmpty() || cButton.matches(filterString)) {
-                button.visible = true;
-                int xPos = backgroundTexture.getDrawableX(parent) + backgroundTexture.getDrawableWidth() - button.getWidth() - spacing;
-                int yPos = backgroundTexture.getDrawableY(parent) + yOffset;
-                button.setPosition(xPos, yPos);
-                context.drawText(parent.getTextRenderer(), cButton.text, backgroundTexture.getDrawableX(parent) + spacing, yPos, Color.WHITE.getRGB(), true);
-                button.render(context, mouseX, mouseY, partialTick);
-                yOffset += button.getHeight() + spacing;
-            } else button.visible = false;
+
+            if (filterBySearchBarText) {
+                if (filterString.isEmpty() || cButton.matches(filterString)) {
+                    button.visible = true;
+                    int xPos = backgroundTexture.getDrawableX(parent) + backgroundTexture.getDrawableWidth() - button.getWidth() - spacing;
+                    int yPos = backgroundTexture.getDrawableY(parent) + yOffset;
+                    button.setPosition(xPos, yPos);
+                    context.drawText(parent.getTextRenderer(), cButton.text, backgroundTexture.getDrawableX(parent) + spacing, yPos, Color.WHITE.getRGB(), true);
+                    button.render(context, mouseX, mouseY, partialTick);
+                    yOffset += button.getHeight() + spacing;
+                } else button.visible = false;
+            } else {
+                if (button.visible) {
+                    int xPos = backgroundTexture.getDrawableX(parent) + backgroundTexture.getDrawableWidth() - button.getWidth() - spacing;
+                    int yPos = backgroundTexture.getDrawableY(parent) + yOffset;
+                    button.setPosition(xPos, yPos);
+                    context.drawText(parent.getTextRenderer(), cButton.text, backgroundTexture.getDrawableX(parent) + spacing, yPos, Color.WHITE.getRGB(), true);
+                    button.render(context, mouseX, mouseY, partialTick);
+                    yOffset += button.getHeight() + spacing;
+                }
+            }
         }
         buttonHeightSum = yOffset - scrollAmount;
         backgroundTexture.disableScissor(context);
@@ -142,5 +163,10 @@ public class ButtonContainer {
 
     public void showAll() {
         buttons.forEach(b -> b.shown = true);
+    }
+
+    public void cleanUnselected() {
+        Collection<ToggleButton> collect = buttons.stream().filter(b -> !b.isToggled()).collect(Collectors.toSet());
+        buttons.removeAll(collect);
     }
 }
