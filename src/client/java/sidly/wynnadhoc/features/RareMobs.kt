@@ -16,7 +16,6 @@ import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitboxFallback
-import sidly.wynnadhoc.utils.playerCanSee
 
 object RareMobs {
     private val config get() = ConfigManager.INSTANCE.config.rareMob
@@ -24,7 +23,6 @@ object RareMobs {
     fun onEachEntity(event: ForEachEntityEvent) {
         if (!config.mainToggle) return
         if (event.textParser?.isRareMob() != true) return
-        if (!event.entity.playerCanSee()) return
 
         event.highlight(
             MobRenderData(

@@ -1,4 +1,4 @@
-package sidly.wynnadhoc.features.raids
+package sidly.wynnadhoc.features.raid
 
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
@@ -12,7 +12,6 @@ import sidly.wynnadhoc.utils.render.drawBox
 import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
-
 
 object NOL {
     fun onWorldRender(event: WorldRenderEvent) {

@@ -36,7 +36,7 @@ import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
-import sidly.wynnadhoc.features.raids.NOL;
+import sidly.wynnadhoc.features.raid.NOL;
 import sidly.wynnadhoc.features.raid.TNA;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
@@ -141,7 +141,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityEvent.class, LootrunCore.INSTANCE::checkIfBeacon);
         Event.register(ForEachEntityEvent.class, NewItemDisplayEvent::onEachEntity);
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
-        Event.register(ForEachEntityRenderEvent.class, RareMobs.INSTANCE::onEachEntity);
+        Event.register(ForEachEntityEvent.class, RareMobs.INSTANCE::onEachEntity);
         Event.register(ForEachEntityEvent.class, TNA.INSTANCE::onEachEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);

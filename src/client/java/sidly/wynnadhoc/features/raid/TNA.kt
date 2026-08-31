@@ -4,7 +4,6 @@ import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.entity.ForEachEntityEvent
 import sidly.wynnadhoc.event.entity.MobRenderData
 import sidly.wynnadhoc.utils.getVehicleHitboxFallback
-import sidly.wynnadhoc.utils.playerCanSee
 import java.awt.Color
 
 object TNA {
@@ -13,7 +12,6 @@ object TNA {
     fun onEachEntity(event: ForEachEntityEvent) {
         if (!config.boxShadowlings) return
         if (event.textParser?.isShadowling() != true) return
-        if (!event.entity.playerCanSee()) return
 
         event.highlight(
             MobRenderData(
