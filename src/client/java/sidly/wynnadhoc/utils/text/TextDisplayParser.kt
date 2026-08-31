@@ -1,7 +1,6 @@
 package sidly.wynnadhoc.utils.text
 
 import net.minecraft.entity.decoration.DisplayEntity
-import net.minecraft.util.Formatting
 
 class TextDisplayParser : TextParser {
     constructor(display: DisplayEntity.TextDisplayEntity) : super(display.text)
@@ -17,8 +16,7 @@ class TextDisplayParser : TextParser {
     fun isShadowling(): Boolean {
         val part = get(0) ?: return false
         val string = part.string == "Shadowling"
-        val color = part.isColor(Formatting.RED)
-        return string && color
+        return string
     }
 
     //TODO make these into an enum
