@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseForEachEntityEvent<T extends BaseForEachEntityEvent<T>> extends Event<T> {
     private static final TimeLimitedSet<Integer> recentCache = new TimeLimitedSet<>(10, TimeUnit.MINUTES);
     private static final TimeLimitedSet<Integer> detectedCache = new TimeLimitedSet<>(60, TimeUnit.SECONDS);
-    private static final TimeLimitedMap<Integer, MobRenderData> renderCache = new TimeLimitedMap<>(7, TimeUnit.SECONDS);
+    private static final TimeLimitedMap<Integer, MobRenderData> renderCache = new TimeLimitedMap<>(2, TimeUnit.SECONDS);
 
     public final Entity entity;
     public final Integer id;
