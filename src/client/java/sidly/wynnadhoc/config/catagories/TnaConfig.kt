@@ -18,5 +18,21 @@ class TnaConfig {
         desc = "Draws a arc that rotates around your cursor pointing toward each shadowling"
     )
     @ConfigEditorBoolean
-    var renderArrowPointer = false
+    var renderArrowPointerShadow = false
+
+
+    @Expose
+    @JvmField
+    @ConfigOption(name = "Box Bulb Catchers", desc = "Draws a box around bulb catchers in room 3")
+    @ConfigEditorBoolean
+    var boxBulbCatchers = false
+
+    @Expose
+    @JvmField
+    @ConfigOption(
+        name = "Draw Arrow",
+        desc = "Draws a arc that rotates around your cursor pointing toward each bulb catcher"
+    )
+    @ConfigEditorBoolean
+    var renderArrowPointerBulb = false
 }

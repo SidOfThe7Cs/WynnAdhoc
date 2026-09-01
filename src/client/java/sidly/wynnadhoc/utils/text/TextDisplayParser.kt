@@ -21,5 +21,12 @@ class TextDisplayParser : TextParser {
         return string && color
     }
 
+    fun isBulbCatcher(): Boolean {
+        val part = get(0) ?: return false
+        val string = part.string == "Bulb Catcher"
+        val color = part.isColor(Formatting.RED)
+        return string && color
+    }
+
     //TODO make these into an enum
 }

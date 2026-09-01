@@ -198,4 +198,5 @@ WAR:
     + check total guild cost / output diamond and compare
     + why does it sometime show less output than it should ie resource multiplier of 9.9 instead of 11
     + confirm queueing if difficulty or cost
+    + show conn and external counts
  */
