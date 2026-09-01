@@ -48,7 +48,7 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public RareMobConfig rareMob = new RareMobConfig();
 
     @Expose
-    @Category(name = "TNA Config", desc = "tna config")
+    @Category(name = "TNA Settings", desc = "tna settings")
     public TnaConfig tna = new TnaConfig();
 
     @Expose
