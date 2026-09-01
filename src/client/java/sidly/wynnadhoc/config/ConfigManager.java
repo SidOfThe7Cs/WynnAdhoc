@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.saves.*;
 import sidly.wynnadhoc.event.CommandRegistrationEvent;
+import sidly.wynnadhoc.features.chests.ChestData;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
@@ -42,11 +43,11 @@ public class ConfigManager {
     public static final ConfigManager INSTANCE = new ConfigManager();
     public static final Gson DEFUALT_GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestsSaveData.ChestData>>() {
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestData>>() {
                     }.getType(),
-                    (JsonSerializer<Map<BlockPos, ChestsSaveData.ChestData>>) (src, typeOfSrc, context) -> {
+                    (JsonSerializer<Map<BlockPos, ChestData>>) (src, typeOfSrc, context) -> {
                         JsonArray array = new JsonArray(); // We'll use an array of entries
-                        for (Map.Entry<BlockPos, ChestsSaveData.ChestData> entry : src.entrySet()) {
+                        for (Map.Entry<BlockPos, ChestData> entry : src.entrySet()) {
                             JsonObject obj = new JsonObject();
                             JsonObject posObj = new JsonObject();
                             posObj.addProperty("x", entry.getKey().getX());
@@ -59,10 +60,10 @@ public class ConfigManager {
                         return array;
                     }
             )
-            .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestsSaveData.ChestData>>() {
+            .registerTypeAdapter(new TypeToken<Map<BlockPos, ChestData>>() {
                     }.getType(),
-                    (JsonDeserializer<Map<BlockPos, ChestsSaveData.ChestData>>) (json, typeOfT, context) -> {
-                        Map<BlockPos, ChestsSaveData.ChestData> map = new HashMap<>();
+                    (JsonDeserializer<Map<BlockPos, ChestData>>) (json, typeOfT, context) -> {
+                        Map<BlockPos, ChestData> map = new HashMap<>();
                         JsonArray array = json.getAsJsonArray();
                         for (JsonElement element : array) {
                             JsonObject obj = element.getAsJsonObject();
@@ -71,7 +72,7 @@ public class ConfigManager {
                             int y = posObj.get("y").getAsInt();
                             int z = posObj.get("z").getAsInt();
                             JsonObject value = obj.get("value").getAsJsonObject();
-                            map.put(new BlockPos(x, y, z), DEFUALT_GSON.fromJson(value, ChestsSaveData.ChestData.class));
+                            map.put(new BlockPos(x, y, z), DEFUALT_GSON.fromJson(value, ChestData.class));
                         }
                         return map;
                     }
@@ -125,7 +126,7 @@ public class ConfigManager {
         lootrunSaveData.changed();
     }
 
-    public Map<BlockPos, ChestsSaveData.ChestData> getChests() {
+    public Map<BlockPos, ChestData> getChests() {
         return chests.chests;
     }
 
@@ -159,10 +160,10 @@ public class ConfigManager {
         return downloadedChests.thenApply((l) -> {
             Collection<LootChest> compressedList = LootChest.compressChestData(l);
             ChestTracker.INSTANCE.cacheChestData(compressedList);
-            Map<BlockPos, ChestsSaveData.ChestData> existingChests = INSTANCE.chests.chests;
+            Map<BlockPos, ChestData> existingChests = INSTANCE.chests.chests;
             compressedList.forEach((chest) -> {
                 if (!existingChests.containsKey(chest.getPos())) {
-                    existingChests.put(chest.getPos(), new ChestsSaveData.ChestData(chest.tier(), new byte[0]));
+                    existingChests.put(chest.getPos(), new ChestData(chest.tier(), new byte[0]));
                 }
             });
             return compressedList.size();

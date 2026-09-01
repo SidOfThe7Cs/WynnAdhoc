@@ -17,7 +17,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import sidly.wynnadhoc.WynnAdhocClient
 import sidly.wynnadhoc.config.ConfigManager
-import sidly.wynnadhoc.config.saves.ChestsSaveData
 import sidly.wynnadhoc.event.*
 import sidly.wynnadhoc.event.entity.EntityClickedEvent
 import sidly.wynnadhoc.features.lootruns.LootrunCore
@@ -206,7 +205,7 @@ object ChestTracker {
             val blockPos: BlockPos = event.blockPos.down(1)
 
             if (!ConfigManager.INSTANCE.chests.containsKey(blockPos)) {
-                ConfigManager.INSTANCE.chests[blockPos] = ChestsSaveData.ChestData(tier, ByteArray(0))
+                ConfigManager.INSTANCE.chests[blockPos] = ChestData(tier, ByteArray(0))
                 ConfigManager.INSTANCE.chestsChanged()
                 chestDataCache[blockPos] = ChestDataCache.from(null, null)
             }
