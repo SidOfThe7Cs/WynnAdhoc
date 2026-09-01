@@ -9,6 +9,7 @@
     "ClientPlayNetworkHandlerMixin",
     "DrawContextMixin",
     "FunctionManagerMixin",
+    "HadesMixin",
     "HudMixin",
     "KeyboardMixin",
     "MouseMixin",
