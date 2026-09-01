@@ -12,8 +12,8 @@ object TNA {
 
     fun onEachEntity(event: ForEachEntityEvent) {
         val textParser = event.textParser ?: return
-        if (!event.entity.playerCanSee()) return
         if (config.boxShadowlings && textParser.isShadowling() || config.boxBulbCatchers && textParser.isBulbCatcher()) {
+            if (!event.entity.playerCanSee()) return
             event.highlight(
                 MobRenderData(
                     event.entity.getVehicleHitboxFallback(),
