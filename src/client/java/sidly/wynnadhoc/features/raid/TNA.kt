@@ -10,16 +10,16 @@ object TNA {
     private val config get() = ConfigManager.INSTANCE.config.tna
 
     fun onEachEntity(event: ForEachEntityEvent) {
-        if (!config.boxShadowlings) return
-        if (event.textParser?.isShadowling() != true) return
-
-        event.highlight(
-            MobRenderData(
-                event.entity.getVehicleHitboxFallback(),
-                Color.GREEN,
-                config.boxShadowlings,
-                config.renderArrowPointer,
+        val textParser = event.textParser ?: return
+        if (config.boxShadowlings && textParser.isShadowling() || config.boxBulbCatchers && textParser.isBulbCatcher()) {
+            event.highlight(
+                MobRenderData(
+                    event.entity.getVehicleHitboxFallback(),
+                    Color.GREEN,
+                    config.boxShadowlings,
+                    config.renderArrowPointerShadow,
+                )
             )
-        )
+        }
     }
 }
