@@ -46,7 +46,7 @@ public class TimeLimitedMap<K, V> {
         return cache.asMap().entrySet();
     }
 
-    public Iterable<V> values() {
+    public Collection<V> values() {
         return cache.asMap().values();
     }
 

@@ -20,10 +20,7 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.event.entity.EntityClickedEvent;
-import sidly.wynnadhoc.event.entity.ForEachEntityEvent;
-import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent;
-import sidly.wynnadhoc.event.entity.MobRenderData;
+import sidly.wynnadhoc.event.entity.*;
 import sidly.wynnadhoc.features.*;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
@@ -94,6 +91,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, BasicSavable::onTick);
         Event.register(ClientTickEvent.class, ArrowPointer.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, DelayedRun.INSTANCE::onTick);
+        Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
