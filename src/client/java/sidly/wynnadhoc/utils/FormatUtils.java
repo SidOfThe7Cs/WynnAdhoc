@@ -2,14 +2,13 @@ package sidly.wynnadhoc.utils;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.awt.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class FormatUtils {
     public static String millisToHMS(long millis) {
@@ -188,6 +187,16 @@ public class FormatUtils {
 
     public static Color getMythicColor() {
         return new Color(11141290);
+    }
+
+
+    private static final Random RANDOM = new Random();
+    private static final List<Formatting> COLORS = Arrays.stream(Formatting.values())
+            .filter(f -> f.ordinal() <= 15)
+            .toList();
+
+    public static Formatting randomColor() {
+        return COLORS.get(RANDOM.nextInt(COLORS.size()));
     }
 
 }

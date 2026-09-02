@@ -132,6 +132,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(ForEachEntityEvent.class, RareMobs.INSTANCE::onEachEntity);
         Event.register(ForEachEntityEvent.class, TNA.INSTANCE::onEachEntity);
+        Event.register(ForEachEntityEvent.class, ShamanTotem.INSTANCE::onEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(KeyboardEvent.class, ButtonPressEvent::onKey);
