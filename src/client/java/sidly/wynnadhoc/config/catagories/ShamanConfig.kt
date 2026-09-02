@@ -41,4 +41,10 @@ class ShamanConfig {
     @ConfigOption(name = "Volume", desc = "Volume")
     @ConfigEditorSlider(minValue = 0.0F, maxValue = 2.0F, minStep = 0.1F)
     var volume = 2.0F
+
+    @Expose
+    @JvmField
+    @ConfigOption(name = "Only If Not Moved", desc = "only warn if you havnt moved in the last 10s")
+    @ConfigEditorBoolean
+    var ifNotMoved = true
 }

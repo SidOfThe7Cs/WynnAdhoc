@@ -6,8 +6,10 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.random.Random
 import sidly.wynnadhoc.config.ConfigManager
+import sidly.wynnadhoc.event.ClientTickEvent
 import sidly.wynnadhoc.event.entity.ForEachEntityEvent
 import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.datatypes.TimeLimitedMap
@@ -18,6 +20,8 @@ object ShamanTotem {
     private val timeRemainingRegex = Regex("(?<timeLeft>\\d+)s")
     private val totemDurationMap = TimeLimitedMap<Int, Int>(2, TimeUnit.SECONDS)
     private val config get() = ConfigManager.INSTANCE.config.shaman
+    private var lastMoved = -1L
+    private var lastLoc: Vec3d? = null
 
     fun onEntity(event: ForEachEntityEvent) {
         if (!config.totemWarningToggle) return
@@ -57,6 +61,15 @@ object ShamanTotem {
         }
     }
 
+    fun onTick(event: ClientTickEvent) {
+        MinecraftClient.getInstance().player?.entityPos?.let { pos ->
+            if (pos != lastLoc) {
+                lastMoved = System.currentTimeMillis()
+            }
+            lastLoc = pos
+        }
+    }
+
     fun onTotemDuration(current: Int, previous: Int) {
         if (!config.totemWarningToggle) return
         if (current > previous) return
@@ -68,6 +81,7 @@ object ShamanTotem {
     }
 
     fun totemWarn(remaining: Int) {
+        if (config.ifNotMoved && lastMoved > System.currentTimeMillis() - 10000) return
         if (config.playSound) {
             val soundInstance = PositionedSoundInstance(
                 SoundEvents.BLOCK_BELL_USE,

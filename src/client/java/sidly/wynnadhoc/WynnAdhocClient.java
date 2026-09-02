@@ -92,6 +92,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, ArrowPointer.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, DelayedRun.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
+        Event.register(ClientTickEvent.class, ShamanTotem.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 

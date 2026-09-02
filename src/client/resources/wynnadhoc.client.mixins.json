@@ -21,7 +21,7 @@
     "WynntillsMapScreenMixin",
     "WynntillsModMixin",
     "WynntilsScreenMixin",
-    "accessors.EntityAccessor"
+    "accessors.EntityAccessor",
     "accessors.GuildLogScreenAccessor",
     "accessors.HandledScreenAccessor",
     "accessors.ItemDisplayEntityAccessor",
