@@ -76,21 +76,15 @@ object IngredientDropWaypoints {
     class SelectorScreen(private val oldMapScreen: MainMapScreen) :
         WynntilsScreen(Text.literal("Ingredient Mob Search Screen")) {
         private var searchInput: TextInputBoxWidget? = null
-        private val buttonContainer = ButtonContainer(
-            TextureInfo(
-                Texture.WAYPOINT_MANAGER_BACKGROUND,
-                10,
-                26,
-                16,
-                9
-            ), 2, false
-        )
+        private val textureInfo = TextureInfo(Texture.WAYPOINT_MANAGER_BACKGROUND, 10, 26, 16, 9)
+        private val buttonContainer = ButtonContainer(textureInfo, 2, false)
 
         override fun close() {
             currentWaypoints.clear()
             val selected = buttonContainer.selected
             lastSelected = selected
             selected.forEach { tButton ->
+                // TODO Toggle button should have a type thingy like <T> (also add count of waypoints its going to add to button text)
                 val item = itemMap[tButton.text.string] ?: return@forEach
                 item.droppedBy?.let { dropData ->
                     dropData.forEach { mobData ->
@@ -145,9 +139,27 @@ object IngredientDropWaypoints {
                     .build()
             )
 
+            val hideAllWidth = textureInfo.drawableWidth / 3
+            addDrawableChild(
+                ButtonWidget.Builder(
+                    Text.literal("Hide All").setStyle(Style.EMPTY.withColor(Formatting.RED))
+                ) { _: ButtonWidget -> hideAll() }
+                    .position(
+                        textureInfo.getDrawableCenterX(this) - hideAllWidth / 2,
+                        textureInfo.getY(this) + textureInfo.height() + 2,
+                    )
+                    .size(hideAllWidth, 20)
+                    .build()
+            )
+
             lastSelected.forEach { tButton ->
                 buttonContainer.addButton(tButton)
             }
+        }
+
+        fun hideAll() {
+            buttonContainer.hideAll()
+            close()
         }
 
         fun search() {

@@ -38,6 +38,14 @@ public record TextureInfo(Texture wynntillsTexture, int leftBorder, int rightBor
         return getY(screen) + topBorder;
     }
 
+    public int getDrawableCenterX(Screen screen) {
+        return getDrawableX(screen) + getDrawableWidth() / 2;
+    }
+
+    public int getDrawableCenterY(Screen screen) {
+        return getDrawableY(screen) + getDrawableHeight() / 2;
+    }
+
     public void enableScissor(DrawContext context, Screen s) {
         RenderUtils.enableScissor(context, getDrawableX(s), getDrawableY(s), getDrawableWidth(), getDrawableHeight());
     }
