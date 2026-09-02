@@ -110,6 +110,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
         Event.register(ScreenRenderEvent.class, LootrunCore.INSTANCE::onScreenRender);
         Event.register(ScreenRenderEvent.class, GuildLogs.INSTANCE::onScreenRender);
+        Event.register(ScreenRenderEvent.class, ChestTracker.INSTANCE::highlightFavorites);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
 

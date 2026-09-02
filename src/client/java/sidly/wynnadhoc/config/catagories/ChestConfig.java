@@ -95,4 +95,9 @@ public class ChestConfig {
     @ConfigEditorBoolean
     public boolean syncChests = true;
 
+    @Expose
+    @ConfigOption(name = "Circle Favorite Items", desc = "Draws a circle around favorited items inside chests")
+    @ConfigEditorBoolean
+    public boolean circleFavorites = false;
+
 }
