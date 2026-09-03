@@ -20,6 +20,7 @@ import sidly.wynnadhoc.utils.getVehicleHitboxFallback
 
 object ItemBoxes {
     private val config get() = ConfigManager.INSTANCE.config.itemBox
+    private var lastSoundPlayedAt = -1L
 
     fun onEntity(event: ForEachEntityEvent) {
         (event.entity as? ItemEntity)?.let { itemEntity ->
@@ -37,17 +38,22 @@ object ItemBoxes {
             if (!event.isDetected) {
                 event.markDetected()
                 val msg = Text.literal("Mythic box").setStyle(Style.EMPTY.withColor(FormatUtils.getMythicColor().rgb))
-                msg.append(Text.literal(" dropped at ").setStyle(Style.EMPTY.withColor(Formatting.WHITE)))
+                msg.append(Text.literal(" dropped at ").setStyle(Style.EMPTY.withColor(Formatting.LIGHT_PURPLE)))
                 if (config.chatMsgMythic) ChatMessageUtils.sendChatCoords(event.entity, msg)
                 try {
-                    if (config.playSoundMythic) McUtils.playSoundMaster(
-                        SoundEvent.of(
-                            Identifier.of(
-                                "wynntils",
-                                "misc.mythic-found-classic"
+                    if (config.playSoundMythic) {
+                        if (lastSoundPlayedAt + 600 < System.currentTimeMillis()) {
+                            McUtils.playSoundMaster(
+                                SoundEvent.of(
+                                    Identifier.of(
+                                        "wynntils",
+                                        "misc.mythic-found-classic"
+                                    )
+                                )
                             )
-                        )
-                    )
+                        }
+                        lastSoundPlayedAt = System.currentTimeMillis()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

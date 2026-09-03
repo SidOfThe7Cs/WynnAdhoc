@@ -1,5 +1,7 @@
 package sidly.wynnadhoc.event;
 
+import net.minecraft.client.MinecraftClient;
+
 public class ButtonPressEvent extends Event<ButtonPressEvent> {
     public int button;
 
@@ -13,10 +15,12 @@ public class ButtonPressEvent extends Event<ButtonPressEvent> {
     }
 
     public static void onMouse(MouseButtonEvent event) {
+        if (MinecraftClient.getInstance().currentScreen != null) return;
         if (event.isPress()) new ButtonPressEvent(event.input.button());
     }
 
     public static void onKey(KeyboardEvent event) {
+        if (MinecraftClient.getInstance().currentScreen != null) return;
         if (event.action == 1) new ButtonPressEvent(event.key);
     }
 }

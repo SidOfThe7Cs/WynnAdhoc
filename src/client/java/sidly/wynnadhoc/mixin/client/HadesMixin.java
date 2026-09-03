@@ -19,7 +19,7 @@ public class HadesMixin {
     public boolean hasStatusEffectOverride(boolean original) {
         SimpleFeatureToggles.NightVisionOption forceNightVision = ConfigManager.INSTANCE.config.toggles.forceNightVision;
         if (forceNightVision == SimpleFeatureToggles.NightVisionOption.ALWAYS || forceNightVision == SimpleFeatureToggles.NightVisionOption.ONLY_END)
-            return true;
+            return false;
         else return original;
     }
 }
