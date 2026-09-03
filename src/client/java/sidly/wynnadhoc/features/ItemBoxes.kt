@@ -16,7 +16,6 @@ import sidly.wynnadhoc.event.entity.ForEachEntityEvent
 import sidly.wynnadhoc.event.entity.MobRenderData
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.FormatUtils
-import sidly.wynnadhoc.utils.datatypes.playerCanSee
 import sidly.wynnadhoc.utils.getVehicleHitboxFallback
 
 object ItemBoxes {
@@ -25,7 +24,6 @@ object ItemBoxes {
     fun onEntity(event: ForEachEntityEvent) {
         (event.entity as? ItemEntity)?.let { itemEntity ->
             if (!isMythicBox(itemEntity.stack)) return
-            if (!event.entity.entityPos.playerCanSee()) return
 
             event.highlight(
                 MobRenderData(
