@@ -134,6 +134,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityEvent.class, RareMobs.INSTANCE::onEachEntity);
         Event.register(ForEachEntityEvent.class, TNA.INSTANCE::onEachEntity);
         Event.register(ForEachEntityEvent.class, ShamanTotem.INSTANCE::onEntity);
+        Event.register(ForEachEntityEvent.class, ItemBoxes.INSTANCE::onEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(KeyboardEvent.class, ButtonPressEvent::onKey);
@@ -169,7 +170,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         NeoEvent.register(SpellEvent.Failed.class, SpellMacros::onFail);
         NeoEvent.register(ChangeCarriedItemEvent.class, SpellMacros::onItemSwap);
         NeoEvent.register(SetSlotEvent.Post.class, SpellMacros::onSetSlotEvent);
-
         NeoEvent.register(WorldStateEvent.class, ReParty.INSTANCE::onWorldChange);
 
         LootrunLogger.load();
