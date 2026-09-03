@@ -80,7 +80,7 @@ public class VersionUtils {
                         fix highlights lingering on mob death
                         hide all button on ingredient search
                         shaman totem reminder
-                        mythic box notifier
+                        mythic box notifier (with los)
                         """
         );
     }
