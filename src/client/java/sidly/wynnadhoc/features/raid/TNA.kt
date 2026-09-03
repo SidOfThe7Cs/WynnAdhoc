@@ -11,13 +11,24 @@ object TNA {
 
     fun onEachEntity(event: ForEachEntityEvent) {
         val textParser = event.textParser ?: return
-        if (config.boxShadowlings && textParser.isShadowling() || config.boxBulbCatchers && textParser.isBulbCatcher()) {
+        if (config.boxShadowlings && textParser.isShadowling()) {
             event.highlight(
                 MobRenderData(
                     event.entity.getVehicleHitboxFallback(),
                     Color.GREEN,
                     config.boxShadowlings,
                     config.renderArrowPointerShadow,
+                )
+            )
+        }
+
+        if (config.boxBulbCatchers && textParser.isBulbCatcher()) {
+            event.highlight(
+                MobRenderData(
+                    event.entity.getVehicleHitboxFallback(),
+                    Color.GREEN,
+                    config.boxBulbCatchers,
+                    config.renderArrowPointerBulb,
                 )
             )
         }

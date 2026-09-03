@@ -2,7 +2,11 @@ package sidly.wynnadhoc.utils;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
+import sidly.wynnadhoc.utils.datatypes.ExtensionsKt;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,7 +16,7 @@ public class ChatMessageUtils {
 
     public static void sendChatCommand(String command) {
         if (command == null || command.isEmpty()) return;
-        String cmd = command.startsWith("/" ) ? command.substring(1) : command;
+        String cmd = command.startsWith("/") ? command.substring(1) : command;
         MinecraftClient.getInstance().execute(() -> {
             MinecraftClient client = MinecraftClient.getInstance();
             ClientPlayerEntity player = client.player;
@@ -78,5 +82,9 @@ public class ChatMessageUtils {
         } else return new String[]{"", input};
 
         return new String[]{extracted, remaining};
+    }
+
+    public static void sendChatCoords(@NotNull Entity entity, MutableText msg) {
+        ExtensionsKt.sendChatCoords(entity, msg);
     }
 }

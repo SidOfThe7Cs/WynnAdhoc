@@ -2,7 +2,6 @@ package sidly.wynnadhoc.features.chests;
 
 import com.wynntils.models.gear.type.GearTier;
 import sidly.wynnadhoc.WynnAdhocClient;
-import sidly.wynnadhoc.config.saves.ChestsSaveData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +62,7 @@ public record ChestDataCache(
         this.localIngCounts.putAll(localIngCounts);
     }
 
-    public static ChestDataCache from(ChestsSaveData.ChestData local, LootChest global) {
+    public static ChestDataCache from(ChestData local, LootChest global) {
         Map<GearTier, Integer> globalItemCounts = new HashMap<>();
         Map<GearTier, Integer> localItemCounts = new HashMap<>();
         Map<Integer, Integer> globalIngCounts = new HashMap<>();

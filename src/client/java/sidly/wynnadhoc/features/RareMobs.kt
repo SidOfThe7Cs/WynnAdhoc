@@ -4,17 +4,13 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.sound.PositionedSoundInstance
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.Style
 import net.minecraft.text.Text
-import net.minecraft.util.Formatting
 import net.minecraft.util.math.random.Random
 import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.entity.ForEachEntityEvent
 import sidly.wynnadhoc.event.entity.MobRenderData
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.FormatUtils
-import sidly.wynnadhoc.utils.datatypes.formatOneDecimal
 import sidly.wynnadhoc.utils.getVehicleHitboxFallback
 
 object RareMobs {
@@ -47,18 +43,7 @@ object RareMobs {
             }
 
             if (config.chatMsg) {
-                //val name = event.entity.text.siblings.getOrNull(2)?.string ?: "Unknown"
-                val formattedX = event.entity.x.formatOneDecimal()
-                val formattedY = event.entity.y.formatOneDecimal()
-                val formattedZ = event.entity.z.formatOneDecimal()
-                val coords = Text.literal("$formattedX $formattedY $formattedZ")
-
-                val clickEvent =
-                    ClickEvent.RunCommand("wynntils compass at ${event.entity.x} ${event.entity.y} ${event.entity.z}")
-                val style =
-                    Style.EMPTY.withColor(Formatting.DARK_AQUA).withUnderline(true).withClickEvent(clickEvent)
-                msg.append(coords.setStyle(style))
-                ChatMessageUtils.sendChatMessage(msg)
+                ChatMessageUtils.sendChatCoords(event.entity, msg)
             }
 
             if (config.playSound) {

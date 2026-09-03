@@ -75,6 +75,10 @@ public class VersionUtils {
                         send rare mob coords to party chat
                         search the wynn api for mobs that drop a specific ingredient and add waypoints for its spawn locations
                         keybind to toggle chest highlight
+                        highlight bulb catchers
+                        config to change time since last open that chests are marked as ready
+                        fix highlights lingering on mob death
+                        hide all button on ingredient search
                         """
         );
     }

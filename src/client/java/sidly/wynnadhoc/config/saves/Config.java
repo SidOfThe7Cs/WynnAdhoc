@@ -52,6 +52,14 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public TnaConfig tna = new TnaConfig();
 
     @Expose
+    @Category(name = "Shaman Settings", desc = "shaman settings")
+    public ShamanConfig shaman = new ShamanConfig();
+
+    @Expose
+    @Category(name = "Item Box Settings", desc = "item box settings")
+    public ItemBoxConfig itemBox = new ItemBoxConfig();
+
+    @Expose
     @Category(name = "Guild Settings", desc = "guild settings")
     public GuildConfig guild = new GuildConfig();
 

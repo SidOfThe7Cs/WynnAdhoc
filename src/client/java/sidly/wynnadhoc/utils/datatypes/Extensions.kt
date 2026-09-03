@@ -2,6 +2,12 @@ package sidly.wynnadhoc.utils.datatypes
 
 import net.minecraft.block.ShapeContext
 import net.minecraft.client.MinecraftClient
+import net.minecraft.entity.Entity
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.MutableText
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
@@ -10,6 +16,7 @@ import net.minecraft.util.math.Vec3i
 import net.minecraft.world.RaycastContext
 import org.joml.Vector3f
 import sidly.wynnadhoc.models.CameraModel
+import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.render.Line
 import java.awt.Color
 
@@ -61,7 +68,7 @@ fun Vec3d.inCameraFrustum(): Boolean {
     return frustum.intersectPoint(this.x, this.y, this.z)
 }
 
-fun Vec3d.canSeePlayer(): Boolean {
+fun Vec3d.playerCanSee(): Boolean {
     return this.inCameraFrustum() && this.hasLOS()
 }
 
@@ -136,4 +143,18 @@ fun <T> MutableList<T>.getLast(): T? {
 
 fun Color.withAlpha(alpha: Float): Color {
     return Color(this.red / 255f, this.green / 255f, this.blue / 255f, alpha)
+}
+
+fun sendChatCoords(entity: Entity, msg: MutableText) {
+    val formattedX = entity.x.formatOneDecimal()
+    val formattedY = entity.y.formatOneDecimal()
+    val formattedZ = entity.z.formatOneDecimal()
+    val coords = Text.literal("$formattedX $formattedY $formattedZ")
+
+    val clickEvent =
+        ClickEvent.RunCommand("wynntils compass at ${entity.x} ${entity.y} ${entity.z}")
+    val style =
+        Style.EMPTY.withColor(Formatting.DARK_AQUA).withUnderline(true).withClickEvent(clickEvent)
+    msg.append(coords.setStyle(style))
+    ChatMessageUtils.sendChatMessage(msg)
 }

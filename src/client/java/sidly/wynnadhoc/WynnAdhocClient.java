@@ -20,10 +20,7 @@ import sidly.wynnadhoc.config.gui.DraggableHudElementScreen;
 import sidly.wynnadhoc.config.gui.HudElementManager;
 import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
-import sidly.wynnadhoc.event.entity.EntityClickedEvent;
-import sidly.wynnadhoc.event.entity.ForEachEntityEvent;
-import sidly.wynnadhoc.event.entity.ForEachEntityRenderEvent;
-import sidly.wynnadhoc.event.entity.MobRenderData;
+import sidly.wynnadhoc.event.entity.*;
 import sidly.wynnadhoc.features.*;
 import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -100,6 +97,8 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, BasicSavable::onTick);
         Event.register(ClientTickEvent.class, ArrowPointer.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, DelayedRun.INSTANCE::onTick);
+        Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
+        Event.register(ClientTickEvent.class, ShamanTotem.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
@@ -119,6 +118,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ScreenRenderEvent.class, ChestItemsLoadedEvent::onScreenRender);
         Event.register(ScreenRenderEvent.class, LootrunCore.INSTANCE::onScreenRender);
         Event.register(ScreenRenderEvent.class, GuildLogs.INSTANCE::onScreenRender);
+        Event.register(ScreenRenderEvent.class, ChestTracker.INSTANCE::highlightFavorites);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
 
@@ -143,6 +143,8 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ForEachEntityRenderEvent.class, WindPrison::onEntity);
         Event.register(ForEachEntityEvent.class, RareMobs.INSTANCE::onEachEntity);
         Event.register(ForEachEntityEvent.class, TNA.INSTANCE::onEachEntity);
+        Event.register(ForEachEntityEvent.class, ShamanTotem.INSTANCE::onEntity);
+        Event.register(ForEachEntityEvent.class, ItemBoxes.INSTANCE::onEntity);
 
         Event.register(KeyboardEvent.class, DraggableHudElementScreen::onKeyPressed);
         Event.register(KeyboardEvent.class, ButtonPressEvent::onKey);
@@ -178,7 +180,6 @@ public class WynnAdhocClient implements ClientModInitializer {
         NeoEvent.register(SpellEvent.Failed.class, SpellMacros::onFail);
         NeoEvent.register(ChangeCarriedItemEvent.class, SpellMacros::onItemSwap);
         NeoEvent.register(SetSlotEvent.Post.class, SpellMacros::onSetSlotEvent);
-
         NeoEvent.register(WorldStateEvent.class, ReParty.INSTANCE::onWorldChange);
 
         LootrunLogger.load();

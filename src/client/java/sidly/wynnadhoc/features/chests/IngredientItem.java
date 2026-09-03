@@ -1,5 +1,7 @@
 package sidly.wynnadhoc.features.chests;
 
+import com.wynntils.utils.colors.CommonColors;
+import com.wynntils.utils.colors.CustomColor;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.component.type.LoreComponent;
@@ -49,6 +51,16 @@ public record IngredientItem(int tier, int lvl) implements EncodableItem {
         int tier = BitUtils.getBits(encoded, 2, 3);
         int lvl = BitUtils.getBits(encoded, 5, 8);
         return new IngredientItem(tier, lvl);
+    }
+
+    public CustomColor getColor() {
+        return switch (this.tier()) {
+            case 0 -> CommonColors.GRAY;
+            case 1 -> CommonColors.YELLOW;
+            case 2 -> CommonColors.MAGENTA;
+            case 3 -> CommonColors.AQUA;
+            default -> CommonColors.WHITE;
+        };
     }
 
     @Override

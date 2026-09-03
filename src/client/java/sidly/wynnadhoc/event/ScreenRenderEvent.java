@@ -10,6 +10,19 @@ public class ScreenRenderEvent extends Event<ScreenRenderEvent> {
     public int mouseX;
     public int mouseY;
 
+
+    public boolean isLootChest() {
+        return screen.getTitle().getString().startsWith("Loot Chest ");
+    }
+
+    public boolean isFlyingChest() {
+        return screen.getTitle().getString().contains("Flying Chest");
+    }
+
+    public boolean isChallengeReward() {
+        return screen.getTitle().getString().equals("Challenge Rewards");
+    }
+
     public ScreenRenderEvent(Screen screen, DrawContext context, int mouseX, int mouseY) {
         this.screen = screen;
         this.context = context;

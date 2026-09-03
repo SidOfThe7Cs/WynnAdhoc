@@ -37,7 +37,12 @@ public class ChestConfig {
     public boolean keepPotions = true;
 
     @Expose
-    @ConfigOption(name = "Ready Color", desc = "color when over 3d since last open")
+    @ConfigOption(name = "Ready Time", desc = "number of hours after last opening a chest to mark it as ready")
+    @ConfigEditorSlider(minValue = 1.0F, maxValue = 100.0F, minStep = 1.0F)
+    public double readyTime = 24;
+
+    @Expose
+    @ConfigOption(name = "Ready Color", desc = "color when time of above setting is reached")
     @ConfigEditorColour
     public String readyColor = ChromaColour.special(0, 255, 0, 255, 0);
 
@@ -89,4 +94,10 @@ public class ChestConfig {
     @ConfigOption(name = "Sync Chests", desc = "Syncs chest locations and items between all users with this setting on")
     @ConfigEditorBoolean
     public boolean syncChests = true;
+
+    @Expose
+    @ConfigOption(name = "Circle Favorite Items", desc = "Draws a circle around favorited items inside chests")
+    @ConfigEditorBoolean
+    public boolean circleFavorites = false;
+
 }
