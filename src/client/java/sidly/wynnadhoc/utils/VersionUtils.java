@@ -79,6 +79,8 @@ public class VersionUtils {
                         config to change time since last open that chests are marked as ready
                         fix highlights lingering on mob death
                         hide all button on ingredient search
+                        shaman totem reminder
+                        mythic box notifier
                         """
         );
     }
