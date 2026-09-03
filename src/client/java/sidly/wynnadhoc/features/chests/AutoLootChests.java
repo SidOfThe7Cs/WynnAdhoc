@@ -42,7 +42,7 @@ public class AutoLootChests {
 
         // challenge rewards are in a lootrun and are not the same as world event rewards
         if (event.isLootChest() || event.isChallengeReward() || event.isFlyingChest()) {
-            chestLooterScheduler.schedule(2, 10, remaining -> {
+            chestLooterScheduler.schedule(2, 4, remaining -> {
                 boolean hasFavorites = lootChest(screen);
                 if (!hasFavorites) {
                     AutoUtils.closeScreen();
