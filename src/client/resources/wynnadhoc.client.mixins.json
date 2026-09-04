@@ -3,7 +3,6 @@
   "package": "sidly.wynnadhoc.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "ChatListenerMixin",
     "ChatMixin",
     "ChatScreenMixin",
     "ClientConnectionMixin",

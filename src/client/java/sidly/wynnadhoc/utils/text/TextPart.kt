@@ -8,6 +8,10 @@ import net.minecraft.util.Identifier
 
 class TextPart(val string: String, val style: Style) {
 
+    fun matches(condition: (TextPart) -> Boolean): Boolean {
+        return condition(this)
+    }
+
     fun getColorRgb(): Int? {
         return style.color?.rgb
     }
@@ -25,6 +29,10 @@ class TextPart(val string: String, val style: Style) {
         return if (font is StyleSpriteSource.Font) font.id() else null
     }
 
+    fun getFontPath(): String? {
+        return getFontId()?.path
+    }
+
     fun isEmpty(): Boolean {
         return string.trim().isEmpty()
     }
@@ -36,4 +44,24 @@ class TextPart(val string: String, val style: Style) {
     override fun toString(): String {
         return "TextPart(string='$string', style=$style)"
     }
+}
+
+fun MutableList<TextPart>.getString(): String {
+    val sb = StringBuilder()
+    this.filter {
+        it.string != "\uDAFF\uDFFC\uE001\uDB00\uDC06"
+    }.forEach {
+        sb.append(it.string)
+    }
+    return sb.toString()
+}
+
+fun MutableList<TextPart>.getStringNoSpaces(): String {
+    val sb = StringBuilder()
+    this.filter {
+        it.string != "\uDAFF\uDFFC\uE001\uDB00\uDC06"
+    }.forEach {
+        sb.append(it.string.trim())
+    }
+    return sb.toString()
 }

@@ -22,6 +22,7 @@ import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.entity.*;
 import sidly.wynnadhoc.features.*;
+import sidly.wynnadhoc.features.c2c.C2CPacketHandler;
 import sidly.wynnadhoc.features.c2c.command.WhisperEncryptedCommand;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
@@ -104,6 +105,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ChatMessageEvent.class, ReParty.INSTANCE::onChat);
         Event.register(ChatMessageEvent.class, Ping.INSTANCE::onChat);
         Event.register(ChatMessageEvent.class, BombShare.INSTANCE::onChat);
+        Event.register(ChatMessageEvent.class, C2CPacketHandler.getInstance()::onChat);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
         Event.register(HudRenderEvent.class, ArrowPointer.INSTANCE::onScreenRender);

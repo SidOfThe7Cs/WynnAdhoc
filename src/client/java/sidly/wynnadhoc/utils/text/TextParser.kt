@@ -17,12 +17,16 @@ abstract class TextParser {
         text.forEach { extractParts(it, Style.EMPTY) }
     }
 
+    fun subText(index: Int): MutableList<TextPart> {
+        return parts.subList(index, parts.size)
+    }
+
     fun find(condition: (TextPart) -> Boolean, startIndex: Int = 0): TextPart? {
         return parts.subList(startIndex, parts.size).firstOrNull { condition(it) }
     }
 
     fun findIndex(condition: (TextPart) -> Boolean, startIndex: Int = 0): Int {
-        return parts.subList(startIndex, parts.size).indexOfFirst { condition(it) }
+        return parts.subList(startIndex, parts.size).indexOfFirst { condition(it) } + startIndex
     }
 
     fun get(index: Int): TextPart? {
@@ -32,6 +36,10 @@ abstract class TextParser {
 
     fun get(): List<TextPart> {
         return parts
+    }
+
+    fun getString(): String {
+        return parts.getString()
     }
 
     private fun extractParts(text: Text, parentStyle: Style) {
@@ -52,5 +60,4 @@ abstract class TextParser {
         if (content is PlainTextContent.Literal) return content.string
         else return content.toString()
     }
-
 }

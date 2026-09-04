@@ -17,9 +17,9 @@ import java.util.List;
 
 @Mixin(value = com.wynntils.handlers.chat.ChatHandler.class, remap = false)
 public class ChatMixin {
-    @Inject(method = "onSystemChatReceived", at = @At("HEAD" ))
+    @Inject(method = "onSystemChatReceived", at = @At("HEAD"))
     private void onSystemChatReceived(SystemMessageEvent.ChatReceivedEvent event, CallbackInfo ci) {
-        String plain = event.getMessage().getString();
+        Text plain = event.getMessage();
         ChatMessageEvent chatMessageEvent = new ChatMessageEvent(plain, event.getStyledText());
         event.setMessage(chatMessageEvent.styledText.getComponent());
         if (chatMessageEvent.canceled) {
@@ -27,7 +27,7 @@ public class ChatMixin {
         }
 
         if (ConfigManager.INSTANCE.config.debug.showCmdOnChatHover) {
-            MutableText finalText = Text.literal("" );
+            MutableText finalText = Text.literal("");
             StyledText[] textParts = event.getStyledText().getPartsAsTextArray();
             Arrays.stream(textParts).forEach(part -> {
                 List<Text> text = part.getComponent().getSiblings();

@@ -31,9 +31,9 @@ public class ChatListenerMixin {
         String packetString = string.substring(index + C2CPacketHandler.C2C_PACKET_HEADER.length());
         if (ConfigManager.INSTANCE.config.c2c.allowC2C) {
             if (OutgoingPacketFilter.removeIfContains(packetString)) {
-                ChatMessageUtils.sendChatMessage("c2cpacket.sentC2CPacket");
+                ChatMessageUtils.sendChatMessage("sentC2CPacket");
             } else {
-                ChatMessageUtils.sendChatMessage(Text.translatable("c2cpacket.receivedC2CPacket").setStyle(
+                ChatMessageUtils.sendChatMessage(Text.literal("receivedC2CPacket").setStyle(
                         Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(params.applyChatDecoration(message.getContent())))
                 ));
             }
@@ -47,7 +47,7 @@ public class ChatListenerMixin {
         if (C2CPacketHandler.handleC2CPacket(packetString, sender.name(), sender.id())) {
             cir.setReturnValue(true);
         } else {
-            ChatMessageUtils.sendChatMessage(Text.translatable("c2cpacket.malformedPacket").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+            ChatMessageUtils.sendChatMessage(Text.literal("malformedPacket").setStyle(Style.EMPTY.withColor(Formatting.RED)));
         }
     }
 }

@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -37,22 +36,14 @@ public class WhisperEncryptedCommand {
     }
 
     private static int whisper(FabricClientCommandSource source, String playerName, String message) throws CommandSyntaxException {
-        PlayerListEntry recipient = source.getClient().getNetworkHandler().getPlayerListEntry(playerName);
-        if (recipient == null) {
-            throw PLAYER_NOT_FOUND_EXCEPTION.create();
-        }
-        PlayerListEntry me = source.getClient()
-                .getNetworkHandler()
-                .getPlayerListEntry(source.getClient().getGameProfile().id());
-
         MessageC2CPacket packet = new MessageC2CPacket(source.getClient().getNetworkHandler().getProfile().name(), message);
-        C2CPacketHandler.getInstance().sendPacket(packet, recipient);
+        C2CPacketHandler.getInstance().sendPacket(packet, playerName, false);
         MutableText prefix = Text.empty();
         prefix.append(Text.literal("[").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
         prefix.append(Text.literal("/cwe").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
         prefix.append(Text.literal("]").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
         prefix.append(Text.literal(" "));
-        Text component = prefix.append(Text.translatable("c2cpacket.messageC2CPacket.outgoing", recipient.getProfile().name(), message));
+        Text component = prefix.append(Text.literal("to " + playerName + ": " + message));
         source.sendFeedback(component);
         return Command.SINGLE_SUCCESS;
     }

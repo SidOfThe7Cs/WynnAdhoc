@@ -8,30 +8,30 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.session.ProfileKeysImpl;
 import net.minecraft.network.DisconnectionInfo;
 import net.minecraft.network.NetworkPhase;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.encryption.PlayerKeyPair;
-import net.minecraft.network.encryption.PlayerPublicKey;
-import net.minecraft.network.encryption.PublicPlayerSession;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.state.NetworkState;
 import net.minecraft.network.state.NetworkStateBuilder;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
+import sidly.wynnadhoc.config.ConfigManager;
+import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.features.c2c.command.ListenCommand;
 import sidly.wynnadhoc.features.c2c.packets.MessageC2CPacket;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
+import sidly.wynnadhoc.utils.EncryptionUtils;
+import sidly.wynnadhoc.utils.text.ChatParser;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.UUID;
 
 public class C2CPacketHandler implements C2CPacketListener {
@@ -45,7 +45,7 @@ public class C2CPacketHandler implements C2CPacketListener {
             .add(MessageC2CPacket.ID, MessageC2CPacket.CODEC)
     ).bind(b -> (C2CFriendlyByteBuf) b);
 
-    public static final String C2C_PACKET_HEADER = "CCΕNC:";
+    public static final String C2C_PACKET_HEADER = "CSΕNC:";
 
     private static final C2CPacketHandler instance = new C2CPacketHandler();
 
@@ -56,17 +56,46 @@ public class C2CPacketHandler implements C2CPacketListener {
         return instance;
     }
 
-    public void sendPacket(Packet<C2CPacketListener> packet, PlayerListEntry recipient) throws CommandSyntaxException {
-        PublicPlayerSession session = recipient.getSession();
-        if (session == null) {
-            throw PUBLIC_KEY_NOT_FOUND_EXCEPTION.create();
+    public void onChat(ChatMessageEvent event) {
+        ChatParser.PMData pm = event.parser.getPM();
+        if (pm == null) return;
+        String string = pm.getMessageStringNoSpaces();
+        int index = string.indexOf(C2CPacketHandler.C2C_PACKET_HEADER);
+        if (index == -1) {
+            return;
         }
-        PlayerPublicKey ppk = session.publicKeyData();
-        //noinspection ConstantValue
-        if (ppk == null) {
-            throw PUBLIC_KEY_NOT_FOUND_EXCEPTION.create();
+        String packetString = string.substring(index + C2CPacketHandler.C2C_PACKET_HEADER.length());
+
+        if (!ConfigManager.INSTANCE.config.c2c.allowC2C) {
+            if (OutgoingPacketFilter.removeIfContains(packetString)) {
+            } else {
+                ChatMessageUtils.sendChatMessage(Text.literal("receivedC2CPacket").setStyle(
+                        Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Text.literal(packetString)))
+                ));
+            }
+            event.canceled = true;
+            return;
         }
-        PublicKey key = ppk.data().key();
+        if (OutgoingPacketFilter.removeIfContains(packetString)) {
+            event.canceled = true;
+            return;
+        }
+        UUID uuid = MinecraftClient.getInstance().player.getUuid(); // TODO cache on connection or get from mojang api
+        if (C2CPacketHandler.handleC2CPacket(packetString, pm.getSender(), uuid)) {
+            event.canceled = true;
+        } else {
+            ChatMessageUtils.sendChatMessage(Text.literal("malformedPacket").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+        }
+    }
+
+
+    public void sendPacket(Packet<C2CPacketListener> packet, String recipient) throws CommandSyntaxException {
+        sendPacket(packet, recipient, true);
+    }
+
+    public void sendPacket(Packet<C2CPacketListener> packet, String recipient, boolean shouldEncrypt) throws CommandSyntaxException {
+        PublicKey key = shouldEncrypt ? EncryptionUtils.INSTANCE.getPublicKey(recipient) : EncryptionUtils.INSTANCE.getDefaultKey().getPublic();
+
         PacketByteBuf buf = wrapByteBuf(FriendlyByteBufs.create(), null, null);
         if (buf == null) {
             return;
@@ -101,7 +130,7 @@ public class C2CPacketHandler implements C2CPacketListener {
             System.arraycopy(encrypted[i], 0, joined, i * 256, 256);
         }
         String packetString = ConversionHelper.BaseUTF8.toUnicode(joined);
-        String commandString = "w " + recipient.getProfile().name() + ' ' + C2C_PACKET_HEADER + packetString;
+        String commandString = "msg " + recipient + ' ' + C2C_PACKET_HEADER + packetString;
         if (commandString.length() >= 256) {
             throw MESSAGE_TOO_LONG_EXCEPTION.create(commandString.length());
         }
@@ -119,18 +148,12 @@ public class C2CPacketHandler implements C2CPacketListener {
         for (int i = 0; i < length; i += 256) {
             encryptedArrays[i / 256] = Arrays.copyOfRange(encrypted, i, i + 256);
         }
-        if (!(MinecraftClient.getInstance().getProfileKeys() instanceof ProfileKeysImpl profileKeyPairManager)) {
-            return false;
-        }
-        Optional<PlayerKeyPair> keyPair = profileKeyPairManager.fetchKeyPair().join();
-        if (keyPair.isEmpty()) {
-            return false;
-        }
+        PrivateKey privateKey = EncryptionUtils.INSTANCE.getDefaultKey().getPrivate(); // TODO
         // decrypt
         int len = 0;
         byte[][] decryptedArrays = new byte[encryptedArrays.length][];
         for (int i = 0; i < encryptedArrays.length; i++) {
-            decryptedArrays[i] = ConversionHelper.RsaEcb.decrypt(encryptedArrays[i], keyPair.get().privateKey());
+            decryptedArrays[i] = ConversionHelper.RsaEcb.decrypt(encryptedArrays[i], privateKey);
             if (decryptedArrays[i] == null) {
                 return false;
             }
@@ -181,20 +204,13 @@ public class C2CPacketHandler implements C2CPacketListener {
         String sender = packet.sender();
         String message = packet.message();
         Text formattedComponent = Text.of(message);
-        /*
-        try {
-            formattedComponent = ExtendedMarkdownArgument.extendedMarkdown().parse(new StringReader(message));
-        } catch (CommandSyntaxException e) {
-            formattedComponent = Text.of(message);
-        }
-
-         */
-        MutableText prefix = Text.empty();
-        prefix.append(Text.literal("[").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
-        prefix.append(Text.literal("/cwe").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-        prefix.append(Text.literal("]").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
-        prefix.append(Text.literal(" "));
-        Text text = prefix.append(Text.translatable("c2cpacket.messageC2CPacket.incoming", sender, formattedComponent));
+        MutableText text = Text.empty();
+        text.append(Text.literal("[").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
+        text.append(Text.literal("/cwe").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        text.append(Text.literal("]").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
+        text.append(Text.literal(" "));
+        text.append(Text.literal("from " + sender + ": "));
+        text.append(formattedComponent);
         ChatMessageUtils.sendChatMessage(text);
     }
 
