@@ -1,0 +1,6 @@
+classTweaker v1 named
+
+accessible field net/minecraft/network/ClientConnection channel Lio/netty/channel/Channel;
+accessible field net/minecraft/network/handler/DecoderHandler state Lnet/minecraft/network/state/NetworkState;
+accessible field net/minecraft/network/handler/PacketCodecDispatcher typeToIndex Lit/unimi/dsi/fastutil/objects/Object2IntMap;
+accessible field net/minecraft/network/handler/EncoderHandler state Lnet/minecraft/network/state/NetworkState;

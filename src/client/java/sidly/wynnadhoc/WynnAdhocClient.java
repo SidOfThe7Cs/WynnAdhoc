@@ -22,6 +22,7 @@ import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.entity.*;
 import sidly.wynnadhoc.features.*;
+import sidly.wynnadhoc.features.c2c.command.WhisperEncryptedCommand;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.item_tooltip.ItemTooltip;
@@ -164,6 +165,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(CommandRegistrationEvent.class, ReParty.INSTANCE::registerCommands);
         Event.register(CommandRegistrationEvent.class, ConfigManager::registerCommands);
         Event.register(CommandRegistrationEvent.class, BombShare.INSTANCE::registerCommands);
+        Event.register(CommandRegistrationEvent.class, WhisperEncryptedCommand::register);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

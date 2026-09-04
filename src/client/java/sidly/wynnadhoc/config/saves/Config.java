@@ -65,5 +65,9 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     @Expose
     @Category(name = "Debug Settings", desc = "debug settings")
     public DebugConfig debug = new DebugConfig();
+
+    @Expose
+    @Category(name = "C2C Settings", desc = "c2c settings")
+    public C2CConfig c2c = new C2CConfig();
 }
 
