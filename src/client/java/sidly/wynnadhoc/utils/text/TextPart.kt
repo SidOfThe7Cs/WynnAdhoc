@@ -5,6 +5,7 @@ import net.minecraft.text.StyleSpriteSource
 import net.minecraft.text.TextColor
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import sidly.wynnadhoc.utils.text.TextPart.Companion.WYNN_CHAT_NEWLINE
 
 class TextPart(val string: String, val style: Style) {
 
@@ -44,12 +45,16 @@ class TextPart(val string: String, val style: Style) {
     override fun toString(): String {
         return "TextPart(string='$string', style=$style)"
     }
+
+    companion object {
+        val WYNN_CHAT_NEWLINE = "\uDAFF\uDFFC\uE001\uDB00\uDC06"
+    }
 }
 
 fun MutableList<TextPart>.getString(): String {
     val sb = StringBuilder()
     this.filter {
-        it.string != "\uDAFF\uDFFC\uE001\uDB00\uDC06"
+        it.string != WYNN_CHAT_NEWLINE
     }.forEach {
         sb.append(it.string)
     }
@@ -59,7 +64,7 @@ fun MutableList<TextPart>.getString(): String {
 fun MutableList<TextPart>.getStringNoSpaces(): String {
     val sb = StringBuilder()
     this.filter {
-        it.string != "\uDAFF\uDFFC\uE001\uDB00\uDC06"
+        it.string != WYNN_CHAT_NEWLINE
     }.forEach {
         sb.append(it.string.trim())
     }

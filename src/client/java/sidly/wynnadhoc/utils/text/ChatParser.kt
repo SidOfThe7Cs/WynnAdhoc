@@ -57,7 +57,7 @@ class ChatParser : TextParser {
         }
 
         override fun toString(): String {
-            return "PMData(sender='$sender', receiver='$receiver', message=$message)"
+            return "PMData(recipient='$sender', receiver='$receiver', message=$message)"
         }
     }
 }

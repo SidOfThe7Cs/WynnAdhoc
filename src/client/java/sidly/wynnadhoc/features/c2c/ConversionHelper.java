@@ -22,8 +22,8 @@ public class ConversionHelper {
      * @author Wagyourtail
      */
     public static class BaseUTF8 {
-        private static final int UNICODE_LOWER_BOUND = 34;
-        private static final int UNICODE_UPPER_BOUND = 0x10ffff - 0x800;
+        private static final int UNICODE_LOWER_BOUND = 0x10000;
+        private static final int UNICODE_UPPER_BOUND = 0x110000;
 
         public static String toUnicode(byte[] b) {
             StringBuilder sb = new StringBuilder();
@@ -33,20 +33,14 @@ public class ConversionHelper {
                 data |= Byte.toUnsignedInt(b1) << bitPtr;
                 bitPtr += 8;
                 if (bitPtr > 19) {
-                    int codePoint = mapCodepoint((data & 0x0FFFFF) + UNICODE_LOWER_BOUND);
-                    if (codePoint >= UNICODE_UPPER_BOUND) {
-                        throw new RuntimeException("WHAT?");
-                    }
+                    int codePoint = (data & 0x0FFFFF) + UNICODE_LOWER_BOUND;
                     data >>= 20;
                     sb.appendCodePoint(codePoint);
                 }
                 bitPtr %= 20;
             }
             if (bitPtr != 0) {
-                int codePoint = mapCodepoint((data & 0x0FFFFF) + UNICODE_LOWER_BOUND);
-                if (codePoint >= UNICODE_UPPER_BOUND) {
-                    throw new RuntimeException("WHAT?");
-                }
+                int codePoint = (data & 0x0FFFFF) + UNICODE_LOWER_BOUND;
                 sb.appendCodePoint(codePoint);
             }
             return sb.toString();
@@ -63,7 +57,6 @@ public class ConversionHelper {
                 if (codepoint >= UNICODE_UPPER_BOUND) {
                     throw new RuntimeException("WHAT?");
                 }
-                codepoint = unmapCodepoint(codepoint);
                 codepoint -= UNICODE_LOWER_BOUND;
                 data[dataPtr / 8] |= codepoint << (dataPtr % 8);
                 codepoint >>= 8 - (dataPtr % 8);
@@ -73,23 +66,6 @@ public class ConversionHelper {
             }
             return Arrays.copyOf(data, dataLength);
         }
-
-        private static int mapCodepoint(int codepoint) {
-            if (codepoint < 0xd800) {
-                return codepoint == 167 ? 32 : codepoint == 127 ? 33 : codepoint;
-            } else {
-                return codepoint + 0x800;
-            }
-        }
-
-        private static int unmapCodepoint(int codepoint) {
-            if (codepoint < 0xd800) {
-                return codepoint == 32 ? 167 : codepoint == 33 ? 127 : codepoint;
-            } else {
-                return codepoint - 0x800;
-            }
-        }
-
     }
 
     /**

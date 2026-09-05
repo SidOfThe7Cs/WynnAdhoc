@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class TimeLimitedMap<K, V> {
@@ -23,6 +25,14 @@ public class TimeLimitedMap<K, V> {
 
     public V get(K key) {
         return cache.getIfPresent(key);
+    }
+
+    public V computeIsAbsent(K key, Callable<? extends V> loader) {
+        try {
+            return cache.get(key, loader);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void remove(K key) {

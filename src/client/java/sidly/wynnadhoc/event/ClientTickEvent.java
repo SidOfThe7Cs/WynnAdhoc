@@ -15,6 +15,10 @@ public class ClientTickEvent extends Event<ClientTickEvent> {
         return counter % (seconds * 20L) == 0;
     }
 
+    public long getCounter() {
+        return counter;
+    }
+
     public ClientTickEvent(MinecraftClient client) {
         this.client = client;
         if (client != null) {

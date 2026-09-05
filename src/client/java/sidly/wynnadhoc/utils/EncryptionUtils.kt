@@ -21,6 +21,7 @@ object EncryptionUtils {
 
     private fun generateKeyPair(): KeyPair {
         val generator = KeyPairGenerator.getInstance(ALGORITHM)
+        generator.initialize(1024)
         return generator.generateKeyPair()
     }
 
@@ -46,20 +47,19 @@ object EncryptionUtils {
         return knownUsersMap[playerName]
     }
 
-    fun setPublicKey(playerName: String, publicKey: PublicKey) {
-        return knownUsersMap.set(playerName, publicKey)
+    fun setPublicKey(playerName: String, publicKey: String) {
+        return knownUsersMap.set(playerName, publicKeyFromBase64(publicKey))
     }
 
     /**
-     * Generates the same X25519 keypair for the same input string.
-     *
+     * Generates the same RSA keypair for the same input string.
      * DO NOT use this for long-term identity keys.
      */
     private fun generateKeyPair(seed: String): KeyPair {
         val hash = MessageDigest.getInstance("SHA-256").digest(seed.toByteArray(StandardCharsets.UTF_8))
         val random = DeterministicSecureRandom(hash)
         val generator = KeyPairGenerator.getInstance(ALGORITHM)
-        generator.initialize(2048, random)
+        generator.initialize(1024, random)
         return generator.generateKeyPair()
     }
 

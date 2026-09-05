@@ -22,6 +22,7 @@ import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.entity.*;
 import sidly.wynnadhoc.features.*;
+import sidly.wynnadhoc.features.c2c.C2CConnectionManager;
 import sidly.wynnadhoc.features.c2c.C2CPacketHandler;
 import sidly.wynnadhoc.features.c2c.command.WhisperEncryptedCommand;
 import sidly.wynnadhoc.features.chests.ChestTracker;
@@ -95,6 +96,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, DelayedRun.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
         Event.register(ClientTickEvent.class, ShamanTotem.INSTANCE::onTick);
+        Event.register(ClientTickEvent.class, C2CConnectionManager::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
@@ -168,6 +170,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(CommandRegistrationEvent.class, ConfigManager::registerCommands);
         Event.register(CommandRegistrationEvent.class, BombShare.INSTANCE::registerCommands);
         Event.register(CommandRegistrationEvent.class, WhisperEncryptedCommand::register);
+        Event.register(CommandRegistrationEvent.class, C2CConnectionManager::register);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);
