@@ -45,7 +45,7 @@ public class WhisperEncryptedCommand {
             source.sendFeedback(component);
             return Command.SINGLE_SUCCESS;
         } else {
-            ChatMessageUtils.sendChatMessage(playerName + " does not have wynnadhoc installed");
+            ChatMessageUtils.sendChatMessage(playerName + " does not have wynnadhoc installed or has disabled c2c");
             return 0;
         }
     }

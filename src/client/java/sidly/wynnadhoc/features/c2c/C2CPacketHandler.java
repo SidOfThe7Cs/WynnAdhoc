@@ -14,14 +14,12 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.state.NetworkState;
 import net.minecraft.network.state.NetworkStateBuilder;
-import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.features.c2c.command.ListenCommand;
@@ -70,14 +68,16 @@ public class C2CPacketHandler implements C2CPacketListener {
             return;
         }
         String packetString = string.substring(index + C2CPacketHandler.C2C_PACKET_HEADER.length());
-        WynnAdhocClient.LOGGER.temp("REcieved packet string: " + packetString);
 
         if (!ConfigManager.INSTANCE.config.c2c.allowC2C) {
             if (OutgoingPacketFilter.removeIfContains(packetString)) {
             } else {
+                /*
                 ChatMessageUtils.sendChatMessage(Text.literal("receivedC2CPacket").setStyle(
                         Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Text.literal(packetString)))
                 ));
+
+                 */
             }
             event.canceled = true;
             return;
@@ -139,7 +139,6 @@ public class C2CPacketHandler implements C2CPacketListener {
             System.arraycopy(encrypted[i], 0, joined, i * 128, 128);
         }
         String packetString = ConversionHelper.BaseUTF8.toUnicode(joined);
-        WynnAdhocClient.LOGGER.temp("Sent packet string: " + packetString);
         String commandString = "msg " + recipient + ' ' + C2C_PACKET_HEADER + packetString;
         if (commandString.length() >= 256) {
             throw MESSAGE_TOO_LONG_EXCEPTION.create(commandString.length());
