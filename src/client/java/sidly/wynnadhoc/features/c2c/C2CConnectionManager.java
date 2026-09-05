@@ -14,63 +14,66 @@ import java.util.*;
 
 public class C2CConnectionManager {
     private static final Map<String, List<PacketData>> queue = new HashMap<>();
-    private static final int CD = 7;
     private static final Set<String> failures = new HashSet<>();
-    private static final int MAX_QUEUE_SIZE = 15;
-    private static final Map<String, Long> lastSentMap = new HashMap<>();
+    private static final Map<String, Long> lastSentMap = new HashMap<>(); // this is ticks not ms
     private static final Map<String, Long> sentConnectionRequests = new HashMap<>();
+    private static final int CD = 7;
+    private static final int MAX_QUEUE_SIZE = 15;
     private static final int MAX_CONN_SECONDS = 10;
 
     public static int queuePacket(Packet<C2CPacketListener> packet, String recipient) {
-        if (failures.contains(recipient)) return 0;
+        if (failures.contains(recipient.toLowerCase())) return 0;
         PacketData packetData = new PacketData(packet, recipient);
-        queue.computeIfAbsent(packetData.recipient(), k -> new ArrayList<>()).add(packetData);
+        queue.computeIfAbsent(recipient.toLowerCase(), k -> new ArrayList<>()).add(packetData);
         return 1;
     }
 
     public static void onTick(ClientTickEvent event) {
         long ticks = event.getCounter();
         Set<String> toRemove = new HashSet<>();
-        queue.forEach((key, value) -> {
-            if (EncryptionUtils.INSTANCE.getPublicKey(key) == null) {
-                Long lastSent = sentConnectionRequests.get(key);
+        queue.forEach((name, value) -> {
+            if (EncryptionUtils.INSTANCE.getPublicKey(name) == null) {
+                Long lastSent = sentConnectionRequests.get(name);
                 if (lastSent == null) {
-                    requestConnection(key);
+                    requestConnection(name);
+                    lastSentMap.put(name, ticks);
                 } else if (lastSent + MAX_CONN_SECONDS * 1000 < System.currentTimeMillis()) {
-                    onFailure(key);
-                    toRemove.add(key);
+                    onFailure(name);
+                    toRemove.add(name);
                 }
                 return;
             }
             if (value.size() > MAX_QUEUE_SIZE) {
-                onFailure(key);
-                toRemove.add(key);
+                onFailure(name);
+                toRemove.add(name);
                 return;
             }
-            Long lastSent = lastSentMap.get(key);
+            Long lastSent = lastSentMap.get(name);
             if (lastSent == null || lastSent + CD < ticks) {
                 if (value.isEmpty()) return;
                 PacketData packetData = value.removeFirst();
                 packetData.send();
-                lastSentMap.put(key, ticks);
+                lastSentMap.put(name, ticks);
             }
         });
         toRemove.forEach(queue::remove);
     }
 
-    public static void onFailure(String key) {
-        failures.add(key);
-        ChatMessageUtils.sendChatMessage(key + " Does not appear to have wynnadhoc installed further C2C packets will not be sent, retry with /wynnadhoc c2c connect " + key);
+    public static void onFailure(String recipient) {
+        failures.add(recipient);
+        sentConnectionRequests.remove(recipient);
+        ChatMessageUtils.sendChatMessage(recipient + " Does not appear to have wynnadhoc installed further C2C packets will not be sent, retry with /wynnadhoc c2c connect " + recipient);
     }
 
     public static void onConnect(String recipient) {
-        failures.remove(recipient);
-        sentConnectionRequests.remove(recipient);
+        failures.remove(recipient.toLowerCase());
+        sentConnectionRequests.remove(recipient.toLowerCase());
     }
 
     public static int requestConnection(String recipient) {
         failures.remove(recipient);
         sentConnectionRequests.put(recipient, System.currentTimeMillis());
+        EncryptionUtils.INSTANCE.removeKey(recipient);
         String pub = EncryptionUtils.INSTANCE.publicKeyToBase64(EncryptionUtils.INSTANCE.getPublicKey());
         ConnectionRequestC2CPacket packet = new ConnectionRequestC2CPacket(C2CPacketHandler.getInstance().self(), pub);
         try {
@@ -88,7 +91,7 @@ public class C2CConnectionManager {
                         .then(ClientCommandManager.argument("user", StringArgumentType.string())
                                 .executes((ctx) ->
                                         requestConnection(
-                                                StringArgumentType.getString(ctx, "user")
+                                                StringArgumentType.getString(ctx, "user").toLowerCase()
                                         )
                                 )
                         )

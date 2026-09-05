@@ -44,11 +44,15 @@ object EncryptionUtils {
     }
 
     fun getPublicKey(playerName: String): PublicKey? {
-        return knownUsersMap[playerName]
+        return knownUsersMap[playerName.lowercase()]
     }
 
     fun setPublicKey(playerName: String, publicKey: String) {
-        return knownUsersMap.set(playerName, publicKeyFromBase64(publicKey))
+        return knownUsersMap.set(playerName.lowercase(), publicKeyFromBase64(publicKey))
+    }
+
+    fun removeKey(playerName: String) {
+        knownUsersMap.remove(playerName.lowercase())
     }
 
     /**
