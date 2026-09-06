@@ -40,7 +40,6 @@ object Larbonic {
             val valid = mining && (lvl == 105 || lvl == 110)
             if (valid) {
                 larbonicLocations.add(event.blockPos)
-                WynnAdhocClient.LOGGER.temp("adding larbonic ${event.blockPos}")
             }
             valid
         })

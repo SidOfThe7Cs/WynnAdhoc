@@ -14,6 +14,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.state.NetworkState;
 import net.minecraft.network.state.NetworkStateBuilder;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -225,8 +226,9 @@ public class C2CPacketHandler implements C2CPacketListener {
         String message = packet.message();
         Text formattedComponent = Text.of(message);
         MutableText text = Text.empty();
+        ClickEvent clickEvent = new ClickEvent.SuggestCommand("cwe " + sender);
         text.append(Text.literal("[").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
-        text.append(Text.literal("/cwe").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+        text.append(Text.literal("/cwe").setStyle(Style.EMPTY.withColor(Formatting.AQUA).withClickEvent(clickEvent)));
         text.append(Text.literal("]").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
         text.append(Text.literal(" "));
         text.append(Text.literal("from " + sender + ": "));
