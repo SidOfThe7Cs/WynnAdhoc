@@ -4,6 +4,7 @@ import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import sidly.wynnadhoc.utils.text.TextDisplayParser;
 
 public class TextDisplaySyncEvent extends Event<TextDisplaySyncEvent> {
     public DisplayEntity.TextDisplayEntity textDisplay;
@@ -11,9 +12,11 @@ public class TextDisplaySyncEvent extends Event<TextDisplaySyncEvent> {
     public String string;
     public Vec3d pos;
     public BlockPos blockPos;
+    public final TextDisplayParser parser;
 
     public TextDisplaySyncEvent(DisplayEntity.TextDisplayEntity textDisplay) {
         this.textDisplay = textDisplay;
+        this.parser = new TextDisplayParser(textDisplay);
         this.text = textDisplay.getText();
         this.string = text.getString();
         this.pos = textDisplay.getEntityPos();

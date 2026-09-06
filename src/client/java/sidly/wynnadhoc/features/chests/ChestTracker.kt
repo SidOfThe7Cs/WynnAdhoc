@@ -31,6 +31,7 @@ import sidly.wynnadhoc.utils.Debug
 import sidly.wynnadhoc.utils.FormatUtils
 import sidly.wynnadhoc.utils.ItemUtils
 import sidly.wynnadhoc.utils.LocationUtils
+import sidly.wynnadhoc.utils.Regexs.TIMER_REGEX
 import sidly.wynnadhoc.utils.datatypes.toBox
 import sidly.wynnadhoc.utils.render.drawBox
 import java.awt.Color
@@ -38,7 +39,6 @@ import java.util.regex.Pattern
 import kotlin.math.pow
 
 object ChestTracker {
-    val TIMER_REGEX = Regex("§7(?<timeLeft>\\d+)(?<unit>[dhms])")
 
     private val config get() = ConfigManager.INSTANCE.config.chest
     private var lastClickedChest: BlockPos? = null
@@ -155,7 +155,7 @@ object ChestTracker {
     }
 
     private fun couldUsePotion(item: ItemStack, hotBarPotions: MutableMap<Int, Int>): Boolean {
-        if (config.keepPotions && (item.getName().string == "Potion of Healing [3/3]") && !hotBarPotions.isEmpty()) {
+        if (config.keepPotions && (item.name.string == "Potion of Healing [3/3]") && !hotBarPotions.isEmpty()) {
             var healAmount = -1
             val tooltip = ItemUtils.getTooltip(item)
             for (line in tooltip) {
@@ -281,7 +281,7 @@ object ChestTracker {
 
         for (i in size - 9..<size) {
             val stack = handler.slots[i].stack
-            if (stack.getName().string.contains("Potions of Healing")) {
+            if (stack.name.string.contains("Potions of Healing")) {
                 potions = stack
             }
         }

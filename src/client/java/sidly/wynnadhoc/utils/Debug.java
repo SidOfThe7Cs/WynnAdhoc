@@ -77,7 +77,8 @@ public class Debug {
         SPELL,
         HUD,
         SERVER,
-        IO;
+        IO,
+        TEXT;
 
         public String get(String message) {
             return "[" + this.name() + "] " + message;

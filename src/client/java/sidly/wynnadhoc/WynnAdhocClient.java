@@ -33,6 +33,7 @@ import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
+import sidly.wynnadhoc.features.prof.Larbonic;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.raid.TNA;
 import sidly.wynnadhoc.features.war.DB;
@@ -155,6 +156,7 @@ public class WynnAdhocClient implements ClientModInitializer {
 
         Event.register(TextDisplaySyncEvent.class, ChestTracker.INSTANCE::onTextDisplaySync);
         Event.register(TextDisplaySyncEvent.class, ProfNodeCore::onTextDisplaySync);
+        Event.register(TextDisplaySyncEvent.class, Larbonic.INSTANCE::onTextDisplaySync);
 
         Event.register(CharacterUuidUpdateEvent.class, Overlays::updateAll);
         Event.register(SlotClickedEvent.class, LootrunCore.INSTANCE::onSlotClicked);

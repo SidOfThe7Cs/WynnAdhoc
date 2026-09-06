@@ -4,6 +4,8 @@ import net.minecraft.text.PlainTextContent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TextContent
+import sidly.wynnadhoc.WynnAdhocClient
+import sidly.wynnadhoc.utils.Debug
 
 abstract class TextParser {
     private val parts: MutableList<TextPart> = mutableListOf()
@@ -40,6 +42,10 @@ abstract class TextParser {
 
     fun getString(): String {
         return parts.getString()
+    }
+
+    fun print() {
+        get().forEach { WynnAdhocClient.LOGGER.info(Debug.Type.TEXT, it.toString()) }
     }
 
     private fun extractParts(text: Text, parentStyle: Style) {
