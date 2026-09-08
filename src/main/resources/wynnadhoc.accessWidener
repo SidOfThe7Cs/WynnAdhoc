@@ -4,3 +4,6 @@ accessible field net/minecraft/network/ClientConnection channel Lio/netty/channe
 accessible field net/minecraft/network/handler/DecoderHandler state Lnet/minecraft/network/state/NetworkState;
 accessible field net/minecraft/network/handler/PacketCodecDispatcher typeToIndex Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 accessible field net/minecraft/network/handler/EncoderHandler state Lnet/minecraft/network/state/NetworkState;
+accessible field net/minecraft/client/gui/hud/PlayerListHud footer Lnet/minecraft/text/Text;
+accessible field net/minecraft/client/gui/hud/PlayerListHud header Lnet/minecraft/text/Text;
+accessible method net/minecraft/client/gui/hud/PlayerListHud collectPlayerEntries ()Ljava/util/List;

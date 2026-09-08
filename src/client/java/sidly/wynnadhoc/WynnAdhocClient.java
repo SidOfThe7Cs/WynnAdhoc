@@ -39,6 +39,7 @@ import sidly.wynnadhoc.features.raid.TNA;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
+import sidly.wynnadhoc.models.TabList;
 import sidly.wynnadhoc.server.ChestCrowdsource;
 import sidly.wynnadhoc.server.CrowdsourceMain;
 import sidly.wynnadhoc.utils.Debug;
@@ -98,6 +99,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
         Event.register(ClientTickEvent.class, ShamanTotem.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, C2CConnectionManager::onTick);
+        Event.register(ClientTickEvent.class, TabList.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
