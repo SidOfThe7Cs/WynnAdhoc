@@ -11,4 +11,8 @@ object Regexs {
     val TAB_GLOBAL_HEADER_REGEX = Regex("""§f {2}§lGlobal ${SERVER_REGEX.pattern}""")
     val TAB_LINE_PLAYER_REGEX =
         Regex("""(?:§(?<serverColor>[23e])${SERVER_REGEX.pattern} §(?<nameColor>[abce7]))?${USERNAME_REGEX.pattern}""")
+
+    // scoreboard
+    val SCOREBOARD_PARTY_HEADER = Regex("""§e§lParty:§6 \[Lv. (?<partyLvl>\d++)]""")
+    val SCOREBOARD_PARTY_MEMBER = Regex("""- \[\|\|(?<health>\d++)\|\|] ${USERNAME_REGEX.pattern} \[(?<lvl>\d++)]""")
 }

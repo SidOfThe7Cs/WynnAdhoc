@@ -9,8 +9,13 @@ import sidly.wynnadhoc.utils.datatypes.Server
 import sidly.wynnadhoc.utils.text.DefaultTextParser
 
 object TabList {
-    private val data = mutableMapOf<EntryType, TabListEntry>()
-    var currentServer: Server? = null
+    private val data = mutableMapOf<EntryType, MutableList<TabListEntry>>()
+    var currentServer: Server? =
+        null // TODO set if anyone (friend/guild) is in the same word as you when there is no global column (on housing)
+
+    private fun addData(type: EntryType, entry: TabListEntry) {
+        data.computeIfAbsent(type, { mutableListOf() }).also { list -> list.add(entry) }
+    }
 
     fun onTick(event: ClientTickEvent) {
         //WynnAdhocClient.LOGGER.temp("footer " + playerListHud.footer?.string)
@@ -19,6 +24,7 @@ object TabList {
         val client = MinecraftClient.getInstance()
         var currentColumn: EntryType? = null
         val playerListHud = client.inGameHud.playerListHud
+        // TODO divide into columns and post event (TabListColumnEvent(header: Header, lines: MutableList<Text>))
         if (client.player != null) playerListHud.collectPlayerEntries().forEach { entry ->
             entry?.displayName?.let { displayName ->
                 val parser = DefaultTextParser(displayName)
@@ -72,7 +78,7 @@ object TabList {
                             WynnAdhocClient.LOGGER.warn("invalid entry found in global tab: $displayName")
                             return@forEach
                         }
-                        data[currentColumn] = TabListEntry(username, server, false, part.getColorRgb())
+                        addData(currentColumn, TabListEntry(username, server, false, part.getColorRgb()))
                         return@forEach
                     }
 
@@ -82,7 +88,7 @@ object TabList {
                             WynnAdhocClient.LOGGER.warn("friend found in $currentColumn column: $displayName")
                             return@forEach
                         }
-                        data[currentColumn] = TabListEntry(username, server, false, null)
+                        addData(currentColumn, TabListEntry(username, server, false, null))
                         return@forEach
                     }
 
@@ -92,7 +98,7 @@ object TabList {
                             WynnAdhocClient.LOGGER.warn("guild member found in $currentColumn column: $displayName")
                             return@forEach
                         }
-                        data[currentColumn] = TabListEntry(username, server, false, null)
+                        addData(currentColumn, TabListEntry(username, server, false, null))
                         return@forEach
                     }
                 }
@@ -103,7 +109,7 @@ object TabList {
 
                     // handles all offline entries
                     if (color == "7") {
-                        data[currentColumn] = TabListEntry(username, null, false, null)
+                        addData(currentColumn, TabListEntry(username, null, false, null))
                         return@forEach
                     }
 
@@ -113,7 +119,7 @@ object TabList {
                             WynnAdhocClient.LOGGER.warn("invalid entry found in party tab: $displayName")
                             return@forEach
                         }
-                        data[currentColumn] = TabListEntry(username, null, partyLeader, null)
+                        addData(currentColumn, TabListEntry(username, null, partyLeader, null))
                         return@forEach
                     }
                 }
@@ -130,6 +136,10 @@ object TabList {
         GLOBAL,
         PARTY,
         GUILD,
-        HOUSING,
+        HOUSING;
+
+        fun getData(): List<TabListEntry>? {
+            return data[this]
+        }
     }
 }
