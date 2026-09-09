@@ -1,7 +1,11 @@
 package sidly.wynnadhoc.features.prof
 
+import com.mojang.brigadier.context.CommandContext
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.util.math.BlockPos
 import sidly.wynnadhoc.WynnAdhocClient
+import sidly.wynnadhoc.event.CommandRegistrationEvent
 import sidly.wynnadhoc.event.TextDisplaySyncEvent
 import sidly.wynnadhoc.utils.Regexs
 import sidly.wynnadhoc.utils.text.Fonts
@@ -43,6 +47,19 @@ object Larbonic {
             }
             valid
         })
+    }
+
+    fun register(event: CommandRegistrationEvent) {
+        event.register(
+            ClientCommandManager.literal("c2c")
+                .then(
+                    ClientCommandManager.literal("startLarbonic")
+                        .executes { ctx: CommandContext<FabricClientCommandSource> ->
+                            WynnAdhocClient.LOGGER.temp("starting larbonic party")
+                            1
+                        }
+                )
+        )
     }
 }
 

@@ -9,6 +9,7 @@ import sidly.wynnadhoc.event.CommandRegistrationEvent;
 import sidly.wynnadhoc.features.c2c.packets.ConnectionRequestC2CPacket;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 import sidly.wynnadhoc.utils.EncryptionUtils;
+import sidly.wynnadhoc.utils.PlayerUtils;
 
 import java.util.*;
 
@@ -62,7 +63,7 @@ public class C2CConnectionManager {
     public static void onFailure(String recipient) {
         failures.add(recipient);
         sentConnectionRequests.remove(recipient);
-        ChatMessageUtils.sendChatMessage(recipient + " Does not appear to have wynnadhoc installed further C2C packets will not be sent, retry with /wynnadhoc c2c connect " + recipient);
+        ChatMessageUtils.sendChatMessage(recipient + " Does not appear to have wynnadhoc installed further C2C packets will not be sent, retry with /wynnadhoc c2c connnect " + recipient);
     }
 
     public static void onConnect(String recipient) {
@@ -75,7 +76,7 @@ public class C2CConnectionManager {
         sentConnectionRequests.put(recipient, System.currentTimeMillis());
         EncryptionUtils.INSTANCE.removeKey(recipient);
         String pub = EncryptionUtils.INSTANCE.publicKeyToBase64(EncryptionUtils.INSTANCE.getPublicKey());
-        ConnectionRequestC2CPacket packet = new ConnectionRequestC2CPacket(C2CPacketHandler.getInstance().self(), pub);
+        ConnectionRequestC2CPacket packet = new ConnectionRequestC2CPacket(PlayerUtils.self(), pub);
         try {
             C2CPacketHandler.getInstance().sendPacket(packet, recipient, false);
             return 1;
@@ -87,7 +88,7 @@ public class C2CConnectionManager {
 
     public static void register(CommandRegistrationEvent event) {
         event.register(ClientCommandManager.literal("c2c")
-                .then(ClientCommandManager.literal("connect")
+                .then(ClientCommandManager.literal("connnect") // it doesnt work if i spell it right ¯\_(ツ)_/¯
                         .then(ClientCommandManager.argument("user", StringArgumentType.string())
                                 .executes((ctx) ->
                                         requestConnection(

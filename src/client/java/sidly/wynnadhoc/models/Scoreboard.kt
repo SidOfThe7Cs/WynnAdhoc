@@ -4,7 +4,9 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.scoreboard.ScoreboardEntry
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import sidly.wynnadhoc.event.ChatMessageEvent
 import sidly.wynnadhoc.features.prof.get
+import sidly.wynnadhoc.utils.PlayerUtils
 import sidly.wynnadhoc.utils.Regexs
 import java.util.function.ToIntFunction
 
@@ -12,10 +14,12 @@ object Scoreboard {
     // TODO call parse every tick and post event (ScoreboardSectionEvent(header: Header, lines: MutableList<Text>))
 
     private val nameMap =
-        mutableMapOf<String, String>() // TODO also update from self() name and from party join chat messages
+        mutableMapOf<String, String>()
+    private val fullNames = mutableSetOf<String>()
 
     fun getPartyMembers(): MutableList<PartyMember> {
-        val fullNames = TabList.EntryType.PARTY.getData()?.map { it.name }?.toList()
+        fullNames.add(PlayerUtils.self())
+        fullNames.addAll(TabList.EntryType.PARTY.getData()?.map { it.name }?.toSet() ?: setOf())
 
         // all sections are guaranteed to not be empty
         val members = mutableListOf<PartyMember>()
@@ -36,6 +40,16 @@ object Scoreboard {
             }
         }
         return members
+    }
+
+    fun onChat(event: ChatMessageEvent) {
+        var match: MatchResult? = null
+        event.parser.find({ part ->
+            match = Regexs.CHAT_PLAYER_JOIN_PARTY.matchEntire(part.string)
+            part.isColor(Formatting.YELLOW) &&
+                    match != null
+        })
+        match?.get("username")?.let { fullNames.add(it) }
     }
 
     private fun getSections(): MutableList<MutableList<Text>> {

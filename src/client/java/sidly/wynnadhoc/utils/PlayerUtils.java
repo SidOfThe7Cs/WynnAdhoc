@@ -1,5 +1,7 @@
 package sidly.wynnadhoc.utils;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import sidly.wynnadhoc.config.ConfigManager;
 
 import java.util.HashMap;
@@ -16,5 +18,11 @@ public class PlayerUtils {
         if (nicknameMap.containsKey(nick)) return;
         nicknameMap.put(nick, realName);
         ConfigManager.INSTANCE.config.guild.aspectOverlayData.updateDisplay();
+    }
+
+    public static String self() {
+        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        if (networkHandler == null) return "";
+        return networkHandler.getProfile().name();
     }
 }

@@ -39,6 +39,7 @@ import sidly.wynnadhoc.features.raid.TNA;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
 import sidly.wynnadhoc.features.war.WarTimer;
+import sidly.wynnadhoc.models.Scoreboard;
 import sidly.wynnadhoc.models.TabList;
 import sidly.wynnadhoc.server.ChestCrowdsource;
 import sidly.wynnadhoc.server.CrowdsourceMain;
@@ -111,6 +112,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ChatMessageEvent.class, Ping.INSTANCE::onChat);
         Event.register(ChatMessageEvent.class, BombShare.INSTANCE::onChat);
         Event.register(ChatMessageEvent.class, C2CPacketHandler.getInstance()::onChat);
+        Event.register(ChatMessageEvent.class, Scoreboard.INSTANCE::onChat);
 
         Event.register(HudRenderOnTopEvent.class, HudElementManager::onHudRender);
         Event.register(HudRenderEvent.class, ArrowPointer.INSTANCE::onScreenRender);
@@ -175,6 +177,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(CommandRegistrationEvent.class, BombShare.INSTANCE::registerCommands);
         Event.register(CommandRegistrationEvent.class, WhisperEncryptedCommand::register);
         Event.register(CommandRegistrationEvent.class, C2CConnectionManager::register);
+        Event.register(CommandRegistrationEvent.class, Larbonic.INSTANCE::register);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

@@ -15,4 +15,7 @@ object Regexs {
     // scoreboard
     val SCOREBOARD_PARTY_HEADER = Regex("""§e§lParty:§6 \[Lv. (?<partyLvl>\d++)]""")
     val SCOREBOARD_PARTY_MEMBER = Regex("""- \[\|\|(?<health>\d++)\|\|] ${USERNAME_REGEX.pattern} \[(?<lvl>\d++)]""")
+
+    // chat
+    val CHAT_PLAYER_JOIN_PARTY = Regex(""" §e${USERNAME_REGEX.pattern} has joined your party, say hello!""")
 }

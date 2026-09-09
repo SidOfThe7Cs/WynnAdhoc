@@ -30,6 +30,7 @@ import sidly.wynnadhoc.features.c2c.packets.ConnectionResponseC2CPacket;
 import sidly.wynnadhoc.features.c2c.packets.MessageC2CPacket;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 import sidly.wynnadhoc.utils.EncryptionUtils;
+import sidly.wynnadhoc.utils.PlayerUtils;
 import sidly.wynnadhoc.utils.text.ChatParser;
 
 import java.security.PrivateKey;
@@ -216,10 +217,6 @@ public class C2CPacketHandler implements C2CPacketListener {
         return true;
     }
 
-    public String self() {
-        return MinecraftClient.getInstance().getNetworkHandler().getProfile().name();
-    }
-
     @Override
     public void onMessageC2CPacket(MessageC2CPacket packet) {
         String sender = packet.sender();
@@ -243,7 +240,7 @@ public class C2CPacketHandler implements C2CPacketListener {
         C2CConnectionManager.onConnect(packetReceived.sender());
 
         String pub = EncryptionUtils.INSTANCE.publicKeyToBase64(EncryptionUtils.INSTANCE.getPublicKey());
-        ConnectionResponseC2CPacket packet = new ConnectionResponseC2CPacket(self(), pub);
+        ConnectionResponseC2CPacket packet = new ConnectionResponseC2CPacket(PlayerUtils.self(), pub);
         try {
             sendPacket(packet, packetReceived.sender(), false);
         } catch (CommandSyntaxException e) {
