@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.models
 
 import sidly.wynnadhoc.WynnAdhocClient
+import sidly.wynnadhoc.utils.PlayerUtils
 
 object Party {
     fun getPartyMembers(): List<String> {
@@ -27,5 +28,9 @@ object Party {
         val fromScoreboard = Scoreboard.getPartyMembers().map { it.name }.toList()
 
         return if (fromTab.isEmpty()) fromScoreboard else fromTab
+    }
+
+    fun isPartyLeader(user: String = PlayerUtils.self()): Boolean {
+        return user.equals(getPartyMembers()[0], true)
     }
 }

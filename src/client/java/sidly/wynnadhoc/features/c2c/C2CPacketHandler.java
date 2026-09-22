@@ -25,17 +25,18 @@ import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.ConfigManager;
 import sidly.wynnadhoc.event.ChatMessageEvent;
 import sidly.wynnadhoc.features.c2c.command.ListenCommand;
-import sidly.wynnadhoc.features.c2c.packets.ConnectionRequestC2CPacket;
-import sidly.wynnadhoc.features.c2c.packets.ConnectionResponseC2CPacket;
-import sidly.wynnadhoc.features.c2c.packets.MessageC2CPacket;
+import sidly.wynnadhoc.features.c2c.packets.*;
+import sidly.wynnadhoc.features.prof.Larbonic;
+import sidly.wynnadhoc.models.Party;
 import sidly.wynnadhoc.utils.ChatMessageUtils;
 import sidly.wynnadhoc.utils.EncryptionUtils;
-import sidly.wynnadhoc.utils.PlayerUtils;
 import sidly.wynnadhoc.utils.text.ChatParser;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
+
+import static sidly.wynnadhoc.utils.PlayerUtils.self;
 
 public class C2CPacketHandler implements C2CPacketListener {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -48,6 +49,8 @@ public class C2CPacketHandler implements C2CPacketListener {
             .add(MessageC2CPacket.ID, MessageC2CPacket.CODEC)
             .add(ConnectionRequestC2CPacket.ID, ConnectionRequestC2CPacket.CODEC)
             .add(ConnectionResponseC2CPacket.ID, ConnectionResponseC2CPacket.CODEC)
+            .add(LarbonicJoinRequestC2CPacket.ID, LarbonicJoinRequestC2CPacket.CODEC)
+            .add(LarbonicPartyMemberUpdateC2CPacket.ID, LarbonicPartyMemberUpdateC2CPacket.CODEC)
     ).bind(b -> (C2CFriendlyByteBuf) b);
 
     public static final String C2C_PACKET_HEADER = "CSΕNC:";
@@ -240,7 +243,7 @@ public class C2CPacketHandler implements C2CPacketListener {
         C2CConnectionManager.onConnect(packetReceived.sender());
 
         String pub = EncryptionUtils.INSTANCE.publicKeyToBase64(EncryptionUtils.INSTANCE.getPublicKey());
-        ConnectionResponseC2CPacket packet = new ConnectionResponseC2CPacket(PlayerUtils.self(), pub);
+        ConnectionResponseC2CPacket packet = new ConnectionResponseC2CPacket(self(), pub);
         try {
             sendPacket(packet, packetReceived.sender(), false);
         } catch (CommandSyntaxException e) {
@@ -253,6 +256,22 @@ public class C2CPacketHandler implements C2CPacketListener {
         EncryptionUtils.INSTANCE.setPublicKey(packet.sender(), packet.publicKey());
         ChatMessageUtils.sendChatMessage("Formed Secure Connection with: " + packet.sender());
         C2CConnectionManager.onConnect(packet.sender());
+    }
+
+    @Override
+    public void onLarbonicJoinC2CPacket(LarbonicJoinRequestC2CPacket packet) {
+        String sender = packet.sender() == null ? "" : packet.sender();
+        if (Party.INSTANCE.isPartyLeader(self())) {
+            Larbonic.INSTANCE.addMember(sender);
+        } else if (Party.INSTANCE.isPartyLeader(sender)) {
+            LarbonicJoinRequestC2CPacket returnPacket = new LarbonicJoinRequestC2CPacket(self());
+            C2CConnectionManager.queuePacket(returnPacket, sender);
+        }
+    }
+
+    @Override
+    public void onLarbonicUpdateC2CPacket(LarbonicPartyMemberUpdateC2CPacket larbonicPartyMemberUpdateC2CPacket) {
+        Larbonic.INSTANCE.setPartyMembers(larbonicPartyMemberUpdateC2CPacket.currentMembers());
     }
 
     public static @Nullable C2CFriendlyByteBuf wrapByteBuf(ByteBuf buf, @Nullable String sender) {
