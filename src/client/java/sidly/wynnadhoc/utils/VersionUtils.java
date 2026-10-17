@@ -83,6 +83,11 @@ public class VersionUtils {
                         mythic box notifier (with los)
                         """
         );
+        changelog("0.0.6",
+                """
+                        Compat with wynntils 4.2.15
+                        """
+        );
     }
 
     private static void changelog(String v, String changes) {
