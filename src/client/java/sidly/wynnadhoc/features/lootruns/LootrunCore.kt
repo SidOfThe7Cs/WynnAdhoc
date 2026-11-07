@@ -166,7 +166,7 @@ object LootrunCore {
                                             var closestTask: TaskLocation? = null
                                             var closestDist = Double.MAX_VALUE
 
-                                            val lootrunModelAcc = Models.Lootrun as WynntillsLootrunModelAccessor
+                                            val lootrunModelAcc = Models.LootrunBeacon as WynntillsLootrunModelAccessor
                                             val taskLocations = lootrunModelAcc.getPossibleTaskLocations()
                                             taskLocations.forEach { taskLocation ->
                                                 val squaredDistanceTo =
