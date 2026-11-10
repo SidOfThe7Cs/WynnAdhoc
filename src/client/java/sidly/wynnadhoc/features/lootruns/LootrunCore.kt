@@ -183,7 +183,7 @@ object LootrunCore {
 
     var seenObscured = TimeLimitedSet<Int>(1, TimeUnit.MINUTES)
     fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
-        if (!seenObscured.add(event.id)) return
+        //if (!seenObscured.add(event.id)) return
         MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
             val entityPos = event.entity.entityPos
             val direction = entityPos.subtract(playerPos)
