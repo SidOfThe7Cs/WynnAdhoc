@@ -12,9 +12,9 @@ import java.util.List;
 
 public class ChestConfig {
     @Expose
-    @ConfigOption(name = "Highlight Chests", desc = "Draws outline of known nearby chests")
+    @ConfigOption(name = "Auto Close", desc = "Automatically takes favorited items and then closes loot chests")
     @ConfigEditorBoolean
-    public boolean forceEsp = false;
+    public boolean autoCloseChests = false;
 
     @Expose
     @ConfigOption(name = "Toggle Chest Highlight", desc = "Press this key to toggle chest highlight")
@@ -22,9 +22,9 @@ public class ChestConfig {
     public int highlightToggleKeybind = GLFW.GLFW_KEY_UNKNOWN;
 
     @Expose
-    @ConfigOption(name = "Auto Close", desc = "Automatically closes loot chests if there are no favorited items (or mythics)")
+    @ConfigOption(name = "Highlight Chests", desc = "Draws outline of known nearby chests")
     @ConfigEditorBoolean
-    public boolean autoCloseChests = false;
+    public boolean forceEsp = false;
 
     @Expose
     @ConfigOption(name = "Delay Ticks", desc = "Delay in ticks to wait after the first item is detected to close")
@@ -79,7 +79,7 @@ public class ChestConfig {
     @Expose
     @ConfigOption(name = "Display Data", desc = "quick toggle for the below selector")
     @ConfigEditorBoolean
-    public boolean displayLevel = false;
+    public boolean displayLevel = true;
 
     @Expose
     @ConfigOption(name = "Display Data", desc = "what data should be displayed on the chest (do note order matters)")

@@ -18,16 +18,18 @@ public class SimpleFeatureToggles {
     }
 
     @Expose
+    @ConfigOption(name = "Disable Darkness", desc = "Disables all darkness effects")
+    @ConfigEditorBoolean
+    public boolean disableDarkness = true;
+
+    @Expose
     @ConfigOption(name = "Hide Ing Pouch Tooltip", desc = "Hides the tooltip of the ingredient pouch")
     @ConfigEditorBoolean
     public boolean hideIngredientPouchTooltip = false;
 
-    /*
-        @Expose
-        @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")
-        @ConfigEditorBoolean
-
-     */
+    @Expose
+    @ConfigOption(name = "Custom Prof Nodes", desc = "Replace prof nodes")
+    @ConfigEditorBoolean
     public boolean customProfNodes = false;
 
     @Expose

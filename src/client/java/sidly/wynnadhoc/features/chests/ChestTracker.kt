@@ -103,7 +103,7 @@ object ChestTracker {
     fun onChestItemsLoaded(event: ChestItemsLoadedEvent) {
         ConfigManager.INSTANCE.chestsChanged()
         logChestContents(event)
-        autoCloseChest(event)
+        //autoCloseChest(event)
     }
 
     fun highlightFavorites(event: ScreenRenderEvent) {

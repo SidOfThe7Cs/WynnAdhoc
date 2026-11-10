@@ -42,6 +42,7 @@ public class ChestItemsLoadedEvent extends Event<ChestItemsLoadedEvent> {
         return containerScreen.getTitle().getString().equals("Challenge Rewards");
     }
 
+
     private static boolean itemsLoaded = false;
     private static int openTicks;
 

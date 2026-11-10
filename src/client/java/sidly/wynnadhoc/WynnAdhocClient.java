@@ -22,6 +22,7 @@ import sidly.wynnadhoc.config.saves.BasicSavable;
 import sidly.wynnadhoc.event.*;
 import sidly.wynnadhoc.event.entity.*;
 import sidly.wynnadhoc.features.*;
+import sidly.wynnadhoc.features.chests.AutoLootChests;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.guild.GuildLogs;
 import sidly.wynnadhoc.features.item_tooltip.ItemTooltip;
@@ -30,7 +31,9 @@ import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
+import sidly.wynnadhoc.features.outervoid.OuterVoidItemPathfinder;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
+import sidly.wynnadhoc.features.raid.NOL;
 import sidly.wynnadhoc.features.raid.TNA;
 import sidly.wynnadhoc.features.war.DB;
 import sidly.wynnadhoc.features.war.WarCore;
@@ -41,6 +44,7 @@ import sidly.wynnadhoc.utils.Debug;
 import sidly.wynnadhoc.utils.DelayedRun;
 import sidly.wynnadhoc.utils.TickScheduler;
 import sidly.wynnadhoc.utils.VersionUtils;
+import sidly.wynnadhoc.utils.auto.MouseLerper;
 import sidly.wynnadhoc.utils.render.ArrowPointer;
 import sidly.wynnadhoc.utils.render.RenderUtils;
 
@@ -83,9 +87,11 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, ForEachEntityEvent::onClientTick);
         Event.register(ClientTickEvent.class, LootrunCore.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, ScoreboardInfo::parseScoreboard);
+        Event.register(ClientTickEvent.class, OuterVoidItemPathfinder.INSTANCE::onClientTick);
         Event.register(ClientTickEvent.class, WarTimer::onClientTick);
         Event.register(ClientTickEvent.class, HealthRegenTick::onTick);
         Event.register(ClientTickEvent.class, TickScheduler::tickAll);
+        Event.register(ClientTickEvent.class, MouseLerper::tick);
         Event.register(ClientTickEvent.class, SpellMacros::onTick);
         Event.register(ClientTickEvent.class, PlayerLoadedEvent::onTick);
         Event.register(ClientTickEvent.class, BasicSavable::onTick);
@@ -94,6 +100,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
         Event.register(ClientTickEvent.class, ShamanTotem.INSTANCE::onTick);
 
+        Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
 
         Event.register(ChatMessageEvent.class, WarTimer::onChatMessage);
@@ -116,8 +123,11 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
 
         Event.register(ChestItemsLoadedEvent.class, ChestTracker.INSTANCE::onChestItemsLoaded);
+        Event.register(ChestItemsLoadedEvent.class, AutoLootChests::onChestItemsLoaded);
 
+        Event.register(WorldRenderEvent.class, OuterVoidItemPathfinder.INSTANCE::draw);
         Event.register(WorldRenderEvent.class, ChestTracker.INSTANCE::onWorldRender);
+        Event.register(WorldRenderEvent.class, NOL.INSTANCE::onWorldRender);
         Event.register(WorldRenderEvent.class, ProfNodeCore::onRender);
         Event.register(WorldRenderEvent.class, ForEachEntityRenderEvent::onRender);
         Event.register(WorldRenderEvent.class, Ping.INSTANCE::onWorldRender);

@@ -24,12 +24,20 @@ public class Config extends io.github.notenoughupdates.moulconfig.Config {
     public WarConfig war = new WarConfig();
 
     @Expose
+    @Category(name = "Outer Void Settings", desc = "outer void settings")
+    public OuterVoidConfig outerVoid = new OuterVoidConfig();
+
+    @Expose
     @Category(name = "Chest Settings", desc = "chest settings")
     public ChestConfig chest = new ChestConfig();
 
     @Expose
     @Category(name = "Lootrun Settings", desc = "lootrun settings")
     public LootrunConfig lootrun = new LootrunConfig();
+
+    @Expose
+    @Category(name = "Raid Settings", desc = "raid settings")
+    public RaidConfig raid = new RaidConfig();
 
     @Expose
     @Category(name = "Ping Settings", desc = "ping settings")
