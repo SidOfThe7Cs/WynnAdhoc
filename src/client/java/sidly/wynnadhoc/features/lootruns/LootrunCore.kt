@@ -200,13 +200,10 @@ object LootrunCore {
 
                 val lootrunModelAcc =
                     Models.LootrunBeacon as WynntillsLootrunModelAccessor
-                val taskLocations = lootrunModelAcc.getPossibleTaskLocations()
-                val usedLocations =
-                    lootrunModelAcc.getTaskLocations()?.values?.flatten()
-
-                print("possible task locations: $taskLocations")
-                print("used task locations: $usedLocations")
-                taskLocations.forEach { taskLocation ->
+                val taskLocations = lootrunModelAcc.getTaskLocations()?.values?.flatten()
+                val usedLocations = lootrunModelAcc.getPossibleTaskLocations()
+                
+                taskLocations?.forEach { taskLocation ->
                     if (usedLocations?.contains(taskLocation) != true) {
                         val squaredDistanceTo =
                             taskLocation.location.toVec3().squaredDistanceTo(targetPos)
