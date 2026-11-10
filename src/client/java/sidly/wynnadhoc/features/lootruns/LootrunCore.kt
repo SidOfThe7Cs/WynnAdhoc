@@ -123,13 +123,11 @@ object LootrunCore {
                         } else if (siblings.isEmpty()) return
 
                         // get the color
+                        var baseColor: BeaconColor? = null
                         val markerSibling = siblings[0]
-                        loop@ for (nested in markerSibling.siblings) {
+                        for (nested in markerSibling.siblings) {
                             if (nested.style.getColor() != null) {
-                                val color = nested.style.getColor()!!.rgb
-
-                                val baseColor: BeaconColor
-                                when (color) {
+                                when (val color = nested.style.getColor()!!.rgb) {
                                     0x5C5CE6 -> baseColor = BeaconColor.Blue
                                     0xFF00FF -> baseColor = BeaconColor.Purple
                                     0xFFFF33 -> baseColor = BeaconColor.Yellow
@@ -154,15 +152,12 @@ object LootrunCore {
                                 if (!currentBeaconOptionsFromWaypoints.containsKey(baseColor)) {
                                     currentBeaconOptionsFromWaypoints[baseColor] = distance
                                 }
-
-                                if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured) {
-                                    addObscuredBeacon(event, distance)
-                                }
                             }
                         }
 
                         // get beacon type
                         // Get the nested components within the marker
+                        var taskType: LootrunTaskType? = null
                         val markerComponents = markerSibling.siblings
                         if (markerComponents.size > 1) {
                             // The symbol is in the second nested component (index 1)
@@ -173,9 +168,12 @@ object LootrunCore {
                                 symbolText.codePoints()
                                     .skip((symbolText.codePointCount(0, symbolText.length) - 1).toLong())
                                     .findFirst().orElse(-1)
-                            val unicodeString = "U+" + String.format("%04X", lastSymbol)
-                            println("beacon at dist: $distance with code: $unicodeString with int: $lastSymbol")
-                            // unicode string contains the beacon type (like slay / target or atleast it did)
+                            //val unicodeString = "U+" + String.format("%04X", lastSymbol)
+                            taskType = getTaskType(lastSymbol)
+                        }
+
+                        if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured) {
+                            addObscuredBeacon(event, taskType, distance)
                         }
                     }
                 }
@@ -185,6 +183,11 @@ object LootrunCore {
 
     fun getTaskType(unicode: Int): LootrunTaskType {
         return when (unicode) {
+            57376 -> LootrunTaskType.SLAY //U+E020
+            57377 -> LootrunTaskType.TARGET //U+E021
+            57378 -> LootrunTaskType.DEFEND //U+E022
+            57379 -> LootrunTaskType.LOOT //U+E023
+            57380 -> LootrunTaskType.DESTROY //U+E024
 
             else -> {
                 LootrunTaskType.UNKNOWN
@@ -202,7 +205,7 @@ object LootrunCore {
 
     // added when valid location is found
     var foundObscured = TimeLimitedMap<Int, Long>(1, TimeUnit.MINUTES)
-    fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
+    fun addObscuredBeacon(event: ForEachEntityEvent, taskType: LootrunTaskType?, distance: Int) {
         if (foundObscured.get(event.id) != null) return
         val now = System.currentTimeMillis()
         val lastSeen = lastSeenObscured.get(event.id)
@@ -224,17 +227,18 @@ object LootrunCore {
                 val taskLocations = lootrunModelAcc.getTaskLocations()?.values?.flatten()
                 val usedLocations = lootrunModelAcc.getPossibleTaskLocations()
 
-                // TODO should also check task type
-                taskLocations?.forEach { taskLocation ->
-                    if (usedLocations?.contains(taskLocation) != true) {
-                        val squaredDistanceTo =
-                            taskLocation.location.toVec3().squaredDistanceTo(targetPos)
-                        if (squaredDistanceTo < closestDist) {
-                            closestDist = squaredDistanceTo
-                            closestTask = taskLocation
+                taskLocations
+                    ?.filter { loc -> loc.taskType() == taskType }
+                    ?.forEach { taskLocation ->
+                        if (usedLocations?.contains(taskLocation) != true) {
+                            val squaredDistanceTo =
+                                taskLocation.location.toVec3().squaredDistanceTo(targetPos)
+                            if (squaredDistanceTo < closestDist) {
+                                closestDist = squaredDistanceTo
+                                closestTask = taskLocation
+                            }
                         }
                     }
-                }
 
                 closestTask?.let { loc ->
                     val beaconMarkerAcc =
