@@ -31,7 +31,7 @@ import sidly.wynnadhoc.mixin.client.accessors.WynntillsLootrunModelAccessor
 import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
-import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
+import sidly.wynnadhoc.utils.datatypes.TimeLimitedMap
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -181,9 +181,12 @@ object LootrunCore {
         }
     }
 
-    var seenObscured = TimeLimitedSet<Int>(1, TimeUnit.MINUTES)
+    var lastSeenObscured = TimeLimitedMap<Int, Long>(1, TimeUnit.MINUTES)
     fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
-        if (!seenObscured.add(event.id)) return
+        val now = System.currentTimeMillis()
+        val lastSeen = lastSeenObscured.get(event.id)
+        if (lastSeen != null && now - lastSeen < 1000) return
+        lastSeenObscured.put(event.id, now)
         MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
             val entityPos = event.entity.entityPos
             val direction = entityPos.subtract(playerPos)
