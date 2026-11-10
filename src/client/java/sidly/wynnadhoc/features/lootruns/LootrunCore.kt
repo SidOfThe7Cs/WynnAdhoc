@@ -181,8 +181,13 @@ object LootrunCore {
         }
     }
 
+    // added every check to prevent failures from nuking fps
     var lastSeenObscured = TimeLimitedMap<Int, Long>(1, TimeUnit.MINUTES)
+
+    // added when valid location is found
+    var foundObscured = TimeLimitedMap<Int, Long>(1, TimeUnit.MINUTES)
     fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
+        if (foundObscured.get(event.id) != null) return
         val now = System.currentTimeMillis()
         val lastSeen = lastSeenObscured.get(event.id)
         if (lastSeen != null && now - lastSeen < 1000) return
@@ -202,7 +207,8 @@ object LootrunCore {
                     Models.LootrunBeacon as WynntillsLootrunModelAccessor
                 val taskLocations = lootrunModelAcc.getTaskLocations()?.values?.flatten()
                 val usedLocations = lootrunModelAcc.getPossibleTaskLocations()
-                
+
+                // TODO should also check task type
                 taskLocations?.forEach { taskLocation ->
                     if (usedLocations?.contains(taskLocation) != true) {
                         val squaredDistanceTo =
@@ -228,6 +234,7 @@ object LootrunCore {
                         "${loc.name} - Obscured"
                     )
                     taskMarkers.add(newMarker)
+                    foundObscured.put(event.id, now)
                 }
             }
         }
