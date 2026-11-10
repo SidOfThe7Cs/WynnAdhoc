@@ -184,7 +184,8 @@ object LootrunCore {
     var lastSeenObscured = TimeLimitedMap<Int, Long>(1, TimeUnit.MINUTES)
     fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
         val now = System.currentTimeMillis()
-        if (now - lastSeenObscured.get(event.id) < 1000) return
+        val lastSeen = lastSeenObscured.get(event.id)
+        if (lastSeen != null && now - lastSeen < 1000) return
         lastSeenObscured.put(event.id, now)
         MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
             val entityPos = event.entity.entityPos
