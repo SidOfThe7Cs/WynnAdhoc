@@ -181,6 +181,11 @@ object LootrunCore {
         }
     }
 
+    fun clearObscuredData() {
+        lastSeenObscured.clear()
+        foundObscured.clear()
+    }
+
     // added every check to prevent failures from nuking fps
     var lastSeenObscured = TimeLimitedMap<Int, Long>(1, TimeUnit.MINUTES)
 

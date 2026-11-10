@@ -12,6 +12,7 @@
     "HadesMixin",
     "HudMixin",
     "KeyboardMixin",
+    "LootrunBeaconMarkerMixin",
     "MouseMixin",
     "NicknameMixin",
     "ScreenMixin",
