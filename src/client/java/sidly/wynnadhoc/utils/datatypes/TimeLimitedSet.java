@@ -13,6 +13,18 @@ public class TimeLimitedSet<T> extends TimeLimitedMap<T, Boolean> {
         cache.put(element, Boolean.TRUE);
     }
 
+
+    /**
+     * @return true if the set did not already contain the element
+     */
+    public boolean add(T element) {
+        boolean contains = contains(element);
+        if (!contains) {
+            cache.put(element, Boolean.TRUE);
+            return true;
+        } else return false;
+    }
+
     public boolean contains(T element) {
         return cache.getIfPresent(element) != null;
     }

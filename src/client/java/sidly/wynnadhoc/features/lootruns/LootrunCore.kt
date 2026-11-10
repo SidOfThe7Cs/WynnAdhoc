@@ -31,10 +31,12 @@ import sidly.wynnadhoc.mixin.client.accessors.WynntillsLootrunModelAccessor
 import sidly.wynnadhoc.models.Character
 import sidly.wynnadhoc.utils.ChatMessageUtils
 import sidly.wynnadhoc.utils.Debug
+import sidly.wynnadhoc.utils.datatypes.TimeLimitedSet
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 object LootrunCore {
@@ -93,7 +95,6 @@ object LootrunCore {
     var sacrificePattern: Pattern = Pattern.compile("\\[\\+(\\d+) Reward Sacrifice]")
     var endRerollPattern: Pattern = Pattern.compile("\\[\\+(\\d+) End Reward Reroll]")
 
-    var lastObscuredBeaconInjection: Long = 0
     fun checkIfBeacon(event: ForEachEntityEvent) {
         // we can also add type detection by checking the last character in the display name
         if (event.entity is TextDisplayEntity) {
@@ -153,55 +154,8 @@ object LootrunCore {
                                     currentBeaconOptionsFromWaypoints[baseColor] = distance
                                 }
 
-                                if (event.isNew) {
-                                    val now = System.currentTimeMillis()
-                                    if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured) {
-                                        MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
-                                            val entityPos = event.entity.entityPos
-                                            val direction = entityPos.subtract(playerPos)
-                                            val len = direction.length()
-                                            if (len != 0.0) {
-                                                val normalised = direction.multiply(1.0 / len)
-                                                val targetPos = entityPos.add(normalised.multiply(distance.toDouble()))
-
-                                                var closestTask: TaskLocation? = null
-                                                var closestDist = Double.MAX_VALUE
-
-                                                val lootrunModelAcc =
-                                                    Models.LootrunBeacon as WynntillsLootrunModelAccessor
-                                                val taskLocations = lootrunModelAcc.getPossibleTaskLocations()
-                                                val usedLocations =
-                                                    lootrunModelAcc.getTaskLocations()?.values?.flatten()
-                                                taskLocations.forEach { taskLocation ->
-                                                    if (usedLocations?.contains(taskLocation) != true) {
-                                                        val squaredDistanceTo =
-                                                            taskLocation.location.toVec3().squaredDistanceTo(targetPos)
-                                                        if (squaredDistanceTo < closestDist) {
-                                                            closestDist = squaredDistanceTo
-                                                            closestTask = taskLocation
-                                                        }
-                                                    }
-                                                }
-
-                                                closestTask?.let { loc ->
-                                                    val beaconMarkerAcc =
-                                                        lootrunModelAcc.lootruN_BEACON_COMPASS_PROVIDER as LootrunBeaconMarkerAccessor
-                                                    val taskMarkers = beaconMarkerAcc.getTaskMarkers()
-                                                    val newMarker = MarkerInfo(
-                                                        "Obscured Beacon ${loc.name}",
-                                                        StaticLocationSupplier(loc.location),
-                                                        loc.taskType.texture,
-                                                        CommonColors.BLACK,
-                                                        CommonColors.WHITE,
-                                                        CommonColors.WHITE,
-                                                        "${loc.name} - Obscured"
-                                                    )
-                                                    taskMarkers.add(newMarker)
-                                                    lastObscuredBeaconInjection = now
-                                                }
-                                            }
-                                        }
-                                    }
+                                if (config().obscuredBeaconLocations && baseColor == BeaconColor.Obscured) {
+                                    addObscuredBeacon(event, distance)
                                 }
                             }
                         }
@@ -222,6 +176,55 @@ object LootrunCore {
                             // unicode string contains the beacon type (like slay / target or atleast it did)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    var seenObscured = TimeLimitedSet<Int>(1, TimeUnit.MINUTES)
+    fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
+        if (!seenObscured.add(event.id)) return
+        MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
+            val entityPos = event.entity.entityPos
+            val direction = entityPos.subtract(playerPos)
+            val len = direction.length()
+            if (len != 0.0) {
+                val normalised = direction.multiply(1.0 / len)
+                val targetPos = entityPos.add(normalised.multiply(distance.toDouble()))
+
+                var closestTask: TaskLocation? = null
+                var closestDist = Double.MAX_VALUE
+
+                val lootrunModelAcc =
+                    Models.LootrunBeacon as WynntillsLootrunModelAccessor
+                val taskLocations = lootrunModelAcc.getPossibleTaskLocations()
+                val usedLocations =
+                    lootrunModelAcc.getTaskLocations()?.values?.flatten()
+                taskLocations.forEach { taskLocation ->
+                    if (usedLocations?.contains(taskLocation) != true) {
+                        val squaredDistanceTo =
+                            taskLocation.location.toVec3().squaredDistanceTo(targetPos)
+                        if (squaredDistanceTo < closestDist) {
+                            closestDist = squaredDistanceTo
+                            closestTask = taskLocation
+                        }
+                    }
+                }
+
+                closestTask?.let { loc ->
+                    val beaconMarkerAcc =
+                        lootrunModelAcc.lootruN_BEACON_COMPASS_PROVIDER as LootrunBeaconMarkerAccessor
+                    val taskMarkers = beaconMarkerAcc.getTaskMarkers()
+                    val newMarker = MarkerInfo(
+                        "Obscured Beacon ${loc.name}",
+                        StaticLocationSupplier(loc.location),
+                        loc.taskType.texture,
+                        CommonColors.BLACK,
+                        CommonColors.WHITE,
+                        CommonColors.WHITE,
+                        "${loc.name} - Obscured"
+                    )
+                    taskMarkers.add(newMarker)
                 }
             }
         }
