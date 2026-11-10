@@ -1,6 +1,7 @@
 package sidly.wynnadhoc.features.lootruns
 
 import com.wynntils.core.components.Models
+import com.wynntils.models.lootrun.type.LootrunTaskType
 import com.wynntils.models.lootrun.type.TaskLocation
 import com.wynntils.models.marker.type.MarkerInfo
 import com.wynntils.models.marker.type.StaticLocationSupplier
@@ -173,10 +174,20 @@ object LootrunCore {
                                     .skip((symbolText.codePointCount(0, symbolText.length) - 1).toLong())
                                     .findFirst().orElse(-1)
                             val unicodeString = "U+" + String.format("%04X", lastSymbol)
+                            println("beacon at dist: $distance with code: $unicodeString with int: $lastSymbol")
                             // unicode string contains the beacon type (like slay / target or atleast it did)
                         }
                     }
                 }
+            }
+        }
+    }
+
+    fun getTaskType(unicode: Int): LootrunTaskType {
+        return when (unicode) {
+
+            else -> {
+                LootrunTaskType.UNKNOWN
             }
         }
     }
