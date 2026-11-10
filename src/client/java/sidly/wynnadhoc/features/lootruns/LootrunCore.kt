@@ -184,6 +184,7 @@ object LootrunCore {
     var seenObscured = TimeLimitedSet<Int>(1, TimeUnit.MINUTES)
     fun addObscuredBeacon(event: ForEachEntityEvent, distance: Int) {
         if (!seenObscured.add(event.id)) return
+        print("checking obscured beacon")
         MinecraftClient.getInstance().player?.entityPos?.let { playerPos ->
             val entityPos = event.entity.entityPos
             val direction = entityPos.subtract(playerPos)
@@ -211,6 +212,7 @@ object LootrunCore {
                     }
                 }
 
+                print("found closest task: $closestTask")
                 closestTask?.let { loc ->
                     val beaconMarkerAcc =
                         lootrunModelAcc.lootruN_BEACON_COMPASS_PROVIDER as LootrunBeaconMarkerAccessor
