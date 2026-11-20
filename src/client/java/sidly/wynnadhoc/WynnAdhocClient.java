@@ -99,6 +99,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ClientTickEvent.class, DelayedRun.INSTANCE::onTick);
         Event.register(ClientTickEvent.class, BaseForEachEntityEvent::onTick);
         Event.register(ClientTickEvent.class, ShamanTotem.INSTANCE::onTick);
+        Event.register(ClientTickEvent.class, SpellScripts.INSTANCE::onTick);
 
         Event.register(InitEvent.class, OuterVoidItemPathfinder.INSTANCE::loadIslandNodes);
         Event.register(InitEvent.class, OuterVoidItemDatabase::init);
@@ -174,6 +175,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(CommandRegistrationEvent.class, ReParty.INSTANCE::registerCommands);
         Event.register(CommandRegistrationEvent.class, ConfigManager::registerCommands);
         Event.register(CommandRegistrationEvent.class, BombShare.INSTANCE::registerCommands);
+        Event.register(CommandRegistrationEvent.class, SpellScripts.INSTANCE::registerCommands);
 
         NeoEvent.register(SpellEvent.Partial.class, SpellMacros::onPartial);
         NeoEvent.register(SpellEvent.Cast.class, SpellMacros::onCastEvent);

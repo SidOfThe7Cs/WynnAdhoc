@@ -36,6 +36,7 @@
     "Invoker.GameRendererInvoker",
     "Invoker.GetTransformationInvoker",
     "Invoker.IsFavoritedInvoker",
+    "Invoker.WynntillsSpellCastInvoker",
     "loggingdisabler.ActionBarMixin",
     "loggingdisabler.ChatHandlerMixin",
     "loggingdisabler.ChatHudMixin",
