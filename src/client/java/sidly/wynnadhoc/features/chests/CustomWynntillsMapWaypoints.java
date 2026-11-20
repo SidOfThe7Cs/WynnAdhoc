@@ -19,7 +19,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import sidly.wynnadhoc.utils.render.ButtonContainer;
+import sidly.wynnadhoc.utils.gui.ButtonContainer;
+import sidly.wynnadhoc.utils.gui.CustomButton;
+import sidly.wynnadhoc.utils.gui.ToggleButton;
 import sidly.wynnadhoc.utils.render.TextureInfo;
 import sidly.wynnadhoc.wapi.item.WynnItem;
 
@@ -137,7 +139,7 @@ public class CustomWynntillsMapWaypoints {
             // TODO map by lvl (could also add matched alias to the render text)
             Map<Integer, Set<WynnItem>> items = new HashMap<>();
             for (int i = 1; i <= 120; i += 5) {
-                ButtonContainer.ToggleButton button = buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
+                ToggleButton button = buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
                         (b) -> {
                         }, 20);
                 if (selectedLvls.contains(i)) button.setToggled(true);
@@ -223,7 +225,7 @@ public class CustomWynntillsMapWaypoints {
 
     public static void selectChestLvlRange(ButtonContainer container) {
         selectedLvls = new ArrayList<>();
-        for (ButtonContainer.ToggleButton button : container.getSelected()) {
+        for (CustomButton button : container.getSelected()) {
             Matcher matcher = BUTTON_LVL_REGEX.matcher(button.getText().getString());
             if (matcher.matches()) {
                 selectedLvls.add(Integer.parseInt(matcher.group(1)));

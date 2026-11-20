@@ -18,7 +18,8 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
-import sidly.wynnadhoc.utils.render.ButtonContainer
+import sidly.wynnadhoc.utils.gui.ButtonContainer
+import sidly.wynnadhoc.utils.gui.CustomButton
 import sidly.wynnadhoc.utils.render.TextureInfo
 import sidly.wynnadhoc.wapi.ItemDatabase
 import sidly.wynnadhoc.wapi.item.WynnItem
@@ -60,7 +61,7 @@ object IngredientDropWaypoints {
 
     private val itemMap = mutableMapOf<String, WynnItem>()
     private val currentWaypoints = mutableSetOf<MobPoi>()
-    private var lastSelected: List<ButtonContainer.ToggleButton> = mutableListOf()
+    private var lastSelected: List<CustomButton> = mutableListOf()
 
     private fun addWaypoint(name: String, pos: BlockPos) {
         val existing = currentWaypoints.find { it.location.asLocation().toBlockPos() == pos }
