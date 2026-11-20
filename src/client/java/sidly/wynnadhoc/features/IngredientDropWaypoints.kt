@@ -1,8 +1,5 @@
 package sidly.wynnadhoc.features
 
-import com.wynntils.core.consumers.screens.WynntilsScreen
-import com.wynntils.screens.base.widgets.TextInputBoxWidget
-import com.wynntils.screens.maps.MainMapScreen
 import com.wynntils.services.map.pois.IconPoi
 import com.wynntils.services.map.pois.Poi
 import com.wynntils.services.map.type.DisplayPriority
@@ -10,17 +7,14 @@ import com.wynntils.utils.colors.CommonColors
 import com.wynntils.utils.colors.CustomColor
 import com.wynntils.utils.mc.type.PoiLocation
 import com.wynntils.utils.render.Texture
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.Click
-import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
-import sidly.wynnadhoc.utils.gui.ButtonContainer
+import sidly.wynnadhoc.utils.gui.ButtonContainerScreen
 import sidly.wynnadhoc.utils.gui.CustomButton
-import sidly.wynnadhoc.utils.render.TextureInfo
 import sidly.wynnadhoc.wapi.ItemDatabase
 import sidly.wynnadhoc.wapi.item.WynnItem
 
@@ -74,13 +68,8 @@ object IngredientDropWaypoints {
         return currentWaypoints
     }
 
-    class SelectorScreen(private val oldMapScreen: MainMapScreen) :
-        WynntilsScreen(Text.literal("Ingredient Mob Search Screen")) {
-        private var searchInput: TextInputBoxWidget? = null
-        private val textureInfo = TextureInfo(Texture.WAYPOINT_MANAGER_BACKGROUND, 10, 26, 16, 9)
-        private val buttonContainer = ButtonContainer(textureInfo, 2, false)
-
-        override fun close() {
+    class SelectorScreen(oldScreen: Screen) : ButtonContainerScreen(oldScreen) {
+        override fun preClose() {
             currentWaypoints.clear()
             val selected = buttonContainer.selected
             lastSelected = selected
@@ -98,36 +87,9 @@ object IngredientDropWaypoints {
                     }
                 }
             }
-
-            MinecraftClient.getInstance().setScreen(oldMapScreen)
         }
 
-        public override fun doInit() {
-            addDrawableChild(
-                ButtonWidget.Builder(
-                    Text.literal("X").setStyle(Style.EMPTY.withColor(Formatting.RED))
-                ) { _: ButtonWidget -> close() }
-                    .position(
-                        (this.translationX + Texture.WAYPOINT_MANAGER_BACKGROUND.width() - 20).toInt(),
-                        (this.translationY - 22).toInt()
-                    )
-                    .size(20, 20)
-                    .build()
-            )
-
-            searchInput = TextInputBoxWidget(
-                (this.translationX + 2).toInt(),
-                (this.translationY - 22).toInt(),
-                Texture.WAYPOINT_MANAGER_BACKGROUND.width() / 2,
-                20,
-                { filterString: String? -> buttonContainer.setFilterString(filterString) },
-                this,
-                searchInput
-            )
-
-            addDrawableChild<TextInputBoxWidget?>(searchInput)
-            focusedTextInput = searchInput
-
+        override fun afterInit() {
             addDrawableChild(
                 ButtonWidget.Builder(
                     Text.literal("Search Api").setStyle(Style.EMPTY.withColor(Formatting.GREEN))
@@ -140,6 +102,7 @@ object IngredientDropWaypoints {
                     .build()
             )
 
+            val textureInfo = super.buttonContainer.backgroundTexture
             val hideAllWidth = textureInfo.drawableWidth / 3
             addDrawableChild(
                 ButtonWidget.Builder(
@@ -178,31 +141,6 @@ object IngredientDropWaypoints {
                 }
             }
         }
-
-        override fun renderBackground(guiGraphics: DrawContext?, mouseX: Int, mouseY: Int, partialTick: Float) {
-            super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
-            buttonContainer.renderBackground(guiGraphics, this)
-        }
-
-        override fun mouseScrolled(mouseX: Double, mouseY: Double, deltaX: Double, deltaY: Double): Boolean {
-            return buttonContainer.onMouseScrolled(mouseX, mouseY, deltaX, deltaY)
-        }
-
-        override fun doRender(guiGraphics: DrawContext?, mouseX: Int, mouseY: Int, partialTick: Float) {
-            super.doRender(guiGraphics, mouseX, mouseY, partialTick)
-            buttonContainer.render(guiGraphics, mouseX, mouseY, partialTick, this)
-        }
-
-        override fun doMouseClicked(event: Click?, isDoubleClick: Boolean): Boolean {
-            super.doMouseClicked(event, isDoubleClick)
-            return buttonContainer.onMouseClicked(event, isDoubleClick)
-        }
-
-        private val translationX: Float
-            get() = (this.width - Texture.WAYPOINT_MANAGER_BACKGROUND.width()) / 2f
-
-        private val translationY: Float
-            get() = (this.height - Texture.WAYPOINT_MANAGER_BACKGROUND.height()) / 2f
     }
 
 }

@@ -19,10 +19,10 @@ public class ButtonContainer {
 
     private final ConcurrentLinkedQueue<CustomButton> buttons = new ConcurrentLinkedQueue<>();
 
-    final TextureInfo backgroundTexture;
-    final int spacing;
-    final boolean filterBySearchBarText;
-    String filterString = "";
+    public final TextureInfo backgroundTexture;
+    public final int spacing;
+    public final boolean filterBySearchBarText;
+    public String filterString = "";
 
     private int scrollAmount = 0;
     private int buttonHeightSum = 0;
@@ -50,6 +50,12 @@ public class ButtonContainer {
         buttons.add(button);
     }
 
+    public CustomButton getLastButton() {
+        return buttons.stream()
+                .reduce((first, second) -> second)
+                .orElse(null);
+    }
+
     public void render(DrawContext context, int mouseX, int mouseY, float partialTick, Screen parent) {
         if (buttons.isEmpty()) return;
         backgroundTexture.enableScissor(context, parent);
@@ -57,6 +63,9 @@ public class ButtonContainer {
         int yOffset = spacing + scrollAmount;
         for (CustomButton cButton : buttons) {
             yOffset += cButton.render(context, mouseX, mouseY, partialTick, parent, this, yOffset);
+        }
+        for (CustomButton cButton : buttons) {
+            cButton.renderOverlay(context, mouseX, mouseY, partialTick, parent, this, yOffset);
         }
         buttonHeightSum = yOffset - scrollAmount;
         backgroundTexture.disableScissor(context);

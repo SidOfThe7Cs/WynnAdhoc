@@ -40,4 +40,7 @@ public abstract class CustomButton {
      */
     public abstract int render(DrawContext context, int mouseX, int mouseY, float partialTick, Screen parent, ButtonContainer container, int yOffset);
 
+    public void renderOverlay(DrawContext context, int mouseX, int mouseY, float partialTick, Screen parent, ButtonContainer container, int yOffset) {
+    }
+
 }

@@ -2,8 +2,10 @@ package sidly.wynnadhoc.config.catagories;
 
 import com.google.gson.annotations.Expose;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
+import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
+import sidly.wynnadhoc.features.Mounts;
 
 public class SimpleFeatureToggles {
     @Expose
@@ -44,4 +46,9 @@ public class SimpleFeatureToggles {
     @ConfigOption(name = "Bomb Share", desc = "Inject clickable commands into chat messages that are likely asking where bombs are")
     @ConfigEditorBoolean
     public boolean bombShare = true;
+
+    @Expose
+    @ConfigOption(name = "Mounts Highlighting", desc = "click this button to open a menu that lets you select what color combination you want for mounts")
+    @ConfigEditorButton(buttonText = "open")
+    public transient Runnable mountHighlightingButton = Mounts.INSTANCE::openEditorScreen;
 }

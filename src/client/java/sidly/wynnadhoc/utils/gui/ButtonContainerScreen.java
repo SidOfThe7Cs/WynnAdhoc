@@ -3,8 +3,10 @@ package sidly.wynnadhoc.utils.gui;
 import com.wynntils.core.consumers.screens.WynntilsScreen;
 import com.wynntils.screens.base.widgets.TextInputBoxWidget;
 import com.wynntils.utils.render.Texture;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -13,10 +15,12 @@ import sidly.wynnadhoc.utils.render.TextureInfo;
 
 public class ButtonContainerScreen extends WynntilsScreen {
     protected TextInputBoxWidget searchInput;
-    protected ButtonContainer buttonContainer;
+    protected Screen oldScreen;
+    public ButtonContainer buttonContainer;
 
-    public ButtonContainerScreen() {
+    public ButtonContainerScreen(Screen oldScreen) {
         super(Text.literal("WynnAdhoc ButtonContainer Screen"));
+        this.oldScreen = oldScreen;
         buttonContainer = new ButtonContainer(
                 new TextureInfo(Texture.WAYPOINT_MANAGER_BACKGROUND,
                         10,
@@ -26,9 +30,19 @@ public class ButtonContainerScreen extends WynntilsScreen {
                 ), 2, true);
     }
 
-    public ButtonContainerScreen(TextureInfo textureInfo, int spacing, boolean filterSearch) {
-        this();
+    public ButtonContainerScreen(Screen oldScreen, TextureInfo textureInfo, int spacing, boolean filterSearch) {
+        this(oldScreen);
         buttonContainer = new ButtonContainer(textureInfo, spacing, filterSearch);
+    }
+
+    @Override
+    public void close() {
+        preClose();
+        MinecraftClient.getInstance().setScreen(oldScreen);
+    }
+
+    public void preClose() {
+
     }
 
     @Override
@@ -82,11 +96,11 @@ public class ButtonContainerScreen extends WynntilsScreen {
         return buttonContainer.onMouseClicked(event, isDoubleClick);
     }
 
-    private float getTranslationX() {
+    protected float getTranslationX() {
         return (this.width - Texture.WAYPOINT_MANAGER_BACKGROUND.width()) / 2f;
     }
 
-    private float getTranslationY() {
+    protected float getTranslationY() {
         return (this.height - Texture.WAYPOINT_MANAGER_BACKGROUND.height()) / 2f;
     }
 }

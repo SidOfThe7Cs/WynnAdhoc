@@ -8,7 +8,6 @@ import com.wynntils.utils.colors.CommonColors;
 import com.wynntils.utils.colors.CustomColor;
 import com.wynntils.utils.mc.type.PoiLocation;
 import com.wynntils.utils.render.Texture;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -72,17 +71,14 @@ public class CustomWynntillsMapWaypoints {
     }
 
     public static class SelectorScreen extends ButtonContainerScreen {
-        private final MainMapScreen oldMapScreen;
 
         public SelectorScreen(MainMapScreen oldScreen) {
-            super();
-            this.oldMapScreen = oldScreen;
+            super(oldScreen);
         }
 
         @Override
-        public void close() {
+        public void preClose() {
             selectChestLvlRange(buttonContainer);
-            MinecraftClient.getInstance().setScreen(oldMapScreen);
         }
 
         @Override
