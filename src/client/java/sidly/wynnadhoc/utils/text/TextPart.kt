@@ -25,6 +25,10 @@ class TextPart(val string: String, val style: Style) {
         return if (font is StyleSpriteSource.Font) font.id() else null
     }
 
+    fun isFontPath(path: String): Boolean {
+        return getFontId()?.path?.equals(path) == true
+    }
+
     fun isEmpty(): Boolean {
         return string.trim().isEmpty()
     }

@@ -18,11 +18,19 @@ abstract class TextParser {
     }
 
     fun find(condition: (TextPart) -> Boolean, startIndex: Int = 0): TextPart? {
-        return parts.subList(startIndex, parts.size).firstOrNull { condition(it) }
+        try {
+            return parts.subList(startIndex, parts.size).firstOrNull { condition(it) }
+        } catch (e: Exception) {
+            return null
+        }
     }
 
     fun findIndex(condition: (TextPart) -> Boolean, startIndex: Int = 0): Int {
-        return parts.subList(startIndex, parts.size).indexOfFirst { condition(it) }
+        try {
+            return parts.subList(startIndex, parts.size).indexOfFirst { condition(it) }
+        } catch (e: Exception) {
+            return -1
+        }
     }
 
     fun get(index: Int): TextPart? {
@@ -32,6 +40,11 @@ abstract class TextParser {
 
     fun get(): List<TextPart> {
         return parts
+    }
+
+    fun print() {
+        println("TextParser:")
+        parts.forEach { println(it) }
     }
 
     private fun extractParts(text: Text, parentStyle: Style) {
