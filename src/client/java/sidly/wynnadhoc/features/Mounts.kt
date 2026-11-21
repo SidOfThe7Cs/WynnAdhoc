@@ -1,6 +1,8 @@
 package sidly.wynnadhoc.features
 
 import com.wynntils.screens.base.widgets.TextInputBoxWidget
+import com.wynntils.utils.colors.CustomColor
+import com.wynntils.utils.render.RenderUtils
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.Click
 import net.minecraft.client.gui.DrawContext
@@ -11,6 +13,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import org.joml.Vector2d
 import sidly.wynnadhoc.event.ScreenRenderEvent
+import sidly.wynnadhoc.features.Mounts.Mount
 import sidly.wynnadhoc.mixin.client.accessors.HandledScreenAccessor
 import sidly.wynnadhoc.utils.GuiUtils
 import sidly.wynnadhoc.utils.gui.ButtonContainer
@@ -22,28 +25,59 @@ import java.awt.Color
 
 object Mounts {
     fun onScreenRender(event: ScreenRenderEvent) {
-        if (event.screen is HandledScreen<*>) {
-            (event.screen as HandledScreenAccessor).focusedSlot?.stack?.let { itemStack ->
-                ItemTextParser(itemStack).getMount()?.let { mount ->
+        val accessor = event.screen as? HandledScreenAccessor ?: return
+        (event.screen as? HandledScreen<*>)?.screenHandler?.slots?.forEach { slot ->
+            ItemTextParser(slot.stack).getMount()?.let { mount ->
+                if (!getSelectedColors().anyColorMatch(mount)) {
+                    RenderUtils.drawLine(
+                        event.context,
+                        CustomColor.fromChatFormatting(Formatting.BLACK),
+                        accessor.x.toFloat() + slot.x.toFloat(),
+                        accessor.y.toFloat() + slot.y.toFloat(),
+                        accessor.x.toFloat() + slot.x.toFloat() + 16,
+                        accessor.y.toFloat() + slot.y.toFloat() + 16,
+                        2f
+                    )
 
+                    RenderUtils.drawLine(
+                        event.context,
+                        CustomColor.fromChatFormatting(Formatting.BLACK),
+                        accessor.x.toFloat() + slot.x.toFloat() + 16,
+                        accessor.y.toFloat() + slot.y.toFloat(),
+                        accessor.x.toFloat() + slot.x.toFloat(),
+                        accessor.y.toFloat() + slot.y.toFloat() + 16,
+                        2f
+                    )
                 }
             }
         }
     }
 
-    fun openEditorScreen() {
-        MinecraftClient.getInstance().setScreen(MountColorSelectorScreen(MinecraftClient.getInstance().currentScreen))
-    }
-
-    fun TextPart.isMount(): Boolean {
-        return this.string == "\uE00C\uE00E\uE014\uE00D\uE013\uDB00\uDC02" &&
-                this.isColor(Formatting.BLACK) &&
-                this.isFontPath("banner/box")
-    }
-
-    class Mount {
+    class Mount() {
         var primaryColor: PrimaryColor = PrimaryColor.UNKNOWN
         var secondaryColor: SecondaryColor = SecondaryColor.UNKNOWN
+
+        constructor(primaryColor: PrimaryColor, secondaryColor: SecondaryColor) : this() {
+            this.primaryColor = primaryColor
+            this.secondaryColor = secondaryColor
+        }
+
+        fun colorMatch(other: Mount): Boolean {
+            if (primaryColor == PrimaryColor.UNKNOWN || secondaryColor == SecondaryColor.UNKNOWN) return false
+
+            var primaryMatch = false
+            var secondaryMatch = false
+
+            if (this.primaryColor == other.primaryColor || this.primaryColor == PrimaryColor.ANY || other.primaryColor == PrimaryColor.ANY) {
+                primaryMatch = true
+            }
+
+            if (this.secondaryColor == other.secondaryColor || this.secondaryColor == SecondaryColor.ANY || other.secondaryColor == SecondaryColor.ANY) {
+                secondaryMatch = true
+            }
+
+            return primaryMatch && secondaryMatch
+        }
 
         companion object {
             fun fromParser(parser: ItemTextParser): Mount? {
@@ -113,13 +147,35 @@ object Mounts {
         val name: String
     }
 
+    fun getSelectedColors(): List<Mount> {
+        val result = mutableListOf<Mount>()
+        mountScreen.buttonContainer.buttons.stream().forEach { button ->
+            if (button is MountColorSelectorButton) {
+                result.add(button.toMount())
+            }
+        }
+        return result
+    }
+
+    val mountScreen: MountColorSelectorScreen = MountColorSelectorScreen(null)
+
+    fun openScreen() {
+        mountScreen.oldScreen = MinecraftClient.getInstance().currentScreen
+        MinecraftClient.getInstance().setScreen(mountScreen)
+    }
+
     class MountColorSelectorScreen(oldScreen: Screen?) : ButtonContainerScreen(oldScreen) {
         override fun preClose() {
             // TODO save (use the custombuttons text field to load the saved text)
         }
 
         override fun afterInit() {
-            buttonContainer.addButton(MountColorSelectorButton(Text.literal("why text"), this))
+            if (buttonContainer.buttons.isEmpty()) buttonContainer.addButton(
+                MountColorSelectorButton(
+                    Text.literal("why text"),
+                    this
+                )
+            )
         }
     }
 
@@ -316,5 +372,24 @@ object Mounts {
                 }
             }
         }
+
+        fun toMount(): Mount {
+            val primary = PrimaryColor.fromString(leftSelector.textBoxInput)
+            val secondary = SecondaryColor.fromString(rightSelector.textBoxInput)
+            return Mount(primary, secondary)
+        }
     }
+}
+
+fun List<Mount>.anyColorMatch(other: Mount): Boolean {
+    for (mount in this) {
+        if (mount.colorMatch(other)) return true
+    }
+    return false
+}
+
+fun TextPart.isMount(): Boolean {
+    return this.string == "\uE00C\uE00E\uE014\uE00D\uE013\uDB00\uDC02" &&
+            this.isColor(Formatting.BLACK) &&
+            this.isFontPath("banner/box")
 }

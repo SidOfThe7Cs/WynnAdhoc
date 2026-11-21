@@ -50,5 +50,5 @@ public class SimpleFeatureToggles {
     @Expose
     @ConfigOption(name = "Mounts Highlighting", desc = "click this button to open a menu that lets you select what color combination you want for mounts")
     @ConfigEditorButton(buttonText = "open")
-    public transient Runnable mountHighlightingButton = Mounts.INSTANCE::openEditorScreen;
+    public transient Runnable mountHighlightingButton = Mounts.INSTANCE::openScreen;
 }

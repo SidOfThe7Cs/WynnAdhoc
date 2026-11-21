@@ -50,6 +50,10 @@ public class ButtonContainer {
         buttons.add(button);
     }
 
+    public ConcurrentLinkedQueue<CustomButton> getButtons() {
+        return buttons;
+    }
+
     public CustomButton getLastButton() {
         return buttons.stream()
                 .reduce((first, second) -> second)

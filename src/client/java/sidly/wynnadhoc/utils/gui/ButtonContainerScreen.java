@@ -15,7 +15,7 @@ import sidly.wynnadhoc.utils.render.TextureInfo;
 
 public class ButtonContainerScreen extends WynntilsScreen {
     protected TextInputBoxWidget searchInput;
-    protected Screen oldScreen;
+    public Screen oldScreen;
     public ButtonContainer buttonContainer;
 
     public ButtonContainerScreen(Screen oldScreen) {
