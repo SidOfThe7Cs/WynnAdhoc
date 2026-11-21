@@ -12,6 +12,7 @@ import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import org.joml.Vector2d
+import sidly.wynnadhoc.config.ConfigManager
 import sidly.wynnadhoc.event.ScreenRenderEvent
 import sidly.wynnadhoc.features.Mounts.Mount
 import sidly.wynnadhoc.mixin.client.accessors.HandledScreenAccessor
@@ -25,10 +26,11 @@ import java.awt.Color
 
 object Mounts {
     fun onScreenRender(event: ScreenRenderEvent) {
+        if (ConfigManager.INSTANCE.selectedMountColors.isEmpty()) return
         val accessor = event.screen as? HandledScreenAccessor ?: return
         (event.screen as? HandledScreen<*>)?.screenHandler?.slots?.forEach { slot ->
             ItemTextParser(slot.stack).getMount()?.let { mount ->
-                if (!getSelectedColors().anyColorMatch(mount)) {
+                if (!ConfigManager.INSTANCE.selectedMountColors.anyColorMatch(mount)) {
                     RenderUtils.drawLine(
                         event.context,
                         CustomColor.fromChatFormatting(Formatting.BLACK),
@@ -78,6 +80,25 @@ object Mounts {
 
             return primaryMatch && secondaryMatch
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            if (other !is Mount) return false
+
+            if (primaryColor != other.primaryColor) return false
+            if (secondaryColor != other.secondaryColor) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = primaryColor.hashCode()
+            result = 31 * result + secondaryColor.hashCode()
+            return result
+        }
+
 
         companion object {
             fun fromParser(parser: ItemTextParser): Mount? {
@@ -147,16 +168,6 @@ object Mounts {
         val name: String
     }
 
-    fun getSelectedColors(): List<Mount> {
-        val result = mutableListOf<Mount>()
-        mountScreen.buttonContainer.buttons.stream().forEach { button ->
-            if (button is MountColorSelectorButton) {
-                result.add(button.toMount())
-            }
-        }
-        return result
-    }
-
     val mountScreen: MountColorSelectorScreen = MountColorSelectorScreen(null)
 
     fun openScreen() {
@@ -165,21 +176,61 @@ object Mounts {
     }
 
     class MountColorSelectorScreen(oldScreen: Screen?) : ButtonContainerScreen(oldScreen) {
+        private var suppressAddButton = false
+
         override fun preClose() {
-            // TODO save (use the custombuttons text field to load the saved text)
+            val saveData = ConfigManager.INSTANCE.selectedMountColors
+            saveData.clear()
+            buttonContainer.buttons.stream().forEach { button ->
+                if (button is MountColorSelectorButton) {
+                    val mount = button.toMount()
+                    if (mount.primaryColor != PrimaryColor.UNKNOWN && mount.secondaryColor != SecondaryColor.UNKNOWN) {
+                        saveData.add(button.toMount())
+                    }
+                }
+            }
+            buttonContainer.buttons.clear()
         }
 
         override fun afterInit() {
-            if (buttonContainer.buttons.isEmpty()) buttonContainer.addButton(
-                MountColorSelectorButton(
-                    Text.literal("why text"),
-                    this
-                )
-            )
+            suppressAddButton = true
+            ConfigManager.INSTANCE.selectedMountColors.forEach { addButton(it) }
+            suppressAddButton = false
+            checkAddButton()
+        }
+
+        fun checkAddButton() {
+            if (suppressAddButton) return
+            else if (buttonContainer.buttons.isEmpty()) addButton(Mount())
+            else {
+                val lastButton = this.buttonContainer.lastButton
+                if (lastButton is MountColorSelectorButton) {
+                    val left = lastButton.leftSelector.textBoxInput
+                    val right = lastButton.rightSelector.textBoxInput
+                    if (!right.isEmpty() && !left.isEmpty() && !right.equals("UNKNOWN") && !left.equals("UNKNOWN")) {
+                        this.addButton(Mount())
+                    }
+                }
+            }
+        }
+
+        fun addButton(data: Mount) {
+            suppressAddButton = true
+            buttonContainer.addButton(MountColorSelectorButton(data, Text.literal(""), this))
+            suppressAddButton = false
         }
     }
 
-    class MountColorSelectorButton(text: Text, val screen: ButtonContainerScreen) : CustomButton(text) {
+    class MountColorSelectorButton(text: Text, val screen: MountColorSelectorScreen) : CustomButton(text) {
+        constructor(data: Mount, text: Text, screen: MountColorSelectorScreen) : this(text, screen) {
+            if (data.primaryColor != PrimaryColor.UNKNOWN) {
+                leftSelector.textBoxInput = data.primaryColor.name
+            }
+            if (data.secondaryColor != SecondaryColor.UNKNOWN) {
+                rightSelector.textBoxInput = data.secondaryColor.name
+            }
+        }
+
         enum class Operator {
             OR,
             AND,
@@ -238,12 +289,7 @@ object Mounts {
 
         private fun onInputUpdate() {
             suggestions.clear()
-            val lastButton = screen.buttonContainer.lastButton
-            if (lastButton is MountColorSelectorButton) {
-                if (!lastButton.leftSelector.textBoxInput.isEmpty() && !lastButton.rightSelector.textBoxInput.isEmpty()) {
-                    screen.buttonContainer.addButton(MountColorSelectorButton(Text.literal("why text"), screen))
-                }
-            }
+            screen.checkAddButton()
         }
 
         private fun addSuggestion(newInput: String, entry: MountColor) {
@@ -315,7 +361,7 @@ object Mounts {
         ): Int {
             val bt = container.backgroundTexture
             val origin = bt.getDrawableX(parent)
-            val tr = MinecraftClient.getInstance().textRenderer
+            //val tr = MinecraftClient.getInstance().textRenderer
             suggestionRenderOrigin = null
 
             var xPos: Int = origin + container.spacing
@@ -381,7 +427,7 @@ object Mounts {
     }
 }
 
-fun List<Mount>.anyColorMatch(other: Mount): Boolean {
+fun Set<Mount>.anyColorMatch(other: Mount): Boolean {
     for (mount in this) {
         if (mount.colorMatch(other)) return true
     }

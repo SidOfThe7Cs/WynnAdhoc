@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.saves.*;
 import sidly.wynnadhoc.event.CommandRegistrationEvent;
+import sidly.wynnadhoc.features.Mounts;
 import sidly.wynnadhoc.features.chests.ChestData;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.chests.LootChest;
@@ -33,10 +34,7 @@ import sidly.wynnadhoc.server.ChestCrowdsource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class ConfigManager {
@@ -109,6 +107,7 @@ public class ConfigManager {
     private ChestsSaveData chests;
     private SessionToken sessionToken;
     private LastVersion lastVersion;
+    private SelectedMountColors selectedMountColors;
 
     public LootrunData getLootrun(String uuid) {
         if (uuid.isEmpty()) {
@@ -149,6 +148,11 @@ public class ConfigManager {
     public void setLastVersion(String newVersion) {
         this.lastVersion.setLastVersion(newVersion);
         this.lastVersion.save();
+    }
+
+    public Set<Mounts.Mount> getSelectedMountColors() {
+        selectedMountColors.changed();
+        return selectedMountColors.getMounts();
     }
 
     public static CompletableFuture<Integer> loadChestsFromServer() {
@@ -210,6 +214,7 @@ public class ConfigManager {
         ConfigManager.INSTANCE.chests = new ChestsSaveData();
         ConfigManager.INSTANCE.sessionToken = new SessionToken();
         ConfigManager.INSTANCE.lastVersion = new LastVersion();
+        ConfigManager.INSTANCE.selectedMountColors = new SelectedMountColors();
 
         BasicSavable.loadAll();
 
