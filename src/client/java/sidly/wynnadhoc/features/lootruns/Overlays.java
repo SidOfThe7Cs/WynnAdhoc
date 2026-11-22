@@ -155,12 +155,13 @@ public class Overlays {
 
     private static List<Text> missionOnHover() {
         List<Text> result = new ArrayList<>();
-        for (MissionOptions mission : data.getCurrentMissionsActive()) {
-            result.add(Text.literal(mission.getDescription()));
-        }
-        for (TrialOptions trial : data.getCurrentTrialsActive()) {
-            result.add(Text.literal(trial.getDescription()));
-        }
+        // TODO disabled until made automatic
+//        for (MissionOptions mission : data.getCurrentMissionsActive()) {
+//            result.add(Text.literal(mission.getDescription()));
+//        }
+//        for (TrialOptions trial : data.getCurrentTrialsActive()) {
+//            result.add(Text.literal(trial.getDescription()));
+//        }
         return result;
     }
 }

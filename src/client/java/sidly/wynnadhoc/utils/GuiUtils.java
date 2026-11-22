@@ -11,4 +11,13 @@ public class GuiUtils {
         double mouseY = client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight();
         return new Pair<>(mouseX, mouseY);
     }
+
+    public static boolean isMouseWithinBound(double x1, double y1, double x2, double y2) {
+        Pair<Double, Double> mouse = getScaledMousePos();
+        if (mouse == null) return false;
+        else if (mouse.getLeft() < x1) return false;
+        else if (mouse.getLeft() > x2) return false;
+        else if (mouse.getRight() < y1) return false;
+        else return mouse.getRight() <= y2;
+    }
 }
