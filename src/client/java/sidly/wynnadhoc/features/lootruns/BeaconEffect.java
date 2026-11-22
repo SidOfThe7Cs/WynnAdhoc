@@ -13,7 +13,7 @@ public class BeaconEffect {
         int totalMulti = 0;
         if (isVibrant) totalMulti++;
         totalMulti += aquaMultiplier;
-        totalMulti = Math.max(totalMulti, 3);
+        totalMulti = Math.min(totalMulti, 3);
         return base + (change * totalMulti);
     }
 }

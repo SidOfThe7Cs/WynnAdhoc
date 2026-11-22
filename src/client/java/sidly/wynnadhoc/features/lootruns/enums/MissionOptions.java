@@ -33,7 +33,7 @@ public enum MissionOptions {
     TrainingArc("Training Arc", ""),
     BrassTacks("Brass Tacks", ""),
     TemporalSpur("Temporal Spur", ""),
-    IDKYET("IDKYET", "");
+    Exorcist("Exorcist", "");
 
     private final String displayName;
     private final String description;

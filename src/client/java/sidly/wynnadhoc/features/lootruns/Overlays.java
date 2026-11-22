@@ -133,7 +133,7 @@ public class Overlays {
             sb.append(mission.getDisplayName());
 
             if (mission == MissionOptions.InterestScheme) {
-                sb.append(" ").append(data.getPullsSinceLastYellow()).append("/24");
+                sb.append(" ").append(data.getPullsSinceLastYellow()).append("/45");
             }
 
             if (mission == MissionOptions.Equilibrium) {
