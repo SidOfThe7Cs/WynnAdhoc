@@ -14,7 +14,7 @@ public class LootrunData {
     private final List<TrialOptions> currentTrialsActive = new ArrayList<>();
     private final EndStats endStats = new EndStats();
     private LootrunStatus status = LootrunStatus.NotInLootrun;
-    private AquaStatus aquaStatus = AquaStatus.Inactive;
+    private int aquaMultiplier = 0;
     private BeaconColor activeBeaconColor = null;
     private BeaconColor possibleActiveBeaconColor = null;
     private Camps activeCamp = null;
@@ -94,8 +94,8 @@ public class LootrunData {
         return status;
     }
 
-    public AquaStatus getAquaStatus() {
-        return aquaStatus;
+    public int getAquaMultiplier() {
+        return aquaMultiplier;
     }
 
     public void setStatus(LootrunStatus status) {
@@ -103,8 +103,8 @@ public class LootrunData {
         ConfigManager.INSTANCE.lootrunChanged();
     }
 
-    public void setAquaStatus(AquaStatus aquaStatus) {
-        this.aquaStatus = aquaStatus;
+    public void setAquaMultiplier(int multi) {
+        this.aquaMultiplier = multi;
         ConfigManager.INSTANCE.lootrunChanged();
     }
 

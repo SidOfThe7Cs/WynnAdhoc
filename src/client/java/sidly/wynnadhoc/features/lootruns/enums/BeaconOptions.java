@@ -14,6 +14,7 @@ public enum BeaconOptions {
     VibrantWhiteBeacon("Vibrant White Beacon", BeaconColor.White),
     VibrantGreyBeacon("Vibrant Grey Beacon", BeaconColor.Grey),
     VibrantRedBeacon("Vibrant Red Beacon", BeaconColor.Red),
+    VibrantVioletBeacon("Vibrant Violet Beacon", BeaconColor.Violet),
     VibrantRainbowBeacon("Vibrant Rainbow Beacon", BeaconColor.Rainbow),
     VibrantCrimsonBeacon("Vibrant Crimson Beacon", BeaconColor.Crimson),
 
@@ -27,6 +28,7 @@ public enum BeaconOptions {
     WhiteBeacon("White Beacon", BeaconColor.White),
     GreyBeacon("Grey Beacon", BeaconColor.Grey),
     RedBeacon("Red Beacon", BeaconColor.Red),
+    VioletBeacon("Violet Beacon", BeaconColor.Violet),
     RainbowBeacon("Rainbow Beacon", BeaconColor.Rainbow),
     CrimsonBeacon("Crimson Beacon", BeaconColor.Crimson);
 

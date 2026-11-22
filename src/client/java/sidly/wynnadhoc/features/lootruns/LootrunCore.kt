@@ -126,19 +126,21 @@ object LootrunCore {
                         var baseColor: BeaconColor? = null
                         val markerSibling = siblings[0]
                         for (nested in markerSibling.siblings) {
-                            if (nested.style.getColor() != null) {
-                                when (val color = nested.style.getColor()!!.rgb) {
+                            val styleColor = nested.style.getColor()
+                            if (styleColor != null) {
+                                when (val color = styleColor.rgb) {
                                     0x5C5CE6 -> baseColor = BeaconColor.Blue
-                                    0xFF00FF -> baseColor = BeaconColor.Purple
+                                    0xa020f0 -> baseColor = BeaconColor.Purple
                                     0xFFFF33 -> baseColor = BeaconColor.Yellow
                                     0x55FFFF -> baseColor = BeaconColor.Aqua
-                                    0xfd72b1 -> baseColor = BeaconColor.Pink
+                                    0xff3892 -> baseColor = BeaconColor.Pink
                                     0xff9500 -> baseColor = BeaconColor.Orange
                                     0xff80 -> baseColor = BeaconColor.Green
                                     0x808080 -> baseColor = BeaconColor.DarkGrey
                                     0xffffff -> baseColor = BeaconColor.White
                                     0xbfbfbf -> baseColor = BeaconColor.Grey
                                     0xff0000 -> baseColor = BeaconColor.Red
+                                    0xe08aff -> baseColor = BeaconColor.Violet
                                     0xf000 -> baseColor = BeaconColor.Rainbow
                                     0xf010 -> baseColor = BeaconColor.Crimson
                                     0xf018 -> baseColor = BeaconColor.Obscured
@@ -309,7 +311,7 @@ object LootrunCore {
         LootrunLogger.appendLine("failed challenge")
 
         data.clearActiveBeaconColor()
-        data.aquaStatus = AquaStatus.Inactive
+        data.aquaMultiplier = 0
         data.beaconCounts.decreaseRemaining()
 
         config().beaconCountsOverlay.updateDisplay()
@@ -341,9 +343,9 @@ object LootrunCore {
         data.beaconCounts.incrementCount(color)
 
         if (color == BeaconColor.Yellow) data.resetPullsSinceLastYellow()
-        applyBeaconEffect(color, data.aquaStatus, vibrant)
+        applyBeaconEffect(color, data.aquaMultiplier, vibrant)
 
-        if (color != BeaconColor.Aqua) data.aquaStatus = AquaStatus.Inactive
+        if (color != BeaconColor.Aqua) data.aquaMultiplier = 0
 
         data.clearActiveBeaconColor()
 
@@ -356,10 +358,10 @@ object LootrunCore {
         LootrunLogger.appendLine(message)
 
         val vibrant = beacon.displayName.startsWith("Vibrant")
-        applyBeaconEffect(beacon.baseColor, AquaStatus.Inactive, vibrant)
+        applyBeaconEffect(beacon.baseColor, 0, vibrant)
     }
 
-    private fun applyBeaconEffect(color: BeaconColor, aquaStatus: AquaStatus, vibrant: Boolean) {
+    private fun applyBeaconEffect(color: BeaconColor, aquaMultiplier: Int, vibrant: Boolean) {
         val data = getCurrentLootrunData() ?: return
 
         when (color) {
@@ -370,27 +372,31 @@ object LootrunCore {
             BeaconColor.Purple -> {
                 val phobia = (data.currentMissionsActive.contains(MissionOptions.Porphyrophobia)
                         && ScoreboardInfo.missionInProgress != "Porphyrophobia")
-                val pulls = BeaconColor.Purple.getBeaconEffect(vibrant, aquaStatus)
+                val pulls = BeaconColor.Purple.getBeaconEffect(vibrant, aquaMultiplier)
                 data.addCursesSinceLastBoon(if (phobia) pulls * 2 else pulls)
                 data.endStats.addEndPulls(if (phobia) pulls * 2 else pulls)
             }
 
             BeaconColor.Aqua -> if (vibrant) {
-                data.aquaStatus = AquaStatus.Vibrant
-            } else data.aquaStatus = AquaStatus.Active
+                data.aquaMultiplier += 2
+            } else data.aquaMultiplier += 1
 
             BeaconColor.Orange -> data.beaconCounts
-                .addRemaining(BeaconColor.Orange, BeaconColor.Orange.getBeaconEffect(vibrant, aquaStatus))
+                .addRemaining(BeaconColor.Orange, BeaconColor.Orange.getBeaconEffect(vibrant, aquaMultiplier))
 
-            BeaconColor.DarkGrey -> data.endStats.addEndPulls(BeaconColor.DarkGrey.getBeaconEffect(vibrant, aquaStatus))
+            BeaconColor.Violet -> data.endStats.addEndPulls(10)
+
             BeaconColor.Red -> {
-                data.beaconCounts.addRemaining(BeaconColor.Red, BeaconColor.Red.getBeaconEffect(vibrant, aquaStatus))
+                data.beaconCounts.addRemaining(
+                    BeaconColor.Red,
+                    BeaconColor.Red.getBeaconEffect(vibrant, aquaMultiplier)
+                )
             }
 
             BeaconColor.Rainbow -> {
                 data.beaconCounts.addRemaining(
                     BeaconColor.Rainbow,
-                    BeaconColor.Rainbow.getBeaconEffect(vibrant, aquaStatus)
+                    BeaconColor.Rainbow.getBeaconEffect(vibrant, aquaMultiplier)
                 )
             }
 
@@ -559,9 +565,11 @@ object LootrunCore {
     }
 
     private var completeChaosCounter: Int = Int.MAX_VALUE
+    private var missionRemovedCounter: Int = Int.MAX_VALUE
     fun onChatMessage(event: ChatMessageEvent) {
         val data = getCurrentLootrunData() ?: return
         if (completeChaosCounter != Int.MAX_VALUE) completeChaosCounter++
+        if (missionRemovedCounter != Int.MAX_VALUE) missionRemovedCounter++
 
         if (data.status === LootrunStatus.PickingBeacon) {
             BeaconOptions.getMatches(event.cleanMessage)
@@ -588,6 +596,8 @@ object LootrunCore {
                 onChallengeFailed()
             } else if (part == "Complete Chaos") {
                 completeChaosCounter = 0
+            } else if (part == "Mission Removed") {
+                missionRemovedCounter = 0
             }
 
             if (completeChaosCounter == 2) {
@@ -596,6 +606,16 @@ object LootrunCore {
                         completeChaosChallengeCompleted(opt)
                     }
                 }
+            }
+
+            if (missionRemovedCounter == 2) {
+                var toRemove: MissionOptions? = null
+                data.currentMissionsActive.stream().forEach { mission ->
+                    if (part == mission.displayName) {
+                        toRemove = mission
+                    }
+                }
+                toRemove?.let { data.currentMissionsActive.remove(it) }
             }
 
             val reRollsMatcher = beaconRerollPattern.matcher(part)
