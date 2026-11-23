@@ -24,11 +24,11 @@ import net.minecraft.util.math.BlockPos;
 import sidly.wynnadhoc.WynnAdhocClient;
 import sidly.wynnadhoc.config.saves.*;
 import sidly.wynnadhoc.event.CommandRegistrationEvent;
-import sidly.wynnadhoc.features.Mounts;
 import sidly.wynnadhoc.features.chests.ChestData;
 import sidly.wynnadhoc.features.chests.ChestTracker;
 import sidly.wynnadhoc.features.chests.LootChest;
 import sidly.wynnadhoc.features.lootruns.LootrunData;
+import sidly.wynnadhoc.features.mounts.MountCore;
 import sidly.wynnadhoc.server.ChestCrowdsource;
 
 import java.io.File;
@@ -150,7 +150,7 @@ public class ConfigManager {
         this.lastVersion.save();
     }
 
-    public Set<Mounts.Mount> getSelectedMountColors() {
+    public Set<MountCore> getSelectedMountColors() {
         selectedMountColors.changed();
         return selectedMountColors.getMounts();
     }

@@ -39,6 +39,7 @@
     "Invoker.GetTransformationInvoker",
     "Invoker.IsFavoritedInvoker",
     "Invoker.WynntillsSpellCastInvoker",
+    "Invoker.ScreenInvoker",
     "loggingdisabler.ActionBarMixin",
     "loggingdisabler.ChatHandlerMixin",
     "loggingdisabler.ChatHudMixin",
