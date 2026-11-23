@@ -78,6 +78,7 @@ public class Overlays {
             sb.append(left);
             if (color != BeaconColor.Orange) sb.append(")");
         }
+        if (color.getMax() != -1) sb.append("/").append(color.getMax());
         sb.append('\n');
     }
 
