@@ -92,6 +92,7 @@ public class VersionUtils {
                 """
                         Fix obscured beacons crashing your game with the setting on
                         Add menu to select mount color combinations and anything not selected will be crossed out
+                        Update Lootrun stuff with new update
                         """
         );
     }

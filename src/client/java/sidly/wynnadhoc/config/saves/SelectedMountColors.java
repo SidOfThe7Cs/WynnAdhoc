@@ -1,7 +1,7 @@
 package sidly.wynnadhoc.config.saves;
 
 import sidly.wynnadhoc.config.ConfigManager;
-import sidly.wynnadhoc.features.Mounts;
+import sidly.wynnadhoc.features.mounts.MountCore;
 
 import java.io.File;
 import java.util.HashSet;
@@ -9,9 +9,9 @@ import java.util.Set;
 
 public class SelectedMountColors extends BasicSavable<SelectedMountColors> {
     public static final File SAVE_FILE = ConfigManager.getConfigDir().resolve("selected-mount-colors.json").toFile();
-    private Set<Mounts.Mount> mounts = new HashSet<>();
+    private Set<MountCore> mounts = new HashSet<>();
 
-    public Set<Mounts.Mount> getMounts() {
+    public Set<MountCore> getMounts() {
         return mounts;
     }
 

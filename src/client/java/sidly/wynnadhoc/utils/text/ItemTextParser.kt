@@ -3,7 +3,7 @@ package sidly.wynnadhoc.utils.text
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import sidly.wynnadhoc.features.Mounts.Mount
+import sidly.wynnadhoc.features.mounts.MountCore
 import sidly.wynnadhoc.utils.ItemUtils
 
 class ItemTextParser : TextParser {
@@ -15,7 +15,7 @@ class ItemTextParser : TextParser {
         return part.string == "Ingredient Pouch" && part.isColor(Formatting.GOLD)
     }
 
-    fun getMount(): Mount? {
-        return Mount.fromParser(this)
+    fun getMount(): MountCore? {
+        return MountCore.fromParser(this)
     }
 }

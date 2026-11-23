@@ -5,7 +5,7 @@ import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorBoolean;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorButton;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigEditorDropdown;
 import io.github.notenoughupdates.moulconfig.annotations.ConfigOption;
-import sidly.wynnadhoc.features.Mounts;
+import sidly.wynnadhoc.features.mounts.Mounts;
 
 public class SimpleFeatureToggles {
     @Expose
