@@ -608,7 +608,7 @@ object LootrunCore {
                 }
             }
 
-            if (missionRemovedCounter <= 3) {
+            if (missionRemovedCounter == 1) {
                 var toRemove: MissionOptions? = null
                 data.currentMissionsActive.stream().forEach { mission ->
                     if (part == mission.displayName) {

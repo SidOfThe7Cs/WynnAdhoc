@@ -93,9 +93,13 @@ public class TextHudElement extends HudElement {
             if (tooltipSupplier == null) return super.getHoverTooltip(relativeMouseX, relativeMouseY);
             else if (!hoverPerLine) return FormatUtils.splitTextLines(tooltipSupplier.get());
             else {
-                List<Text> fullTooltip = tooltipSupplier.get();
-                int index = getHoveredLineIndex(relativeMouseY);
-                return FormatUtils.splitTextLines(List.of(fullTooltip.get(index)));
+                try {
+                    List<Text> fullTooltip = tooltipSupplier.get();
+                    int index = getHoveredLineIndex(relativeMouseY);
+                    return FormatUtils.splitTextLines(List.of(fullTooltip.get(index)));
+                } catch (Exception e) {
+                    return List.of();
+                }
             }
         } catch (Exception e) {
             return List.of(Text.literal("Failed to get tooltip"), Text.literal(e.getMessage()));
