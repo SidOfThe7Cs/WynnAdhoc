@@ -3,6 +3,7 @@ package sidly.wynnadhoc.mixin.client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +20,7 @@ public class ScreenMixin {
         if (client == null || client.player == null || client.world == null) return;
         if ((Object) this instanceof Screen screen) {
             if (screen instanceof LevelLoadingScreen) return;
+            if (screen instanceof HandledScreen<?>) return; // handled by HandledScreenMixin with correct context
             new ScreenRenderEvent(screen, context, mouseX, mouseY);
             new HudRenderOnTopEvent(context);
         }

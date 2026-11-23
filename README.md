@@ -12,5 +12,5 @@ hide ingredient pouch tooltip\
 click chat message to share bombs when people ask\
 highlight rare mobs (if you have LOS)\
 highlight shadowlings & bulb catchers\
-search the wynn api for mobs that drop a specific ingredient and add waypoints for its spawn locations
-
+search the wynn api for mobs that drop a specific ingredient and add waypoints for its spawn locations\
+highlight specific mount colors

@@ -27,8 +27,18 @@ import kotlin.math.max
 
 object BombShare {
     private val prof = mutableSetOf("prof", "profs", "speed bomb", "gxp")
-    private val xp = mutableSetOf("xp bomb", "dxp", "cxp", "txp", "double xp", "combat experience")
-    private val chest = mutableSetOf("loot chest", "dcl", "chest loot", "cloot")
+    private val xp = mutableSetOf(
+        "xp bomb",
+        "dxp",
+        "cxp",
+        "txp",
+        "double xp",
+        "combat experience",
+        "combat bomb",
+        "combat bombs",
+        "xp bombs"
+    )
+    private val chest = mutableSetOf("loot chest", "dcl", "chest loot", "cloot", "lcb")
     private val loot = mutableSetOf("dloot", "loot bomb")
     private val clickEventsToAdd: MutableMap<String, Bomb> = mutableMapOf()
 

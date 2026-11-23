@@ -29,6 +29,7 @@ import sidly.wynnadhoc.features.lootruns.LootrunCore;
 import sidly.wynnadhoc.features.lootruns.LootrunLogger;
 import sidly.wynnadhoc.features.lootruns.Overlays;
 import sidly.wynnadhoc.features.lootruns.ScoreboardInfo;
+import sidly.wynnadhoc.features.mounts.Mounts;
 import sidly.wynnadhoc.features.outervoid.OuterVoidItemDatabase;
 import sidly.wynnadhoc.features.prof.ProfNodeCore;
 import sidly.wynnadhoc.features.raid.TNA;
@@ -112,6 +113,7 @@ public class WynnAdhocClient implements ClientModInitializer {
         Event.register(ScreenRenderEvent.class, LootrunCore.INSTANCE::onScreenRender);
         Event.register(ScreenRenderEvent.class, GuildLogs.INSTANCE::onScreenRender);
         Event.register(ScreenRenderEvent.class, ChestTracker.INSTANCE::highlightFavorites);
+        Event.register(ScreenRenderEvent.class, Mounts.INSTANCE::onScreenRender);
 
         Event.register(ScreenOpenedEvent.class, ChestItemsLoadedEvent::onScreenOpened);
 

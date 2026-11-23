@@ -52,7 +52,11 @@ public enum TrialOptions {
     WarmthDevourer("Warmth Devourer",
             "Gain 20 end reward pulls",
             "Lose 1 boon and one challenge every challenge completed",
-            "+1 reroll, +1 sacrifice");
+            "+1 reroll, +1 sacrifice"),
+    Sprezzatura("Sprezzatura",
+            "Gain 10 curses",
+            "Enemies deal 5+1n%hp as dmg",
+            "+1rr per 5 challenges completed");
 
     private final String displayName;
     private final String objective;

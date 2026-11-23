@@ -78,6 +78,7 @@ public class Overlays {
             sb.append(left);
             if (color != BeaconColor.Orange) sb.append(")");
         }
+        if (color.getMax() != -1) sb.append("/").append(color.getMax());
         sb.append('\n');
     }
 
@@ -133,7 +134,7 @@ public class Overlays {
             sb.append(mission.getDisplayName());
 
             if (mission == MissionOptions.InterestScheme) {
-                sb.append(" ").append(data.getPullsSinceLastYellow()).append("/24");
+                sb.append(" ").append(data.getPullsSinceLastYellow()).append("/45");
             }
 
             if (mission == MissionOptions.Equilibrium) {
@@ -155,12 +156,13 @@ public class Overlays {
 
     private static List<Text> missionOnHover() {
         List<Text> result = new ArrayList<>();
-        for (MissionOptions mission : data.getCurrentMissionsActive()) {
-            result.add(Text.literal(mission.getDescription()));
-        }
-        for (TrialOptions trial : data.getCurrentTrialsActive()) {
-            result.add(Text.literal(trial.getDescription()));
-        }
+        // TODO disabled until made automatic
+//        for (MissionOptions mission : data.getCurrentMissionsActive()) {
+//            result.add(Text.literal(mission.getDescription()));
+//        }
+//        for (TrialOptions trial : data.getCurrentTrialsActive()) {
+//            result.add(Text.literal(trial.getDescription()));
+//        }
         return result;
     }
 }

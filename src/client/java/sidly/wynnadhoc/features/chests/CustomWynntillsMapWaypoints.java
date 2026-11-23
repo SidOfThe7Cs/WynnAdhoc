@@ -1,7 +1,5 @@
 package sidly.wynnadhoc.features.chests;
 
-import com.wynntils.core.consumers.screens.WynntilsScreen;
-import com.wynntils.screens.base.widgets.TextInputBoxWidget;
 import com.wynntils.screens.maps.MainMapScreen;
 import com.wynntils.services.map.pois.IconPoi;
 import com.wynntils.services.map.pois.Poi;
@@ -10,17 +8,13 @@ import com.wynntils.utils.colors.CommonColors;
 import com.wynntils.utils.colors.CustomColor;
 import com.wynntils.utils.mc.type.PoiLocation;
 import com.wynntils.utils.render.Texture;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import sidly.wynnadhoc.utils.render.ButtonContainer;
-import sidly.wynnadhoc.utils.render.TextureInfo;
+import sidly.wynnadhoc.utils.gui.ButtonContainer;
+import sidly.wynnadhoc.utils.gui.ButtonContainerScreen;
+import sidly.wynnadhoc.utils.gui.CustomButton;
+import sidly.wynnadhoc.utils.gui.ToggleButton;
 import sidly.wynnadhoc.wapi.item.WynnItem;
 
 import java.util.*;
@@ -76,49 +70,19 @@ public class CustomWynntillsMapWaypoints {
         }
     }
 
-    public static class SelectorScreen extends WynntilsScreen {
-        private final MainMapScreen oldMapScreen;
-        private TextInputBoxWidget searchInput;
-        private final ButtonContainer buttonContainer = new ButtonContainer(
-                new TextureInfo(Texture.WAYPOINT_MANAGER_BACKGROUND,
-                        10,
-                        26,
-                        16,
-                        9
-                ), 2, true);
+    public static class SelectorScreen extends ButtonContainerScreen {
 
         public SelectorScreen(MainMapScreen oldScreen) {
-            super(Text.literal("Chest Level Selector Screen"));
-            this.oldMapScreen = oldScreen;
+            super(oldScreen);
         }
 
         @Override
-        public void close() {
+        public void preClose() {
             selectChestLvlRange(buttonContainer);
-            MinecraftClient.getInstance().setScreen(oldMapScreen);
         }
 
         @Override
-        public void doInit() {
-            addDrawableChild(
-                    new ButtonWidget.Builder(Text.literal("X").setStyle(Style.EMPTY.withColor(Formatting.RED)), (button) -> close())
-                            .position((int) (getTranslationX() + Texture.WAYPOINT_MANAGER_BACKGROUND.width() - 20), (int) (getTranslationY() - 22))
-                            .size(20, 20)
-                            .build());
-
-            searchInput = new TextInputBoxWidget(
-                    (int) (getTranslationX() + 2),
-                    (int) (getTranslationY() - 22),
-                    Texture.WAYPOINT_MANAGER_BACKGROUND.width() / 2,
-                    20,
-                    buttonContainer::setFilterString,
-                    this,
-                    searchInput
-            );
-
-            addDrawableChild(searchInput);
-            setFocusedTextInput(searchInput);
-
+        public void afterInit() {
             buttonContainer.addButton(Text.literal("Hide All"),
                     (b) -> {
                         selectedLvls = new ArrayList<>();
@@ -137,7 +101,7 @@ public class CustomWynntillsMapWaypoints {
             // TODO map by lvl (could also add matched alias to the render text)
             Map<Integer, Set<WynnItem>> items = new HashMap<>();
             for (int i = 1; i <= 120; i += 5) {
-                ButtonContainer.ToggleButton button = buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
+                ToggleButton button = buttonContainer.addButton(Text.literal("Select Lvl " + i + " - " + (i + 4)),
                         (b) -> {
                         }, 20);
                 if (selectedLvls.contains(i)) button.setToggled(true);
@@ -148,37 +112,6 @@ public class CustomWynntillsMapWaypoints {
                     wynnItems.forEach(item -> button.addAlias(item.internalName()));
                 }
             }
-        }
-
-        @Override
-        public void renderBackground(DrawContext guiGraphics, int mouseX, int mouseY, float partialTick) {
-            super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-            buttonContainer.renderBackground(guiGraphics, this);
-        }
-
-        @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
-            return buttonContainer.onMouseScrolled(mouseX, mouseY, deltaX, deltaY);
-        }
-
-        @Override
-        public void doRender(DrawContext guiGraphics, int mouseX, int mouseY, float partialTick) {
-            super.doRender(guiGraphics, mouseX, mouseY, partialTick);
-            buttonContainer.render(guiGraphics, mouseX, mouseY, partialTick, this);
-        }
-
-        @Override
-        public boolean doMouseClicked(Click event, boolean isDoubleClick) {
-            super.doMouseClicked(event, isDoubleClick);
-            return buttonContainer.onMouseClicked(event, isDoubleClick);
-        }
-
-        private float getTranslationX() {
-            return (this.width - Texture.WAYPOINT_MANAGER_BACKGROUND.width()) / 2f;
-        }
-
-        private float getTranslationY() {
-            return (this.height - Texture.WAYPOINT_MANAGER_BACKGROUND.height()) / 2f;
         }
     }
 
@@ -223,7 +156,7 @@ public class CustomWynntillsMapWaypoints {
 
     public static void selectChestLvlRange(ButtonContainer container) {
         selectedLvls = new ArrayList<>();
-        for (ButtonContainer.ToggleButton button : container.getSelected()) {
+        for (CustomButton button : container.getSelected()) {
             Matcher matcher = BUTTON_LVL_REGEX.matcher(button.getText().getString());
             if (matcher.matches()) {
                 selectedLvls.add(Integer.parseInt(matcher.group(1)));

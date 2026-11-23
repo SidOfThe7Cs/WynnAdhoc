@@ -255,7 +255,7 @@ public class SpellMacros {
 
         if (dir == SpellDirection.RIGHT)
             clickQueue.add(MouseUtils::sendRightClickInput);
-        else clickQueue.add(MouseUtils::sendLeftClickInput);
+        else clickQueue.add(() -> MouseUtils.sendLeftClickInput(false));
     }
 
     public static void start() {

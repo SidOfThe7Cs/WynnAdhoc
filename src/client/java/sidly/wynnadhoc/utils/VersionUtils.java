@@ -88,6 +88,13 @@ public class VersionUtils {
                         Compat with wynntils 4.2.15
                         """
         );
+        changelog("0.0.7",
+                """
+                        Fix obscured beacons crashing your game with the setting on
+                        Add menu to select mount color combinations and anything not selected will be crossed out
+                        Update Lootrun stuff with new update
+                        """
+        );
     }
 
     private static void changelog(String v, String changes) {

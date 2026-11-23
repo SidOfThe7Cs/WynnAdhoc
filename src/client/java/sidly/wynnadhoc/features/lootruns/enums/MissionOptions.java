@@ -28,7 +28,12 @@ public enum MissionOptions {
     HighSpirits("High Spirits ", "Gain +50% Vibrancy chance."),
     KnifeEdge("Knife Edge", "After completing a challenge, gain +7 pulls. This amount is reduced by 1 per challenge remaining (min 0)"),
     KingsCourt("King's Court", "Add +1 Crimson Beacon to your beacon pool."),
-    CompleteChaos("Complete Chaos", "After finishing a Challenge, get an additional random Beacon reward. ");
+    CompleteChaos("Complete Chaos", "After finishing a Challenge, get an additional random Beacon reward. "),
+    BalancingAct("Balancing Act", "Cleanse one curse per challenge"),
+    TrainingArc("Training Arc", ""),
+    BrassTacks("Brass Tacks", ""),
+    TemporalSpur("Temporal Spur", ""),
+    Exorcist("Exorcist", "");
 
     private final String displayName;
     private final String description;
