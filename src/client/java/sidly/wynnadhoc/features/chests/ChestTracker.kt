@@ -206,13 +206,14 @@ object ChestTracker {
         if (client == null || player == null) return
 
         val crono = LootrunCore.isMissionActive(MissionOptions.Chronokinesis)
+        val hoard = LootrunCore.isMissionActive(MissionOptions.Hoarder)
         val missionReq = ScoreboardInfo.missionChestReq > ScoreboardInfo.missionChestCurrent
         val splunk = ScoreboardInfo.splunkChestReq > ScoreboardInfo.splunkChestCurrent
         val highlightRelevantChests = ConfigManager.INSTANCE.config.lootrun.highlightRelevantChests
-        val shouldHighLight = highlightRelevantChests && (missionReq || crono || splunk)
+        val shouldHighLight = highlightRelevantChests && (missionReq || crono || splunk || hoard)
         if (shouldHighLight || config.forceEsp) {
             val currentTime = System.currentTimeMillis()
-            val onlySplunk = splunk && !missionReq && !crono && !config.forceEsp
+            val onlySplunk = splunk && !missionReq && !crono && !config.forceEsp && !hoard
             for (knownChest in ConfigManager.INSTANCE.chests.entries) {
                 if (!config.shownTiers.contains(ChestTier.from(knownChest.value.tier))) continue
                 val isSplunkChest = knownChest.value.tier > 2 && splunk

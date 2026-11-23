@@ -324,6 +324,14 @@ object LootrunCore {
             return
         }
 
+        if (isMissionActive(MissionOptions.BelezaPura) && color != BeaconColor.Aqua) {
+            if (data.currentBeaconOptions.contains(BeaconOptions.AquaBeacon) ||
+                data.currentBeaconOptions.contains(BeaconOptions.VibrantAquaBeacon)
+            ) {
+                data.aquaMultiplier += 1
+            }
+        }
+
         // check the available beacon options to see if its vibrant or not
         var vibrant = false
         var beaconCompleted = ""
